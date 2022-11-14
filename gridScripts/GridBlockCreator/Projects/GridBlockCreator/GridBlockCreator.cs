@@ -21,6 +21,7 @@ namespace VMS.TPS
 {
   public class Script
   {
+    /*
     public Script()
     {
 
@@ -31,7 +32,7 @@ namespace VMS.TPS
     int getImagePlaneFromZCoordinate(Image image, double zCoord)
     {
         return (int)Math.Round((zCoord - image.Origin.z) / image.ZRes);
-    }
+    }*/
 
     VVector[]  CreateContour(VVector center, double radius, int nOfPoints)
     {
@@ -45,7 +46,7 @@ namespace VMS.TPS
             VVector delta = new VVector(xDelta, yDelta, 0.0);
             contour[i] = center + delta;
         }
-        contour[nOfPoints] = contour[0];
+        contour[nOfPoints] = contour[0]; // Last pt is same as first
 
         return contour;
     }
@@ -58,19 +59,20 @@ namespace VMS.TPS
 
         foreach(var contourCenter in gridPoints)
         {
-            VVector center = new VVector(contourCenter.x, contourCenter.y, zCoord);
+            //VVector center = new VVector(contourCenter.x, contourCenter.y, zCoord);
             var contour = CreateContour(contourCenter, radius, contourSegmentCount);
             gridStructure.AddContourOnImagePlane(contour, zLayer);
         }
     }
 
+    /*
     void createGridStructure(VVector[] gridPoints, Image image, Structure ptv, ref Structure gridStructure, double radius)
     {
         for(int z = 0; z < image.ZSize; ++z)
             addContoursToStructure(gridPoints, image,  ref gridStructure, radius, z);
         gridStructure.And(ptv);
         
-    }
+    }*/
 
     //VVector [] getBoundingBox(Structure ptv, int nOfLayers)
     //{
@@ -131,10 +133,11 @@ namespace VMS.TPS
             return;
         }
 
+        /*
         GridBlockCreator.GridDialog mainWindow = new GridBlockCreator.GridDialog(context);
-        mainWindow.ShowDialog();
+        mainWindow.ShowDialog();*/
 
-        
+
 
     }
   }

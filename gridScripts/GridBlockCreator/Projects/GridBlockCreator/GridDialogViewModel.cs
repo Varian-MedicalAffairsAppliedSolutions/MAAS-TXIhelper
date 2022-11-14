@@ -80,8 +80,6 @@ namespace GridBlockCreator
         }
     } 
 
-   
-
     public class Circle : BaseObject
     {
         double r;      
@@ -231,8 +229,6 @@ namespace GridBlockCreator
             }
              return new Circle { X = 0, Y = 0, R = xConv.LengthToCanvas(radius), Selected = true, xGrid = xG, yGrid = yG, tiltX = tiltX, tiltY = tiltY, zCoordStarX = xConv.LengthToCanvas((double)(2 * zShown - zStart - zEnd) * 0.5 * context.Image.ZRes), zCoordStarY = yConv.LengthToCanvas((double)(2 * zShown - zStart - zEnd) * 0.5 * context.Image.ZRes) };
         }
-
-
 
          void create2Dgrid()
          {
@@ -515,9 +511,10 @@ namespace GridBlockCreator
             }
         }
 
+        // CR This seems to be the method called to create the grid structure
         void createGridStructure( ref Structure gridStructure)
         {
-            if (target == null) return;
+            /*if (target == null) return;
 
             double zCenter = (double)(zEnd + zStart) / 2.0 * context.Image.ZRes + context.Image.Origin.z;
 
@@ -527,6 +524,7 @@ namespace GridBlockCreator
                 double tiltXOffset = (zCoord - zCenter) * Math.Tan(tiltX / 180.0 * Math.PI);
                 double tiltYOffset = (zCoord - zCenter) * Math.Tan(tiltY / 180.0 * Math.PI);
                 const int contourSegmentCount = 32;
+                
                 foreach (var s in drawingObjects)
                 {
                     if (s is Circle)
@@ -541,16 +539,56 @@ namespace GridBlockCreator
                 }
             }
 
-            gridStructure.SegmentVolume = gridStructure.And(target);
+            gridStructure.SegmentVolume = gridStructure.And(target);*/
+            CRTest(ref gridStructure, 1);
 
+        }
+
+        
+        void CRTest(ref Structure gridStructure, float R)
+        {
+            if (target == null) return;
+
+            double zCenter = (double)(zEnd + zStart) / 2.0 * context.Image.ZRes + context.Image.Origin.z;
+            for (int z = zStart; z < zEnd; ++z)
+            {
+                double zCoord = (double)(z) * context.Image.ZRes + context.Image.Origin.z;
+
+                // For each slice find in plane radius
+                var z_diff = Math.Abs(zCoord - zCenter);
+                if (z_diff > R) // If we are out of range of the sphere continue
+                {
+                    continue;
+                }
+
+                // Otherwise do the thing (make spheres)
+                var r_z = Math.Pow(R, 2) - Math.Pow(z_diff, 2);
+
+                // Just make one sphere at target center for now
+                var contour = CreateContour(gridStructure.CenterPoint, 2, 64);
+                gridStructure.AddContourOnImagePlane(contour, z);
+           
+            }
+
+            gridStructure.SegmentVolume = gridStructure.SegmentVolume.And(target);
         }
 
         public void CreateGrid()
         {
+            // Caleb Summary
+            // Add 'Grid' structure set base (based how? same struct?) on PTV
+            // pass gridstructure to createGridStructure
+            // This gets some vars related to rod center and position
+            // For each slice between Z start and Z end
+            // NOTE: for checking sphere touching try: https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/point_in_sphere.html
+
+
             //Start prepare the patient
             context.Patient.BeginModifications();
             var grid = context.StructureSet.AddStructure("PTV", "Grid");
             createGridStructure(ref grid);
+
+            
         }
 
         public void CreateGridAndInverse()

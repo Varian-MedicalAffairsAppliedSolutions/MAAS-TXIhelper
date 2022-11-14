@@ -19,60 +19,6 @@ namespace GridBlockCreator
 {
 
 
-    public class BoolToBlue : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo language)
-        {
-            bool selectionFlag = (bool)value;
-            return selectionFlag ? "Blue" : "Gray";
-            //return selectionFlag ? System.Windows.Media.Colors.Blue : System.Windows.Media.Colors.Green;
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo language)
-        {
-
-            System.Windows.Media.Color color = (System.Windows.Media.Color)value;
-            return color == System.Windows.Media.Colors.Blue;
-
-        }
-    }
-
-    public class BoolToStrike : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo language)
-        {
-            bool selectionFlag = (bool)value;
-            return selectionFlag ? "" : "1";
-            //return selectionFlag ? System.Windows.Media.Colors.Blue : System.Windows.Media.Colors.Green;
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo language)
-        {
-
-            System.Windows.Media.Color color = (System.Windows.Media.Color)value;
-            return color == System.Windows.Media.Colors.Blue;
-
-        }
-    }
-
-    public class RadiusToDiameter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo language)
-        {
-            return 2.0 * (double)value;
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo language)
-        {
-
-            return 0.5 * (double)value;
-
-        }
-    }
-
     /// <summary>
     /// Interaction logic for GridDialog.xaml
     /// </summary>
