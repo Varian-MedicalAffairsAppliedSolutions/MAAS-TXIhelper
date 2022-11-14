@@ -63,5 +63,9 @@ namespace GridBlockCreator
 
         }
 
+        private void TargetList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

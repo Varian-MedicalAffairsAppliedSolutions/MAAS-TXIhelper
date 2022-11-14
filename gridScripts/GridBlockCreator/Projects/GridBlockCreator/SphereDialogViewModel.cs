@@ -4,11 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VMS.TPS.Common.Model.API;
+using VMS.TPS.Common.Model.Types;
 
 namespace GridBlockCreator
 {
     public class SphereDialogViewModel : Notifier
     {
+        private List<string> targetStructures;
+        public List<string> TargetStructures
+        {
+            get { return targetStructures; }
+            set
+            {
+                targetStructures = value;
+                OnPropertyChanged("TargetStructures");
+            }
+        }
+
+        private int targetSelected;
+        public int TargetSelected
+        {
+            get { return targetSelected; }
+            set
+            {
+                targetSelected = value;
+                updateFullState();
+                OnPropertyChanged("TargetSelected");
+            }
+        }
 
         int zStart;
         public int ZStart
@@ -33,6 +56,23 @@ namespace GridBlockCreator
         public SphereDialogViewModel(ScriptContext context)
         {
             this.context = context;
+
+            //target structures
+            targetStructures = new List<string>();
+            targetSelected = -1;
+            //plan target
+            string planTargetId = null;
+
+            foreach (var i in context.StructureSet.Structures)
+            {
+                if (i.DicomType != "PTV") continue;
+                targetStructures.Add(i.Id);
+                if (planTargetId == null) continue;
+                if (i.Id == planTargetId) targetSelected = targetStructures.Count() - 1;
+            }
+
+            updateFullState();
+
         }
 
         void CRTest(ref Structure gridStructure, float R)
@@ -61,6 +101,33 @@ namespace GridBlockCreator
             }
 
             gridStructure.SegmentVolume = gridStructure.SegmentVolume.And(target);
+        }
+
+        VVector[] CreateContour(VVector center, double radius, int nOfPoints)
+        {
+            VVector[] contour = new VVector[nOfPoints + 1];
+            double angleIncrement = Math.PI * 2.0 / Convert.ToDouble(nOfPoints);
+            for (int i = 0; i < nOfPoints; ++i)
+            {
+                double angle = Convert.ToDouble(i) * angleIncrement;
+                double xDelta = radius * Math.Cos(angle);
+                double yDelta = radius * Math.Sin(angle);
+                VVector delta = new VVector(xDelta, yDelta, 0.0);
+                contour[i] = center + delta;
+            }
+            contour[nOfPoints] = contour[0];
+
+            return contour;
+        }
+
+        public void updateFullState()
+        {
+            //selectTarget();
+            //if (target != null)
+            //{
+                //scanTarget();
+                //create2Dgrid();
+            //}
         }
 
         public void CreateGrid()
@@ -92,5 +159,7 @@ namespace GridBlockCreator
             return;
 
         }
+
+
     }
 }
