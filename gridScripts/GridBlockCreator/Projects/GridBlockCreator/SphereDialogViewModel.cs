@@ -87,25 +87,18 @@ namespace GridBlockCreator
         void CRTest(ref Structure gridStructure, float R)
         {
             target = context.StructureSet.Structures.Where(x => x.Id == "PTV").First();
-            MessageBox.Show($"Target selected as {target}");
+            //MessageBox.Show($"Target selected as {target}");
 
             double xCenter = (double)(this.context.Image.XSize) / 2.0 * context.Image.XRes + context.Image.Origin.x;
             double yCenter = (double)(this.context.Image.YSize) / 2.0 * context.Image.YRes + context.Image.Origin.y;
             double zCenter = (double)(zEnd + zStart) / 2.0 * context.Image.ZRes + context.Image.Origin.z;
 
-            MessageBox.Show($"Z start {zStart} - Z end {zEnd}");
+            //MessageBox.Show($"Z start {zStart} - Z end {zEnd}");
 
             for (int z = zStart; z < zEnd; ++z)
             {
                 double zCoord = (double)(z) * context.Image.ZRes + context.Image.Origin.z;
 
-
-                if (z == zEnd - 1) 
-                {
-                    MessageBox.Show($"Creating Contour end at z {zCoord}");
-                }
-
-                /*
                 // For each slice find in plane radius
                 var z_diff = Math.Abs(zCoord - zCenter);
                 if (z_diff > R) // If we are out of range of the sphere continue
@@ -114,12 +107,12 @@ namespace GridBlockCreator
                 }
 
                 // Otherwise do the thing (make spheres)
-                var r_z = Math.Pow(R, 2) - Math.Pow(z_diff, 2);
-                */
+                var r_z = Math.Sqrt(Math.Pow(R, 2) - Math.Pow(z_diff, 2));
+                
 
                 // Just make one sphere at target center for now
                 var center = new VVector(xCenter,yCenter,zCenter);
-                var contour = CreateContour(center, 25, 20);
+                var contour = CreateContour(center, r_z, 20);
                 gridStructure.AddContourOnImagePlane(contour, z);
 
             }
@@ -168,7 +161,7 @@ namespace GridBlockCreator
             context.Patient.BeginModifications();
             MessageBox.Show("here1");
             var grid = context.StructureSet.AddStructure("PTV", "myGrid");
-            CRTest(ref grid, 1);
+            CRTest(ref grid, 35);
 
 
         }
