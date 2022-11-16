@@ -7,6 +7,12 @@ using System.Windows;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 
+// TODO 
+// Add user input for cleanup threshold for deleting fractional spheres
+// Hexagonal = staggered layers
+// Target Border
+// Console for output (lower priority)
+
 namespace GridBlockCreator
 {
     public class SphereDialogViewModel : Notifier
@@ -176,7 +182,7 @@ namespace GridBlockCreator
 
                 // Otherwise do the thing (make spheres)
                 var r_z = Math.Sqrt(Math.Pow(R, 2) - Math.Pow(z_diff, 2));
-                var contour = CreateContour(center, r_z, 20);
+                var contour = CreateContour(center, r_z, 200);
                 parentStruct.AddContourOnImagePlane(contour, z);
 
             }
@@ -198,8 +204,9 @@ namespace GridBlockCreator
             return retval;
         }
 
-        private List<VVector> BuildGrid(List<double> xcoords, List<double> ycoords, List<double> zcoords, Structure boundingStruct)
+        private List<VVector> BuildGrid(List<double> xcoords, List<double> ycoords, List<double> zcoords)
         {
+
             var retval = new List<VVector>();
             foreach(var x in xcoords)
             {
@@ -208,10 +215,7 @@ namespace GridBlockCreator
                     foreach(var z in zcoords)
                     {
                         var pt = new VVector(x, y, z);
-                        /*if (boundingStruct.IsPointInsideSegment(pt))
-                        {
-                            retval.Add(pt);
-                        }*/
+                        
                         retval.Add(pt);
                     }
                 }
@@ -219,36 +223,55 @@ namespace GridBlockCreator
             return retval;
         }
 
-        public void RectSpheres(ref Structure GridStructure)
+        public void RectSpheres(ref Structure structHi)
         {
             // 1. Generate target plus margin
+            MessageBox.Show($"Finding target");
             var target = context.StructureSet.Structures.Where(x => x.Id == "PTV").First();
+            MessageBox.Show($"Target here {target.Id}");
             var dummie = context.StructureSet.AddStructure("PTV", "dummie"); 
             dummie.Margin(50);
+            MessageBox.Show($"Dummie created with margin");
 
-            // 2. Generate a regular grid accross the image 
-            var xcoords = Arange(0, context.Image.XSize * context.Image.XRes, MinSpacing);
-            var ycoords = Arange(0, context.Image.YSize * context.Image.YRes, MinSpacing);
-            var zcoords = Arange(0, context.Image.ZSize * context.Image.ZRes, MinSpacing);
+            // 2. Generate a regular grid accross the dummie bounding box 
+            var bounds = target.MeshGeometry.Bounds;
+            MessageBox.Show($"Bounds = {bounds}");
+            var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, MinSpacing);
+            var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, MinSpacing);
+            var zcoords = Arange(bounds.Z, bounds.Z + bounds.SizeZ, MinSpacing);
 
             MessageBox.Show($"About to create grid");
 
             // 3. Get points that are not in the image
-            var Grid = BuildGrid(xcoords, ycoords, zcoords, dummie);
+            var Grid = BuildGrid(xcoords, ycoords, zcoords);
 
             MessageBox.Show($"Created grid with {Grid.Count} pts");
 
             // 4. Make spheres
             foreach(VVector ctr in Grid)
             {
-                BuildSphere(GridStructure, ctr, Radius);
+                BuildSphere(structHi, ctr, Radius);
             }
 
             MessageBox.Show("Created Spehres");
 
+            // And with the target
+            // structLo.SegmentVolume = structHi.And(structHi);
+
+            //structLo.SegmentVolume = structLo.SegmentVolume.And(target);
+
+            //var targetHiRes = context.StructureSet.AddStructure("PTV", "targetHiRes");
+            //targetHiRes.SegmentVolume = targetHiRes.And(target);
+            //targetHiRes.ConvertToHighResolution();
+
+            structHi.SegmentVolume = structHi.SegmentVolume.And(target);
+            structHi.ConvertToHighResolution();
+
+            //HightoLow(context.StructureSet, structHi);
+
             // Cleanup from step 1
-            context.StructureSet.RemoveStructure(dummie);
-            MessageBox.Show("Deleted dummie struct");
+            //context.StructureSet.RemoveStructure(dummie);
+            //MessageBox.Show("Deleted dummie struct");
               
         }
 
@@ -269,6 +292,36 @@ namespace GridBlockCreator
             return contour;
         }
 
+        public int _GetSlice(double z, StructureSet SS)
+        {
+            var imageRes = SS.Image.ZRes;
+            return Convert.ToInt32((z - SS.Image.Origin.z) / imageRes);
+        }
+
+        private Structure HightoLow(StructureSet structureset, Structure structure)
+        {
+
+            var lowresstructureId = "lowres" + structure.Id;
+            var lowresstructure = structureset.AddStructure("CONTROL", lowresstructureId);
+
+            var mesh = structure.MeshGeometry.Bounds;
+            var meshLow = _GetSlice(mesh.Z, structureset);
+            var meshUp = _GetSlice(mesh.Z + mesh.SizeZ, structureset) + 1;
+
+            for (int j = meshLow; j <= meshUp; j++)
+            {
+                var contours = structure.GetContoursOnImagePlane(j);
+                if (contours.Length > 0)
+                {
+                    lowresstructure.AddContourOnImagePlane(contours[0], j);
+                }
+            }
+
+            lowresstructure.SegmentVolume = lowresstructure;
+            return lowresstructure;
+
+        }
+
 
         public void CreateGrid()
         {
@@ -283,9 +336,13 @@ namespace GridBlockCreator
             //Start prepare the patient
             context.Patient.BeginModifications();
          
-            var grid = context.StructureSet.AddStructure("PTV", "myGrid");
+       
+            var LatticeHiRes = context.StructureSet.AddStructure("PTV", "LatticeHiRes");
+            //LatticeHiRes.ConvertToHighResolution();
+
+            //grid.ConvertToHighResolution();
             //CRTest(ref grid, Radius);
-            RectSpheres(ref grid);
+            RectSpheres(ref LatticeHiRes);
 
 
         }
