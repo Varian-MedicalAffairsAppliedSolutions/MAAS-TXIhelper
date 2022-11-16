@@ -108,7 +108,7 @@ namespace GridBlockCreator
 
         private void CreateGridAndInverse(object sender, RoutedEventArgs e)
         {
-            vm.CreateGridAndInverse();
+            //vm.CreateGridAndInverse();
             this.Close();
         }
 

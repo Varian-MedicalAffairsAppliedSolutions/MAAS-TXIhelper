@@ -3,11 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:GridBlockCreator"
         Title="SphereLattice" Height="580" Width="517">
-    <Window.Resources>
-        <local:BoolToBlue x:Key="BoolToBlue"/>
-        <local:BoolToStrike x:Key="BoolToStrike"/>
-        <local:RadiusToDiameter x:Key="RadiusToDiameter"/>
-    </Window.Resources>
+    
 
     <StackPanel Orientation="Vertical" Margin="0,0,0,0" IsEnabled="True">
         <StackPanel Orientation="Horizontal" >
@@ -21,8 +17,8 @@
             <Label Height="26" Width="100" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Min Spacing (mm)" />
             <TextBox x:Name="MinSpacing" Text="{Binding MinSpacing}" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
             <Label Height="26" Width="58" Margin="10,10,10,10" VerticalAlignment="Top" Content="Pattern" />
-            <RadioButton GroupName="Pattern" Margin="5,15">Hexagonal</RadioButton>
-            <RadioButton GroupName="Pattern" Margin="5, 15">Rectangular</RadioButton>
+            <RadioButton IsChecked="{Binding IsHex}" GroupName="Pattern" Margin="5,15">Hexagonal</RadioButton>
+            <RadioButton IsChecked="{Binding IsRect}" GroupName="Pattern" Margin="5, 15">Rectangular</RadioButton>
 
         </StackPanel>
 
