@@ -514,7 +514,7 @@ namespace GridBlockCreator
         // CR This seems to be the method called to create the grid structure
         void createGridStructure( ref Structure gridStructure)
         {
-            /*if (target == null) return;
+            if (target == null) return;
 
             double zCenter = (double)(zEnd + zStart) / 2.0 * context.Image.ZRes + context.Image.Origin.z;
 
@@ -539,8 +539,7 @@ namespace GridBlockCreator
                 }
             }
 
-            gridStructure.SegmentVolume = gridStructure.And(target);*/
-            CRTest(ref gridStructure, 1);
+            gridStructure.SegmentVolume = gridStructure.And(target);
 
         }
 

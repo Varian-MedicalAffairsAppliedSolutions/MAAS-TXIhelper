@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 
@@ -55,7 +56,15 @@ namespace GridBlockCreator
 
         public SphereDialogViewModel(ScriptContext context)
         {
+
+
+
             this.context = context;
+
+            // Set zStart and zEnd
+            zStart = 0;
+            zEnd = context.Image.ZSize;
+
 
             //target structures
             targetStructures = new List<string>();
@@ -77,13 +86,26 @@ namespace GridBlockCreator
 
         void CRTest(ref Structure gridStructure, float R)
         {
-            if (target == null) return;
+            target = context.StructureSet.Structures.Where(x => x.Id == "PTV").First();
+            MessageBox.Show($"Target selected as {target}");
 
+            double xCenter = (double)(this.context.Image.XSize) / 2.0 * context.Image.XRes + context.Image.Origin.x;
+            double yCenter = (double)(this.context.Image.YSize) / 2.0 * context.Image.YRes + context.Image.Origin.y;
             double zCenter = (double)(zEnd + zStart) / 2.0 * context.Image.ZRes + context.Image.Origin.z;
+
+            MessageBox.Show($"Z start {zStart} - Z end {zEnd}");
+
             for (int z = zStart; z < zEnd; ++z)
             {
                 double zCoord = (double)(z) * context.Image.ZRes + context.Image.Origin.z;
 
+
+                if (z == zEnd - 1) 
+                {
+                    MessageBox.Show($"Creating Contour end at z {zCoord}");
+                }
+
+                /*
                 // For each slice find in plane radius
                 var z_diff = Math.Abs(zCoord - zCenter);
                 if (z_diff > R) // If we are out of range of the sphere continue
@@ -93,14 +115,16 @@ namespace GridBlockCreator
 
                 // Otherwise do the thing (make spheres)
                 var r_z = Math.Pow(R, 2) - Math.Pow(z_diff, 2);
+                */
 
                 // Just make one sphere at target center for now
-                var contour = CreateContour(gridStructure.CenterPoint, 2, 64);
+                var center = new VVector(xCenter,yCenter,zCenter);
+                var contour = CreateContour(center, 25, 20);
                 gridStructure.AddContourOnImagePlane(contour, z);
 
             }
 
-            gridStructure.SegmentVolume = gridStructure.SegmentVolume.And(target);
+            //gridStructure.SegmentVolume = gridStructure.SegmentVolume.And(target);
         }
 
         VVector[] CreateContour(VVector center, double radius, int nOfPoints)
@@ -142,7 +166,8 @@ namespace GridBlockCreator
 
             //Start prepare the patient
             context.Patient.BeginModifications();
-            var grid = context.StructureSet.AddStructure("PTV", "Grid");
+            MessageBox.Show("here1");
+            var grid = context.StructureSet.AddStructure("PTV", "myGrid");
             CRTest(ref grid, 1);
 
 
