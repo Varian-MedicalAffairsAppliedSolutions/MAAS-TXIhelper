@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 
@@ -12,17 +16,33 @@ using VMS.TPS.Common.Model.Types;
 // Hexagonal = staggered layers
 // Target Border
 // Console for output (lower priority)
+// Get eclipse v16
+// https://mathworld.wolfram.com/CirclePacking.html
 
 namespace GridBlockCreator
 {
-    public class SphereDialogViewModel : Notifier
+  
+    public class SphereDialogViewModel : BindableBase
     {
+
+        private string _LogText;
+
+        public string LogText
+        {
+            get { return _LogText; }
+            set { 
+                SetProperty(ref _LogText, value);
+                System.Threading.Thread.Sleep(1000);
+            }
+        }
+
+
         private float _MinSpacing;
 
         public float MinSpacing
         {
             get { return _MinSpacing; }
-            set { _MinSpacing = value; OnPropertyChanged("MinSpacing"); }
+            set { SetProperty(ref _MinSpacing, value); }
         }
 
 
@@ -31,7 +51,7 @@ namespace GridBlockCreator
         public bool IsHex
         {
             get { return _IsHex; }
-            set { _IsHex = value; OnPropertyChanged("IsHex"); }
+            set { SetProperty(ref _IsHex, value); }
         }
 
         private bool _IsRect;
@@ -39,7 +59,7 @@ namespace GridBlockCreator
         public bool IsRect
         {
             get { return _IsRect; }
-            set { _IsRect = value; OnPropertyChanged("IsRect"); }
+            set { SetProperty(ref _IsRect, value); }
         }
 
 
@@ -48,7 +68,7 @@ namespace GridBlockCreator
         public float Radius
         {
             get { return _Radius; }
-            set { _Radius = value; OnPropertyChanged("Radius"); }
+            set { SetProperty(ref _Radius, value); }
         }
 
 
@@ -58,8 +78,7 @@ namespace GridBlockCreator
             get { return targetStructures; }
             set
             {
-                targetStructures = value;
-                OnPropertyChanged("TargetStructures");
+                SetProperty(ref targetStructures, value);
             }
         }
 
@@ -69,9 +88,7 @@ namespace GridBlockCreator
             get { return targetSelected; }
             set
             {
-                targetSelected = value;
-                //updateFullState();
-                OnPropertyChanged("TargetSelected");
+                SetProperty(ref targetSelected, value);
             }
         }
 
@@ -79,7 +96,7 @@ namespace GridBlockCreator
         public int ZStart
         {
             get { return zStart; }
-            set { zStart = value; OnPropertyChanged("ZStart"); }
+            set { SetProperty(ref zStart, value); }
 
         }
 
@@ -89,7 +106,7 @@ namespace GridBlockCreator
         public int ZEnd
         {
             get { return zEnd; }
-            set { zEnd = value; OnPropertyChanged("ZEnd"); }
+            set { SetProperty(ref zEnd, value); }
 
         }
     
@@ -101,6 +118,8 @@ namespace GridBlockCreator
 
 
             this.context = context;
+            Console.WriteLine("Log output:\n");
+            Console.WriteLine("TestLine\n");
 
             // Set zStart and zEnd
             zStart = 0;
@@ -125,47 +144,6 @@ namespace GridBlockCreator
 
         }
 
-        void CRTest(ref Structure gridStructure, float R)
-        {
-            MessageBox.Show($"Hex | Rect : {IsHex} | {IsRect}");
-
-            target = context.StructureSet.Structures.Where(x => x.Id == "PTV").First();
-            //MessageBox.Show($"Target selected as {target}");
-
-            double xCenter = (double)(this.context.Image.XSize) / 2.0 * context.Image.XRes + context.Image.Origin.x;
-            double yCenter = (double)(this.context.Image.YSize) / 2.0 * context.Image.YRes + context.Image.Origin.y;
-            double zCenter = (double)(zEnd + zStart) / 2.0 * context.Image.ZRes + context.Image.Origin.z;
-
-
-            MessageBox.Show($"Image center {xCenter} {yCenter} {zCenter}");
-            MessageBox.Show($"PTV center {target.CenterPoint.x} {target.CenterPoint.y} {target.CenterPoint.z}");
-
-
-            for (int z = zStart; z < zEnd; ++z)
-            {
-                double zCoord = (double)(z) * context.Image.ZRes + context.Image.Origin.z;
-
-                // For each slice find in plane radius
-                var z_diff = Math.Abs(zCoord - zCenter);
-                if (z_diff > R) // If we are out of range of the sphere continue
-                {
-                    continue;
-                }
-
-                // Otherwise do the thing (make spheres)
-                var r_z = Math.Sqrt(Math.Pow(R, 2) - Math.Pow(z_diff, 2));
-                
-
-                // Just make one sphere at target center for now
-                //var center = new VVector(xCenter,yCenter,zCenter);
-                var center = new VVector(target.CenterPoint.x, target.CenterPoint.y, target.CenterPoint.z);
-                var contour = CreateContour(center, r_z, 20);
-                gridStructure.AddContourOnImagePlane(contour, z);
-
-            }
-
-            //gridStructure.SegmentVolume = gridStructure.SegmentVolume.And(target);
-        }
 
         private void BuildSphere(Structure parentStruct, VVector center, float R)
         {
@@ -190,7 +168,7 @@ namespace GridBlockCreator
 
         private List<double> Arange(double start, double stop, double step)
         {
-            MessageBox.Show($"Arange with start stop step = {start} {stop} {step}");
+            Console.WriteLine($"Arange with start stop step = {start} {stop} {step}\n");
             var retval = new List<double>();
             var currentval = start;
             while (currentval < stop)
@@ -198,7 +176,7 @@ namespace GridBlockCreator
                 retval.Add(currentval);
                 currentval += step;
             }
-            MessageBox.Show($"Arange created with {retval.Count} points");
+            Console.WriteLine($"Arange created with {retval.Count} points\n");
             
 
             return retval;
@@ -223,29 +201,29 @@ namespace GridBlockCreator
             return retval;
         }
 
-        public void RectSpheres(ref Structure structHi)
+        public void BuildSpheres(ref Structure structHi)
         {
             // 1. Generate target plus margin
-            MessageBox.Show($"Finding target");
+            Console.WriteLine($"Finding target\n");
             var target = context.StructureSet.Structures.Where(x => x.Id == "PTV").First();
-            MessageBox.Show($"Target here {target.Id}");
+            Console.WriteLine($"Target here {target.Id}\n");
             var dummie = context.StructureSet.AddStructure("PTV", "dummie"); 
             dummie.Margin(50);
-            MessageBox.Show($"Dummie created with margin");
+            LogText +=$"Dummie created with margin\n";
 
             // 2. Generate a regular grid accross the dummie bounding box 
             var bounds = target.MeshGeometry.Bounds;
-            MessageBox.Show($"Bounds = {bounds}");
+            LogText +=$"Bounds = {bounds}\n";
             var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, MinSpacing);
             var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, MinSpacing);
             var zcoords = Arange(bounds.Z, bounds.Z + bounds.SizeZ, MinSpacing);
 
-            MessageBox.Show($"About to create grid");
+            LogText +=$"About to create grid\n";
 
             // 3. Get points that are not in the image
             var Grid = BuildGrid(xcoords, ycoords, zcoords);
 
-            MessageBox.Show($"Created grid with {Grid.Count} pts");
+            LogText +=$"Created grid with {Grid.Count} pts\n";
 
             // 4. Make spheres
             foreach(VVector ctr in Grid)
@@ -253,7 +231,8 @@ namespace GridBlockCreator
                 BuildSphere(structHi, ctr, Radius);
             }
 
-            MessageBox.Show("Created Spehres");
+            LogText += "Created Spheres\n";
+            System.Threading.Thread.Sleep(10000);
 
             // And with the target
             // structLo.SegmentVolume = structHi.And(structHi);
@@ -271,7 +250,8 @@ namespace GridBlockCreator
 
             // Cleanup from step 1
             //context.StructureSet.RemoveStructure(dummie);
-            //MessageBox.Show("Deleted dummie struct");
+            //LogText +="Deleted dummie struct");
+            MessageBox.Show("Here");
               
         }
 
@@ -342,8 +322,8 @@ namespace GridBlockCreator
 
             //grid.ConvertToHighResolution();
             //CRTest(ref grid, Radius);
-            RectSpheres(ref LatticeHiRes);
-
+            BuildSpheres(ref LatticeHiRes);
+            //MessageBox.Show(LogText);
 
         }
 

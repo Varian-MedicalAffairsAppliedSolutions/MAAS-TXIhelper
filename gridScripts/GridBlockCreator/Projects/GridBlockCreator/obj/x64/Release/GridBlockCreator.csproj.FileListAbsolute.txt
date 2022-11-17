@@ -14,3 +14,4 @@ C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\GridBlockCreator\Proj
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\GridBlockCreator\Projects\GridBlockCreator\obj\x64\Release\MainWindow.g.cs
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\GridBlockCreator\Projects\GridBlockCreator\obj\x64\Release\SphereDialog.baml
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\GridBlockCreator\Projects\GridBlockCreator\obj\x64\Release\MainWindow.baml
+C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\GridBlockCreator\Projects\GridBlockCreator\obj\x64\Release\GridBlockCreator.csproj.CopyComplete

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -82,15 +84,25 @@ namespace GridBlockCreator
 
         public SphereDialogViewModel vm;
 
+        public TextBoxOutputter outputter;
 
         public SphereDialog(ScriptContext context)
         {
             InitializeComponent();
             vm = new SphereDialogViewModel(context);
-            this.DataContext = vm;
+            DataContext = vm;
 
-            //if (vm.CloseAction == null)
-            //    vm.CloseAction = new Action(this.Close);
+            outputter = new TextBoxOutputter(TestBox);
+            Console.SetOut(outputter);
+            Console.WriteLine("Started");
+
+            
+        }
+
+        void TimerTick(object state)
+        {
+            var who = state as string;
+            Console.WriteLine(who);
         }
 
         private void ToggleCircle(object sender, MouseButtonEventArgs e)
