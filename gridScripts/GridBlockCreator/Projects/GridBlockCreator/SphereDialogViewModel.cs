@@ -98,7 +98,14 @@ namespace GridBlockCreator
             }
         }
 
-        int zStart;
+        private float vThresh;
+        public float VThresh
+        {
+            get { return vThresh; }
+            set { SetProperty(ref vThresh, value); }
+        }
+
+        private int zStart;
         public int ZStart
         {
             get { return zStart; }
@@ -122,9 +129,9 @@ namespace GridBlockCreator
         public SphereDialogViewModel(ScriptContext context)
         {
 
-            LogMsgs = new ObservableCollection<string>();
-            LogMsgs.Add("Hey there");
+            VThresh = 100;
             this.context = context;
+
           
             // Set zStart and zEnd
             zStart = 0;
@@ -207,7 +214,6 @@ namespace GridBlockCreator
 
         private List<VVector> BuildHexGrid(double Xstart, double Xsize, double Ystart, double Ysize, double Zstart, double Zsize)
         {
-            MessageBox.Show("Buildng hex grid.");
             double A = MinSpacing * (Math.Sqrt(3) / 2);
             var retval = new List<VVector>();
 
@@ -242,6 +248,13 @@ namespace GridBlockCreator
 
         public void BuildSpheres(ref Structure structMain, bool makeIndividual)
         {
+            // Check vol thresh for spheres
+            if (VThresh > 100 || VThresh < 0)
+            {
+                MessageBox.Show("Volume threshold must be between 0 and 100");
+            }
+
+
             // Check target
             if (targetSelected == -1)
             {
@@ -252,11 +265,13 @@ namespace GridBlockCreator
             //log.Info($"Target selected with ID: {target_name}");
             var target = context.StructureSet.Structures.Where(x => x.Id == target_name).First();
 
+            // Get thresh vol
+            var minVol = (4/3) * Math.PI * Math.Pow((Radius/10), 3) * (VThresh / 100);
+
             // Generate a regular grid accross the dummie bounding box 
             var bounds = target.MeshGeometry.Bounds;
          
-
-            // 3. Get points that are not in the image
+            // Get points that are not in the image
             List<VVector> Grid;
             if (IsHex)
             {
@@ -284,17 +299,35 @@ namespace GridBlockCreator
             int sphere_count = 0;
             foreach(VVector ctr in Grid)
             {
-                // Add sphere to structure
-                BuildSphere(structMain, ctr, Radius);
+                
 
                 if (makeIndividual)
                 {
                     // Create a new structure and build sphere on that
                     var singleSphere = context.StructureSet.AddStructure("PTV", $"Sphere_{sphere_count}");
                     BuildSphere(singleSphere, ctr, Radius);
+                    // Crop to target
+                    singleSphere.SegmentVolume = singleSphere.SegmentVolume.And(target);
+
+                    // Delete if too small
+                    if (singleSphere.Volume < minVol)
+                    {
+                        context.StructureSet.RemoveStructure(singleSphere);
+                        MessageBox.Show("Removing Sphere");
+                        continue;
+                    }
+
+
+                    singleSphere.ConvertToHighResolution();
                     sphere_count++;
+
+                    // Add sphere to structure
+                    BuildSphere(structMain, ctr, Radius);
                 }
             }
+
+            // And the main structure with target
+            structMain.SegmentVolume = structMain.SegmentVolume.And(target);
 
             //log.Info("Created Spheres");
             structMain.ConvertToHighResolution();

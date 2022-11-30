@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:GridBlockCreator" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         Title="SphereLattice" Height="580" Width="517">
-    
+
 
     <StackPanel Orientation="Vertical" Margin="0,0,0,0" IsEnabled="True">
         <StackPanel Orientation="Horizontal" >
@@ -25,29 +25,18 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" >
-            <Label Height="26" Width="100" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Target Border (mm)" />
-            <TextBox x:Name="TargetBorder" Text="{Binding TargetBorder}" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+            <Label Height="26" Width="100" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Border (mm)" />
+            <TextBox x:Name="TargetBorder" Text="{Binding TargetBorder}" IsEnabled="True" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+            <Label Height="26" Width="107" Margin="10,10,10,10" VerticalAlignment="Top" Content="Vol Threshold (%)" />
+            <TextBox x:Name="VThresh" Text="{Binding VThresh}" IsEnabled="True" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" />
+        <StackPanel Orientation="Horizontal"/>
 
         <StackPanel Orientation="Horizontal" >
             <Button Height="26" Width="130" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Create" Click="CreateGrid"/>
             <Button Height="26" Width="130" Margin="20,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Cancel" Click="Cancel"/>
         </StackPanel>
 
-        <StackPanel>
-            <ListBox ItemsSource="{Binding LogMsgs}" VirtualizingStackPanel.IsVirtualizing="True" Height="100">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Margin="0,2">
 
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            <!--ScrollViewer Name="Scroller" Margin="10" Background="LightGray">
-                <TextBox Background="LightGray" x:Name="TestBox" Height="280"/>
-            </ScrollViewer-->
-        </StackPanel>
     </StackPanel>
 </Window>
