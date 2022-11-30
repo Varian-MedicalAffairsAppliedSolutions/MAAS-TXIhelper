@@ -1,9 +1,14 @@
-﻿using Prism.Mvvm;
+﻿using NLog;
+using NLog.Config;
+using NLog.Extensions.Logging;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,13 +22,14 @@ using VMS.TPS.Common.Model.Types;
 // Target Border
 // Console for output (lower priority)
 // Get eclipse v16
-// https://mathworld.wolfram.com/CirclePacking.html
+// 
 
 namespace GridBlockCreator
 {
   
     public class SphereDialogViewModel : BindableBase
     {
+        public ObservableCollection<string> LogMsgs;
 
         private string _LogText;
 
@@ -109,18 +115,17 @@ namespace GridBlockCreator
             set { SetProperty(ref zEnd, value); }
 
         }
+
     
         private ScriptContext context;
 
         public SphereDialogViewModel(ScriptContext context)
         {
 
-
-
+            LogMsgs = new ObservableCollection<string>();
+            LogMsgs.Add("Hey there");
             this.context = context;
-            Console.WriteLine("Log output:\n");
-            Console.WriteLine("TestLine\n");
-
+          
             // Set zStart and zEnd
             zStart = 0;
             zEnd = context.Image.ZSize;
@@ -140,7 +145,6 @@ namespace GridBlockCreator
                 if (i.Id == planTargetId) targetSelected = targetStructures.Count() - 1;
             }
 
-            //updateFullState();
 
         }
 
@@ -149,7 +153,7 @@ namespace GridBlockCreator
         {
             for (int z = zStart; z < zEnd; ++z)
             {
-                double zCoord = (double)(z) * context.Image.ZRes + context.Image.Origin.z;
+                double zCoord = (double)(z) * (context.Image.ZRes) + context.Image.Origin.z;
 
                 // For each slice find in plane radius
                 var z_diff = Math.Abs(zCoord - center.z);
@@ -160,7 +164,7 @@ namespace GridBlockCreator
 
                 // Otherwise do the thing (make spheres)
                 var r_z = Math.Sqrt(Math.Pow(R, 2) - Math.Pow(z_diff, 2));
-                var contour = CreateContour(center, r_z, 200);
+                var contour = CreateContour(center, r_z, 500);
                 parentStruct.AddContourOnImagePlane(contour, z);
 
             }
@@ -168,7 +172,7 @@ namespace GridBlockCreator
 
         private List<double> Arange(double start, double stop, double step)
         {
-            Console.WriteLine($"Arange with start stop step = {start} {stop} {step}\n");
+            //log.Debug($"Arange with start stop step = {start} {stop} {step}\n");
             var retval = new List<double>();
             var currentval = start;
             while (currentval < stop)
@@ -176,7 +180,7 @@ namespace GridBlockCreator
                 retval.Add(currentval);
                 currentval += step;
             }
-            Console.WriteLine($"Arange created with {retval.Count} points\n");
+            
             
 
             return retval;
@@ -201,58 +205,102 @@ namespace GridBlockCreator
             return retval;
         }
 
-        public void BuildSpheres(ref Structure structHi)
+        private List<VVector> BuildHexGrid(double Xstart, double Xsize, double Ystart, double Ysize, double Zstart, double Zsize)
         {
-            // 1. Generate target plus margin
-            Console.WriteLine($"Finding target\n");
-            var target = context.StructureSet.Structures.Where(x => x.Id == "PTV").First();
-            Console.WriteLine($"Target here {target.Id}\n");
-            var dummie = context.StructureSet.AddStructure("PTV", "dummie"); 
-            dummie.Margin(50);
-            LogText +=$"Dummie created with margin\n";
+            MessageBox.Show("Buildng hex grid.");
+            double A = MinSpacing * (Math.Sqrt(3) / 2);
+            var retval = new List<VVector>();
 
-            // 2. Generate a regular grid accross the dummie bounding box 
-            var bounds = target.MeshGeometry.Bounds;
-            LogText +=$"Bounds = {bounds}\n";
-            var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, MinSpacing);
-            var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, MinSpacing);
-            var zcoords = Arange(bounds.Z, bounds.Z + bounds.SizeZ, MinSpacing);
-
-            LogText +=$"About to create grid\n";
-
-            // 3. Get points that are not in the image
-            var Grid = BuildGrid(xcoords, ycoords, zcoords);
-
-            LogText +=$"Created grid with {Grid.Count} pts\n";
-
-            // 4. Make spheres
-            foreach(VVector ctr in Grid)
+            void CreateLayer(double zCoord, double x0, double y0)
             {
-                BuildSphere(structHi, ctr, Radius);
+                // create planar hexagonal sphere packing grid
+                var yeven = Arange(y0, y0 + Ysize, 2 * A);
+                var xeven = Arange(x0, x0 + Xsize, MinSpacing);
+                foreach (var y in yeven)
+                {
+                    foreach(var x in xeven)
+                    {
+                        retval.Add(new VVector(x, y, zCoord));
+                        retval.Add(new VVector(x + (MinSpacing/2), y + A, zCoord));
+                    }
+                }
+
+              
             }
 
-            LogText += "Created Spheres\n";
-            System.Threading.Thread.Sleep(10000);
+            foreach(var z in Arange(Zstart, Zstart + Zsize, 2 * A))
+            {
+                CreateLayer(z, Xstart, Ystart);
+                CreateLayer(z + A, Xstart + (MinSpacing/2), Ystart + (A/2));
+ 
+            }
 
-            // And with the target
-            // structLo.SegmentVolume = structHi.And(structHi);
+            return retval;
+        }
 
-            //structLo.SegmentVolume = structLo.SegmentVolume.And(target);
+        
 
-            //var targetHiRes = context.StructureSet.AddStructure("PTV", "targetHiRes");
-            //targetHiRes.SegmentVolume = targetHiRes.And(target);
-            //targetHiRes.ConvertToHighResolution();
+        public void BuildSpheres(ref Structure structMain, bool makeIndividual)
+        {
+            // Check target
+            if (targetSelected == -1)
+            {
+                MessageBox.Show("Must have target selected, canceling operation.");
+                return;
+            }
+            var target_name = targetStructures[targetSelected];
+            //log.Info($"Target selected with ID: {target_name}");
+            var target = context.StructureSet.Structures.Where(x => x.Id == target_name).First();
 
-            structHi.SegmentVolume = structHi.SegmentVolume.And(target);
-            structHi.ConvertToHighResolution();
+            // Generate a regular grid accross the dummie bounding box 
+            var bounds = target.MeshGeometry.Bounds;
+         
 
-            //HightoLow(context.StructureSet, structHi);
+            // 3. Get points that are not in the image
+            List<VVector> Grid;
+            if (IsHex)
+            {
+                Grid = BuildHexGrid(bounds.X, bounds.SizeX, bounds.Y, bounds.SizeY, bounds.Z, bounds.SizeZ);
+                structMain.Id += "Hex";
+                //log.Info($"Hexagonal grid built with {Grid.Count} points.");
+            }
+            else if (IsRect)
+            {
+                var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, MinSpacing);
+                var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, MinSpacing);
+                var zcoords = Arange(bounds.Z, bounds.Z + bounds.SizeZ, MinSpacing);
+                Grid = BuildGrid(xcoords, ycoords, zcoords);
+                structMain.Id += "Rect";
+                //log.Info($"Rectangular grid built with {Grid.Count} points.");
+            }
+            else
+            {
+                MessageBox.Show("No pattern selected. Returning.");
+                return;
+            }
 
-            // Cleanup from step 1
-            //context.StructureSet.RemoveStructure(dummie);
-            //LogText +="Deleted dummie struct");
-            MessageBox.Show("Here");
-              
+
+            // 4. Make spheres
+            int sphere_count = 0;
+            foreach(VVector ctr in Grid)
+            {
+                // Add sphere to structure
+                BuildSphere(structMain, ctr, Radius);
+
+                if (makeIndividual)
+                {
+                    // Create a new structure and build sphere on that
+                    var singleSphere = context.StructureSet.AddStructure("PTV", $"Sphere_{sphere_count}");
+                    BuildSphere(singleSphere, ctr, Radius);
+                    sphere_count++;
+                }
+            }
+
+            //log.Info("Created Spheres");
+            structMain.ConvertToHighResolution();
+            MessageBox.Show("Finished");
+
+
         }
 
         VVector[] CreateContour(VVector center, double radius, int nOfPoints)
@@ -302,7 +350,7 @@ namespace GridBlockCreator
 
         }
 
-
+        
         public void CreateGrid()
         {
             // Caleb Summary
@@ -315,14 +363,17 @@ namespace GridBlockCreator
 
             //Start prepare the patient
             context.Patient.BeginModifications();
-         
-       
-            var LatticeHiRes = context.StructureSet.AddStructure("PTV", "LatticeHiRes");
+
+            /*var oldStruct = context.StructureSet.Structures.ToList().Where(x => x.Id == "Lat").First();
+            if (oldStruct != null) {
+                context.StructureSet.RemoveStructure(oldStruct);
+            }*/
+            var LatticeHiRes = context.StructureSet.AddStructure("PTV", "Lattice");
             //LatticeHiRes.ConvertToHighResolution();
 
             //grid.ConvertToHighResolution();
             //CRTest(ref grid, Radius);
-            BuildSpheres(ref LatticeHiRes);
+            BuildSpheres(ref LatticeHiRes, true);
             //MessageBox.Show(LogText);
 
         }

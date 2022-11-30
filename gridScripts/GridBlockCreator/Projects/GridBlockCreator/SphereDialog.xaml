@@ -1,6 +1,7 @@
 ﻿<Window x:Class="GridBlockCreator.SphereDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:nlog ="clr-namespace:NlogViewer;assembly=NlogViewer"
         xmlns:local="clr-namespace:GridBlockCreator" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         Title="SphereLattice" Height="580" Width="517">
@@ -31,14 +32,22 @@
 
         <StackPanel Orientation="Horizontal" >
             <Button Height="26" Width="130" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Create" Click="CreateGrid"/>
-            <Button Height="26" Width="130" Margin="20,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Create with inverse" Click="CreateGridAndInverse"/>
             <Button Height="26" Width="130" Margin="20,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Cancel" Click="Cancel"/>
         </StackPanel>
 
         <StackPanel>
-            <ScrollViewer Name="Scroller" Margin="10" Background="LightGray">
+            <ListBox ItemsSource="{Binding LogMsgs}" VirtualizingStackPanel.IsVirtualizing="True" Height="100">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,2">
+
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <!--ScrollViewer Name="Scroller" Margin="10" Background="LightGray">
                 <TextBox Background="LightGray" x:Name="TestBox" Height="280"/>
-            </ScrollViewer>
+            </ScrollViewer-->
         </StackPanel>
     </StackPanel>
 </Window>

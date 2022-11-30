@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
+using NLog;
 
 
 namespace GridBlockCreator
@@ -91,12 +92,6 @@ namespace GridBlockCreator
             InitializeComponent();
             vm = new SphereDialogViewModel(context);
             DataContext = vm;
-
-            outputter = new TextBoxOutputter(TestBox);
-            Console.SetOut(outputter);
-            Console.WriteLine("Started");
-
-            
         }
 
         void TimerTick(object state)
