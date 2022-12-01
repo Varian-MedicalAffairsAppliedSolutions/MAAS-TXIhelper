@@ -44,9 +44,9 @@ namespace GridBlockCreator
             }
         }
 
-        private int progress;
+        private bool progress;
 
-        public int Progress
+        public bool Progress
         {
             get { return progress; }
             set { SetProperty(ref progress, value); }
@@ -259,12 +259,13 @@ namespace GridBlockCreator
 
         public void BuildSpheres(ref Structure structMain, bool makeIndividual)
         {
+            Progress = true;
             // Check vol thresh for spheres
             if (VThresh > 100 || VThresh < 0)
             {
                 MessageBox.Show("Volume threshold must be between 0 and 100");
             }
-            Progress += 10;
+
 
 
             // Check target
@@ -276,7 +277,7 @@ namespace GridBlockCreator
             var target_name = targetStructures[targetSelected];
             //log.Info($"Target selected with ID: {target_name}");
             var target = context.StructureSet.Structures.Where(x => x.Id == target_name).First();
-            Progress += 10;
+
 
             // Get thresh vol
             var minVol = (4/3) * Math.PI * Math.Pow((Radius/10), 3) * (VThresh / 100);
@@ -304,19 +305,31 @@ namespace GridBlockCreator
             else
             {
                 MessageBox.Show("No pattern selected. Returning.");
+                Progress = false;
                 return;
             }
-            Progress += 30;
+
 
 
             // 4. Make spheres
             int sphere_count = 0;
+
+            var prevSpheres = context.StructureSet.Structures.Where(x => x.Id.Contains("Sphere")).ToList();
+            int deleted_spheres = 0;
+            foreach(var sp in prevSpheres)
+            {
+                context.StructureSet.RemoveStructure(sp);
+                deleted_spheres++;
+            }
+            if (deleted_spheres > 0) { MessageBox.Show($"{deleted_spheres} pre-existing spheres deleted "); }
+
+
             foreach(VVector ctr in Grid)
             {
                 if (makeIndividual)
                 {
                     // Create a new structure and build sphere on that
-                    var singleSphere = context.StructureSet.AddStructure("PTV", $"Sphere_{sphere_count}");
+                    var singleSphere = CreateStructure($"Sphere_{sphere_count}", false);
                     BuildSphere(singleSphere, ctr, Radius);
                     // Crop to target
                     singleSphere.SegmentVolume = singleSphere.SegmentVolume.And(target);
@@ -325,7 +338,7 @@ namespace GridBlockCreator
                     if (singleSphere.Volume < minVol)
                     {
                         context.StructureSet.RemoveStructure(singleSphere);
-                        MessageBox.Show("Removing Sphere");
+                        //MessageBox.Show("Removing Sphere");
                         continue;
                     }
 
@@ -336,15 +349,15 @@ namespace GridBlockCreator
                     BuildSphere(structMain, ctr, Radius);
                 }
             }
-            Progress += 40;
+            MessageBox.Show($"Deleted {Grid.Count-sphere_count}/{Grid.Count} spheres (vol thresh == {minVol} cc)");
+
 
             // And the main structure with target
             structMain.SegmentVolume = structMain.SegmentVolume.And(target);
 
             //log.Info("Created Spheres");
             structMain.ConvertToHighResolution();
-            MessageBox.Show("Finished");
-            Progress += 10;
+            Progress = false;
 
 
         }
@@ -412,7 +425,7 @@ namespace GridBlockCreator
             return structure;   
         }
         
-        /*public void CreateGrid()
+        public void CreateGrid()
         {
             // Caleb Summary
             // Add 'Grid' structure set base (based how? same struct?) on PTV
@@ -425,28 +438,11 @@ namespace GridBlockCreator
 
 
             var LatticeStruct = CreateStructure("Lattice", true);
-            //LatticeHiRes.ConvertToHighResolution();
-
-            //grid.ConvertToHighResolution();
-            //CRTest(ref grid, Radius);
             BuildSpheres(ref LatticeStruct, true);
-            //MessageBox.Show(LogText);
 
-        }*/
-
-        public void CreateGrid2(object sender, DoWorkEventArgs e)
-        {
-            for (int i = 0; i < 100; i++)
-            {
-                (sender as BackgroundWorker).ReportProgress(i);
-                Thread.Sleep(100);
-            }
         }
 
-        public void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            Progress = e.ProgressPercentage;
-        }
+
 
 
     }

@@ -109,18 +109,14 @@ namespace GridBlockCreator
             selectedCircle.Selected = !selectedCircle.Selected;
         }
 
+        
         private void CreateGrid(object sender, RoutedEventArgs e)
         {
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.DoWork += vm.CreateGrid2;
-            worker.ProgressChanged += vm.worker_ProgressChanged;
-
-            worker.RunWorkerAsync();
-
+            vm.CreateGrid();
         }
 
-        
+
+
 
         private void Cancel(object sender, RoutedEventArgs e)
         {
