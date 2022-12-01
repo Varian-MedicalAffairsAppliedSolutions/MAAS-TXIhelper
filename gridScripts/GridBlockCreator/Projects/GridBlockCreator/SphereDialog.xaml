@@ -37,6 +37,12 @@
             <Button Height="26" Width="130" Margin="20,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Cancel" Click="Cancel"/>
         </StackPanel>
 
+        <StackPanel Height="100">
+            <Grid Height="100">
+                <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}"/>
+            </Grid>
+        </StackPanel>
+
 
     </StackPanel>
 </Window>

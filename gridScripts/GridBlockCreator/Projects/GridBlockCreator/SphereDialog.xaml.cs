@@ -17,7 +17,8 @@ using System.Windows.Shapes;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 using NLog;
-
+using System.Net.NetworkInformation;
+using System.ComponentModel;
 
 namespace GridBlockCreator
 {
@@ -77,6 +78,7 @@ namespace GridBlockCreator
         }
     }
 
+
     /// <summary>
     /// Interaction logic for GridDialog.xaml
     /// </summary>
@@ -109,15 +111,16 @@ namespace GridBlockCreator
 
         private void CreateGrid(object sender, RoutedEventArgs e)
         {
-            vm.CreateGrid();
-            this.Close();
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += vm.CreateGrid2;
+            worker.ProgressChanged += vm.worker_ProgressChanged;
+
+            worker.RunWorkerAsync();
+
         }
 
-        private void CreateGridAndInverse(object sender, RoutedEventArgs e)
-        {
-            //vm.CreateGridAndInverse();
-            this.Close();
-        }
+        
 
         private void Cancel(object sender, RoutedEventArgs e)
         {

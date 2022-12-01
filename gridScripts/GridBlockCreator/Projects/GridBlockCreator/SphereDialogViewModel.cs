@@ -8,8 +8,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,6 +43,15 @@ namespace GridBlockCreator
                 System.Threading.Thread.Sleep(1000);
             }
         }
+
+        private int progress;
+
+        public int Progress
+        {
+            get { return progress; }
+            set { SetProperty(ref progress, value); }
+        }
+
 
 
         private float _MinSpacing;
@@ -253,6 +264,7 @@ namespace GridBlockCreator
             {
                 MessageBox.Show("Volume threshold must be between 0 and 100");
             }
+            Progress += 10;
 
 
             // Check target
@@ -264,6 +276,7 @@ namespace GridBlockCreator
             var target_name = targetStructures[targetSelected];
             //log.Info($"Target selected with ID: {target_name}");
             var target = context.StructureSet.Structures.Where(x => x.Id == target_name).First();
+            Progress += 10;
 
             // Get thresh vol
             var minVol = (4/3) * Math.PI * Math.Pow((Radius/10), 3) * (VThresh / 100);
@@ -293,14 +306,13 @@ namespace GridBlockCreator
                 MessageBox.Show("No pattern selected. Returning.");
                 return;
             }
+            Progress += 30;
 
 
             // 4. Make spheres
             int sphere_count = 0;
             foreach(VVector ctr in Grid)
             {
-                
-
                 if (makeIndividual)
                 {
                     // Create a new structure and build sphere on that
@@ -317,7 +329,6 @@ namespace GridBlockCreator
                         continue;
                     }
 
-
                     singleSphere.ConvertToHighResolution();
                     sphere_count++;
 
@@ -325,6 +336,7 @@ namespace GridBlockCreator
                     BuildSphere(structMain, ctr, Radius);
                 }
             }
+            Progress += 40;
 
             // And the main structure with target
             structMain.SegmentVolume = structMain.SegmentVolume.And(target);
@@ -332,6 +344,7 @@ namespace GridBlockCreator
             //log.Info("Created Spheres");
             structMain.ConvertToHighResolution();
             MessageBox.Show("Finished");
+            Progress += 10;
 
 
         }
@@ -383,8 +396,23 @@ namespace GridBlockCreator
 
         }
 
+        private Structure CreateStructure(string structName, bool showMessage)
+        {
+            string msg = $"New structure ({structName}) created.";
+            var prevStruct = context.StructureSet.Structures.Where(x => x.Id == structName).FirstOrDefault();
+            if (prevStruct != null)
+            {
+                context.StructureSet.RemoveStructure(prevStruct);
+                msg += " Old structure overwritten.";
+            }
+
+            var structure = context.StructureSet.AddStructure("PTV", structName);
+
+            if (showMessage) { MessageBox.Show(msg); } 
+            return structure;   
+        }
         
-        public void CreateGrid()
+        /*public void CreateGrid()
         {
             // Caleb Summary
             // Add 'Grid' structure set base (based how? same struct?) on PTV
@@ -392,23 +420,32 @@ namespace GridBlockCreator
             // This gets some vars related to rod center and position
             // For each slice between Z start and Z end
             // NOTE: for checking sphere touching try: https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/point_in_sphere.html
-
-
             //Start prepare the patient
             context.Patient.BeginModifications();
 
-            /*var oldStruct = context.StructureSet.Structures.ToList().Where(x => x.Id == "Lat").First();
-            if (oldStruct != null) {
-                context.StructureSet.RemoveStructure(oldStruct);
-            }*/
-            var LatticeHiRes = context.StructureSet.AddStructure("PTV", "Lattice");
+
+            var LatticeStruct = CreateStructure("Lattice", true);
             //LatticeHiRes.ConvertToHighResolution();
 
             //grid.ConvertToHighResolution();
             //CRTest(ref grid, Radius);
-            BuildSpheres(ref LatticeHiRes, true);
+            BuildSpheres(ref LatticeStruct, true);
             //MessageBox.Show(LogText);
 
+        }*/
+
+        public void CreateGrid2(object sender, DoWorkEventArgs e)
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                (sender as BackgroundWorker).ReportProgress(i);
+                Thread.Sleep(100);
+            }
+        }
+
+        public void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            Progress = e.ProgressPercentage;
         }
 
 
