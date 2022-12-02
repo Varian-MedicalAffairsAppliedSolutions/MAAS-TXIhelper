@@ -11,17 +11,21 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using VMS.TPS.Common.Model.API;
 
 namespace GridBlockCreator
 {
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class Window1 : Window
+    public partial class MainWindow : Window
     {
-        public Window1()
+        public MainWindow(ScriptContext context)
         {
             InitializeComponent();
+            SphereLatticeTab.Content = new SphereDialog(context);
+            RapidRodsTab.Content = new GridDialog(context);
+
         }
     }
 }

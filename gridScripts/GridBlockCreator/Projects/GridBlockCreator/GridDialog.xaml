@@ -1,13 +1,13 @@
-﻿<Window x:Class="GridBlockCreator.GridDialog"
+﻿<UserControl x:Class="GridBlockCreator.GridDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:GridBlockCreator"
-        Title="RapidRods" Height="580" Width="517">
-    <Window.Resources>
+        Height="580" Width="580">
+    <!--UserControl.Resources>
         <local:BoolToBlue x:Key="BoolToBlue"/>
         <local:BoolToStrike x:Key="BoolToStrike"/>
         <local:RadiusToDiameter x:Key="RadiusToDiameter"/>
-    </Window.Resources>
+    </UserControl.Resources-->
 
     <StackPanel Orientation="Vertical" Margin="0,0,0,0" IsEnabled="True">
         <StackPanel Orientation="Horizontal" >
@@ -46,21 +46,20 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.Resources>
-                    <DataTemplate DataType="{x:Type local:Circle}" >
+                    <!--DataTemplate DataType="{x:Type local:Circle}" >
 
                         <Ellipse Width="{Binding R, Converter={StaticResource RadiusToDiameter}}" 
                              Height="{Binding R, Converter={StaticResource RadiusToDiameter}}" 
                                  Fill="{Binding Selected, Converter={StaticResource BoolToBlue}}" MouseUp="ToggleCircle" Stroke="Black" 
-                                 StrokeDashArray="{Binding Selected, Converter={StaticResource BoolToStrike}}"
-    StrokeThickness="4">
+                                 StrokeDashArray="{Binding Selected, Converter={StaticResource BoolToStrike}}" StrokeThickness="4">
 
                         </Ellipse>
 
                     </DataTemplate>
 
-                    <DataTemplate DataType="{x:Type local:Polygon}" >
+                    <DataTemplate DataType="{x:Type Polygon}" >
                         <Polygon  Points="{Binding Points}"  Stroke="Red" StrokeThickness="3"/>
-                    </DataTemplate>
+                    </DataTemplate-->
 
 
                     <Style TargetType="ContentPresenter">
@@ -80,4 +79,4 @@
 
         </StackPanel>
     </StackPanel>
-</Window>
+</UserControl>

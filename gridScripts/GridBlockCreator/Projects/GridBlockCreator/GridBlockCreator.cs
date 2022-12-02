@@ -135,7 +135,7 @@ namespace VMS.TPS
         }
 
        
-        var mainWindow = new GridBlockCreator.SphereDialog(context);
+        var mainWindow = new GridBlockCreator.MainWindow(context);
         mainWindow.ShowDialog();
 
 
