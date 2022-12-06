@@ -25,11 +25,8 @@ namespace GridBlockCreator
             InitializeComponent();
             SphereLatticeTab.Content = new SphereDialog(context);
             RapidRodsTab.Content = new GridDialog(context);
-
-            if(showTerms ) { // TODO show banner here
-                Footer.Text = "*** Not Valid For Clinical Use ***";
-          
-            }
+            var vm = new MainViewModel(showTerms);
+            DataContext = vm;
 
 
         }

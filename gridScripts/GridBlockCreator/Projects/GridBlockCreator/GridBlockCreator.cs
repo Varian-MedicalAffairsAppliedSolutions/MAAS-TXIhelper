@@ -23,6 +23,7 @@ namespace VMS.TPS
 {
   public class Script
   {
+    private bool isDebug = true;
     /*
     public Script()
     {
@@ -126,17 +127,18 @@ namespace VMS.TPS
 
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public void Execute(ScriptContext context /*, System.Windows.Window window, ScriptEnvironment environment*/)
+    public void Execute(ScriptContext context)
     {
 
         if (context.Patient == null || context.PlanSetup == null)
         {
             MessageBox.Show("No active plan selected - exiting.");
-                return;
-            }
+            return;
+        }
 
-        var showBanner = System.Configuration.ConfigurationManager.AppSettings["DisplayTerms"] == "true";
-        var mainWindow = new GridBlockCreator.MainWindow(context, showBanner);
+        //var showBanner = System.Configuration.ConfigurationManager.AppSettings["DisplayTerms"].ToLower() == "true";
+          //  MessageBox.Show($"IsDebug Flag: {System.Configuration.ConfigurationManager.AppSettings["DisplayTerms"].ToLower()}");
+        var mainWindow = new GridBlockCreator.MainWindow(context, isDebug);
         
         mainWindow.ShowDialog();
 

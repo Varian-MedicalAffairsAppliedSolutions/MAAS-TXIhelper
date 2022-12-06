@@ -16,12 +16,9 @@
                 <TabItem Name="SphereLatticeTab" Header="SphereLattice" />
                 <TabItem Name="RapidRodsTab" Header="RapidRods"/>
             </TabControl>
-            
-            <TextBlock Grid.Row="1" Name="Footer" Background="PaleVioletRed">
-                Bound by the terms of the 
-                <Hyperlink NavigateUri="http://medicalaffairs.varian.com/download/VarianLUSLA.pdf">
-                VarianLUSLA
-                </Hyperlink>
+
+            <TextBlock Grid.Row="1" Name="Footer" Background="PaleVioletRed" Text="{Binding Footer, Mode=TwoWay}">            
+                
             </TextBlock>
         </Grid>
 
