@@ -20,11 +20,17 @@ namespace GridBlockCreator
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(ScriptContext context)
+        public MainWindow(ScriptContext context, bool showTerms)
         {
             InitializeComponent();
             SphereLatticeTab.Content = new SphereDialog(context);
             RapidRodsTab.Content = new GridDialog(context);
+
+            if(showTerms ) { // TODO show banner here
+                Footer.Text = "*** Not Valid For Clinical Use ***";
+          
+            }
+
 
         }
     }

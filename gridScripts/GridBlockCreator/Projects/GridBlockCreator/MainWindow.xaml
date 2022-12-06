@@ -5,11 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GridBlockCreator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="580" Width="580">
-    <Grid>
-        <TabControl>
-            <TabItem Name="SphereLatticeTab" Header="SphereLattice" />
-            <TabItem Name="RapidRodsTab" Header="RapidRods"/>
-        </TabControl>
-    </Grid>
+        Title="MAAS-SFRThelper" Height="580" Width="580">
+    <DockPanel LastChildFill="False">
+        <Grid DockPanel.Dock="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TabControl>
+                <TabItem Name="SphereLatticeTab" Header="SphereLattice" />
+                <TabItem Name="RapidRodsTab" Header="RapidRods"/>
+            </TabControl>
+            
+            <TextBlock Grid.Row="1" Name="Footer" Background="PaleVioletRed">
+                Bound by the terms of the 
+                <Hyperlink NavigateUri="http://medicalaffairs.varian.com/download/VarianLUSLA.pdf">
+                VarianLUSLA
+                </Hyperlink>
+            </TextBlock>
+        </Grid>
+
+       
+    </DockPanel>
+    
 </Window>
