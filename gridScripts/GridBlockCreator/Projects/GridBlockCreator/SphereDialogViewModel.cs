@@ -29,6 +29,48 @@ using VMS.TPS.Common.Model.Types;
 
 namespace GridBlockCreator
 {
+    public class Spacing:BindableBase
+    {
+        private double value_;
+
+        public double Value
+        {
+            get { return value_; }
+            set { SetProperty(ref value_, value); }
+        }
+
+        private double hex_spacing;
+
+        public double Hex_Spacing
+        {
+            get { return hex_spacing; }
+            set { SetProperty(ref hex_spacing, value); }
+        }
+
+        public override string ToString()
+        {
+            string v = $"{Math.Round(value_, 2)} (Rect) / {Math.Round(hex_spacing, 2)} (Hex)";
+            return v;
+        }
+
+        private string stringRep;
+
+        public string StringRep
+        {
+            get { return stringRep; }
+            set { SetProperty(ref stringRep, value); }
+        }
+
+
+        public Spacing(double rect_spacing)
+        {
+            this.value_ = rect_spacing;
+            this.Hex_Spacing = rect_spacing * Math.Sqrt(3);
+            this.StringRep = this.ToString();
+  
+            
+        }
+    }
   
     public class SphereDialogViewModel : BindableBase
     {
@@ -135,8 +177,8 @@ namespace GridBlockCreator
 
         }
 
-        private List<double> validSpacings;
-        public List<double> ValidSpacings
+        private List<Spacing> validSpacings;
+        public List<Spacing> ValidSpacings
         {
             get { return validSpacings; }
             set
@@ -145,8 +187,8 @@ namespace GridBlockCreator
             }
         }
 
-        private double spacingSelected;
-        public double SpacingSelected
+        private Spacing spacingSelected;
+        public Spacing SpacingSelected
         {
             get { return spacingSelected; }
             set
@@ -167,12 +209,14 @@ namespace GridBlockCreator
             this.context = context;
 
             // Set valid spacings
-            ValidSpacings = new List<double>();
+            ValidSpacings = new List<Spacing>();
             var spacing = context.Image.ZRes;
-            for (int i = 1; i<30; i++) { ValidSpacings.Add(spacing * i); }
+            for (int i = 1; i<30; i++) {
+                ValidSpacings.Add(new Spacing(spacing * i));
+            }
 
             // Default to first value
-            SpacingSelected = ValidSpacings.FirstOrDefault();
+            //SpacingSelected = ValidSpacings.FirstOrDefault().Item1;
 
           
             // Set zStart and zEnd
@@ -256,20 +300,20 @@ namespace GridBlockCreator
 
         private List<VVector> BuildHexGrid(double Xstart, double Xsize, double Ystart, double Ysize, double Zstart, double Zsize)
         {
-            double A = SpacingSelected * (Math.Sqrt(3) / 2);
+            double A = SpacingSelected.Value * (Math.Sqrt(3) / 2);
             var retval = new List<VVector>();
 
             void CreateLayer(double zCoord, double x0, double y0)
             {
                 // create planar hexagonal sphere packing grid
                 var yeven = Arange(y0, y0 + Ysize, 2 * A);
-                var xeven = Arange(x0, x0 + Xsize, SpacingSelected);
+                var xeven = Arange(x0, x0 + Xsize, SpacingSelected.Value);
                 foreach (var y in yeven)
                 {
                     foreach(var x in xeven)
                     {
                         retval.Add(new VVector(x, y, zCoord));
-                        retval.Add(new VVector(x + (SpacingSelected/2), y + A, zCoord));
+                        retval.Add(new VVector(x + (SpacingSelected.Value/2), y + A, zCoord));
                     }
                 }
 
@@ -279,7 +323,7 @@ namespace GridBlockCreator
             foreach(var z in Arange(Zstart, Zstart + Zsize, 2 * A))
             {
                 CreateLayer(z, Xstart, Ystart);
-                CreateLayer(z + A, Xstart + (SpacingSelected/2), Ystart + (A/2));
+                CreateLayer(z + A, Xstart + (SpacingSelected.Value/2), Ystart + (A/2));
  
             }
 
@@ -338,9 +382,9 @@ namespace GridBlockCreator
                     var z0 = context.Image.Origin.z + (plane_int * context.Image.ZRes);
                     MessageBox.Show($"Original z | Snapped z = {bounds.Z} | {z0}");
 
-                    var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, SpacingSelected);
-                    var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, SpacingSelected);
-                    var zcoords = Arange(z0, z0 + bounds.SizeZ, SpacingSelected);
+                    var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, SpacingSelected.Value);
+                    var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, SpacingSelected.Value);
+                    var zcoords = Arange(z0, z0 + bounds.SizeZ, SpacingSelected.Value);
                     Grid = BuildGrid(xcoords, ycoords, zcoords);
 
                 }
