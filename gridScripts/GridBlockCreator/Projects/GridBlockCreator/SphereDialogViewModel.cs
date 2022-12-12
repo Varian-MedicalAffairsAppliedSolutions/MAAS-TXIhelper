@@ -1,6 +1,7 @@
 ﻿using NLog;
 using NLog.Config;
 using NLog.Extensions.Logging;
+using Prism.Modularity;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -134,7 +135,29 @@ namespace GridBlockCreator
 
         }
 
-    
+        private List<double> validSpacings;
+        public List<double> ValidSpacings
+        {
+            get { return validSpacings; }
+            set
+            {
+                SetProperty(ref validSpacings, value);
+            }
+        }
+
+        private double spacingSelected;
+        public double SpacingSelected
+        {
+            get { return spacingSelected; }
+            set
+            {
+                SetProperty(ref spacingSelected, value);
+            }
+        }
+
+
+
+
         private ScriptContext context;
 
         public SphereDialogViewModel(ScriptContext context)
@@ -142,6 +165,14 @@ namespace GridBlockCreator
 
             VThresh = 0;
             this.context = context;
+
+            // Set valid spacings
+            ValidSpacings = new List<double>();
+            var spacing = context.Image.ZRes;
+            for (int i = 1; i<30; i++) { ValidSpacings.Add(spacing * i); }
+
+            // Default to first value
+            SpacingSelected = ValidSpacings.FirstOrDefault();
 
           
             // Set zStart and zEnd
@@ -225,20 +256,20 @@ namespace GridBlockCreator
 
         private List<VVector> BuildHexGrid(double Xstart, double Xsize, double Ystart, double Ysize, double Zstart, double Zsize)
         {
-            double A = MinSpacing * (Math.Sqrt(3) / 2);
+            double A = SpacingSelected * (Math.Sqrt(3) / 2);
             var retval = new List<VVector>();
 
             void CreateLayer(double zCoord, double x0, double y0)
             {
                 // create planar hexagonal sphere packing grid
                 var yeven = Arange(y0, y0 + Ysize, 2 * A);
-                var xeven = Arange(x0, x0 + Xsize, MinSpacing);
+                var xeven = Arange(x0, x0 + Xsize, SpacingSelected);
                 foreach (var y in yeven)
                 {
                     foreach(var x in xeven)
                     {
                         retval.Add(new VVector(x, y, zCoord));
-                        retval.Add(new VVector(x + (MinSpacing/2), y + A, zCoord));
+                        retval.Add(new VVector(x + (SpacingSelected/2), y + A, zCoord));
                     }
                 }
 
@@ -248,7 +279,7 @@ namespace GridBlockCreator
             foreach(var z in Arange(Zstart, Zstart + Zsize, 2 * A))
             {
                 CreateLayer(z, Xstart, Ystart);
-                CreateLayer(z + A, Xstart + (MinSpacing/2), Ystart + (A/2));
+                CreateLayer(z + A, Xstart + (SpacingSelected/2), Ystart + (A/2));
  
             }
 
@@ -257,8 +288,9 @@ namespace GridBlockCreator
 
         
 
-        public void BuildSpheres(ref Structure structMain, bool makeIndividual)
+        public void BuildSpheres(bool makeIndividual, bool alignGrid)
         {
+            Structure structMain;
             Progress = true;
             // Check vol thresh for spheres
             if (VThresh > 100 || VThresh < 0)
@@ -288,16 +320,39 @@ namespace GridBlockCreator
             if (IsHex)
             {
                 Grid = BuildHexGrid(bounds.X, bounds.SizeX, bounds.Y, bounds.SizeY, bounds.Z, bounds.SizeZ);
-                structMain.Id += "Hex";
+                structMain = CreateStructure("LatticeHex", true);
                 //log.Info($"Hexagonal grid built with {Grid.Count} points.");
             }
             else if (IsRect)
             {
-                var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, MinSpacing);
-                var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, MinSpacing);
-                var zcoords = Arange(bounds.Z, bounds.Z + bounds.SizeZ, MinSpacing);
-                Grid = BuildGrid(xcoords, ycoords, zcoords);
-                structMain.Id += "Rect";
+                if(alignGrid)
+                {
+                    // Snap z to nearest z slice
+                    // where z slices = img.origin.z + (c * zres)
+                    // x, y, z --> dropdown all equal
+                    // z0 --> rounded to nearest grid slice
+                    var zSlices = new List<double>();
+                    var plane_idx = (bounds.Z - context.Image.Origin.z) / context.Image.ZRes;
+                    int plane_int = (int)Math.Round(plane_idx);
+
+                    var z0 = context.Image.Origin.z + (plane_int * context.Image.ZRes);
+                    MessageBox.Show($"Original z | Snapped z = {bounds.Z} | {z0}");
+
+                    var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, SpacingSelected);
+                    var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, SpacingSelected);
+                    var zcoords = Arange(z0, z0 + bounds.SizeZ, SpacingSelected);
+                    Grid = BuildGrid(xcoords, ycoords, zcoords);
+
+                }
+                else
+                {
+                    var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, MinSpacing);
+                    var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, MinSpacing);
+                    var zcoords = Arange(bounds.Z, bounds.Z + bounds.SizeZ, MinSpacing);
+                    Grid = BuildGrid(xcoords, ycoords, zcoords);
+                }
+
+                structMain = CreateStructure("LatticeRect", true);
                 //log.Info($"Rectangular grid built with {Grid.Count} points.");
             }
             else
@@ -461,8 +516,8 @@ namespace GridBlockCreator
             context.Patient.BeginModifications();
 
 
-            var LatticeStruct = CreateStructure("Lattice", true);
-            BuildSpheres(ref LatticeStruct, true);
+            
+            BuildSpheres(true, true);
 
         }
 
