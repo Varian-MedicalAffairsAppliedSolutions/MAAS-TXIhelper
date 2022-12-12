@@ -1,4 +1,4 @@
-# MAAS-SFRTHelper
+# MAAS-SFRThelper
 TO DO (sphere lattice)
 * structure processing (boolean at high res)
 * x and Y direction user defined offsets
