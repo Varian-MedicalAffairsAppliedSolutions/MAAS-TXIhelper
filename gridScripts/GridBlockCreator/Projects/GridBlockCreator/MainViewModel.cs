@@ -36,9 +36,9 @@ namespace GridBlockCreator
         public MainViewModel(bool isDebug)
         {
             MessageBox.Show($"Is Debug == {isDebug}");
-            Footer = "Bound by the terms of the Varian";
-            var hlink = new Hyperlink() { NavigateUri = new Uri("http://medicalaffairs.varian.com/download/VarianLUSLA.pdf") };
-            Footer += hlink;
+            Footer = "Bound by the terms of the Varian LUSA";
+            //var hlink = new Hyperlink() { NavigateUri = new Uri("http://medicalaffairs.varian.com/download/VarianLUSLA.pdf") };
+            //Footer += hlink;
             if (isDebug)
             {
                 Footer += " *** Not Valid for clinical use ***";

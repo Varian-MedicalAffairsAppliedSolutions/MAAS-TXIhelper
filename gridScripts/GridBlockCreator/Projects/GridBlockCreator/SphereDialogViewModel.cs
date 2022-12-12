@@ -140,7 +140,7 @@ namespace GridBlockCreator
         public SphereDialogViewModel(ScriptContext context)
         {
 
-            VThresh = 100;
+            VThresh = 0;
             this.context = context;
 
           
@@ -278,9 +278,7 @@ namespace GridBlockCreator
             //log.Info($"Target selected with ID: {target_name}");
             var target = context.StructureSet.Structures.Where(x => x.Id == target_name).First();
 
-
-            // Get thresh vol
-            var minVol = (4/3) * Math.PI * Math.Pow((Radius/10), 3) * (VThresh / 100);
+            //(4/3) * Math.PI * Math.Pow((Radius/10), 3) * (VThresh / 100);
 
             // Generate a regular grid accross the dummie bounding box 
             var bounds = target.MeshGeometry.Bounds;
@@ -324,39 +322,65 @@ namespace GridBlockCreator
             if (deleted_spheres > 0) { MessageBox.Show($"{deleted_spheres} pre-existing spheres deleted "); }
 
 
-            foreach(VVector ctr in Grid)
-            {
+            // Hold on to single sphere ids
+            var singleIds = new List<string>();
+            var singleVols = new List<double>();
+
+            // Create all individual spheres
+            foreach (VVector ctr in Grid)
+            { 
                 if (makeIndividual)
                 {
                     // Create a new structure and build sphere on that
-                    var singleSphere = CreateStructure($"Sphere_{sphere_count}", false);
+                    var singleId = $"Sphere_{sphere_count}";
+                    var singleSphere = CreateStructure(singleId, false);
                     BuildSphere(singleSphere, ctr, Radius);
+                    
                     // Crop to target
                     singleSphere.SegmentVolume = singleSphere.SegmentVolume.And(target);
 
-                    // Delete if too small
-                    if (singleSphere.Volume < minVol)
-                    {
-                        context.StructureSet.RemoveStructure(singleSphere);
-                        //MessageBox.Show("Removing Sphere");
-                        continue;
-                    }
-
-                    singleSphere.ConvertToHighResolution();
                     sphere_count++;
 
-                    // Add sphere to structure
-                    BuildSphere(structMain, ctr, Radius);
+                    singleIds.Add(singleId);
+                    singleVols.Add(singleSphere.Volume);
                 }
             }
-            MessageBox.Show($"Deleted {Grid.Count-sphere_count}/{Grid.Count} spheres (vol thresh == {minVol} cc)");
+
+            var volThresh = singleVols.Max() * (VThresh / 100);
+
+
+
+            foreach(string id_ in singleIds)
+            { 
+                // delete small spheres
+                var singleSphere = context.StructureSet.Structures.Where(x => x.Id == id_).FirstOrDefault();
+                if (singleSphere != null)
+                {
+                    if(singleSphere.Volume <= volThresh)
+                    {
+                        // Delete
+                        //MessageBox.Show($"Deleted sphere based on volume threshold: {singleSphere.Volume} >= {volThresh}");
+                        context.StructureSet.RemoveStructure(singleSphere);
+                        continue;
+                    }
+                }
+
+                // If here sphere is big enough
+                structMain.SegmentVolume = structMain.SegmentVolume.Or(singleSphere);
+                singleSphere.ConvertToHighResolution();
+
+            }
+
+            
 
 
             // And the main structure with target
             structMain.SegmentVolume = structMain.SegmentVolume.And(target);
 
-            //log.Info("Created Spheres");
             structMain.ConvertToHighResolution();
+
+            MessageBox.Show("Created Spheres");
+
             Progress = false;
 
 
