@@ -62,7 +62,7 @@ jobs:
       run: .\.github\workflows\Update-EsapiHintPaths.ps1 -CsprojFilePath .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\ -CsprojFileName MAAS-SFRThelper.csproj 
 
     - name: Build Solution
-      run: msbuild.exe .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\MAAS-SFRThelper.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:Configuration=Debug /p:Platform="Any CPU"
+      run: msbuild.exe .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\MAAS-SFRThelper.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform="x64"
         
     - name: Zip
       run: |
