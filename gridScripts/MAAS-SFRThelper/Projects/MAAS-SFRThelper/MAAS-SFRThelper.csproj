@@ -6,8 +6,8 @@
     <ProjectGuid>{2FC15AB5-D196-45CB-AD50-CF6B7C7AB038}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GridBlockCreator</RootNamespace>
-    <AssemblyName>GridBlockCreatorWithTilt.esapi</AssemblyName>
+    <RootNamespace>MAAS_SFRThelper</RootNamespace>
+    <AssemblyName>MAAS-SFRThelper.esapi</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

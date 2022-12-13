@@ -93,7 +93,7 @@ namespace GridBlockCreator {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/GridBlockCreatorWithTilt.esapi;component/spheredialog.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MAAS-SFRThelper.esapi;component/spheredialog.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\SphereDialog.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
