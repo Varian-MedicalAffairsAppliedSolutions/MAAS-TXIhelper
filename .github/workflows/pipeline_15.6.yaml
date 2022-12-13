@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: windows-2019
     env:
-      GITHUB_WORKSPACE_PACKAGES_PATH: .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\packages\ESAPI.15.6.0\lib\net45\
+      GITHUB_WORKSPACE_PACKAGES_PATH: packages\ESAPI.15.6.0\lib\net45\
       PROJECT_NAME: MAAS-SFRThelper
       MAJOR_VERSION: 2
       MINOR_VERSION: 5
@@ -56,7 +56,7 @@ jobs:
         -StorePasswordInClearText
 
     - name: Download nuget package
-      run: nuget install ESAPI -Version 15.6.0 -OutputDirectory .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\packages\
+      run: nuget install ESAPI -Version 15.6.0 -OutputDirectory packages
 
     - name: Update hint paths in the csproj file
       run: .\.github\workflows\Update-EsapiHintPaths.ps1 -CsprojFilePath .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\ -CsprojFileName MAAS-SFRThelper.csproj 
