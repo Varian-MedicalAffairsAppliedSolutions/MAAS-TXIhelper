@@ -52,8 +52,8 @@ jobs:
       run: nuget source add -Name github `
         -Source "https://nuget.pkg.github.com/Varian-Innovation-Center/index.json" `
         -UserName craman96 `
-        -Password ${{ secrets.ESAPI_READ_TOKEN }} `
-        #-StorePasswordInClearText
+        -Password ${{ secrets.GITHUB_TOKEN }} `
+        -StorePasswordInClearText
 
     - name: Download nuget package
       run: nuget install ESAPI -Version 15.6.0 -OutputDirectory packages
