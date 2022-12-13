@@ -1,0 +1,38 @@
+﻿<Window x:Class="gridTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:gridTest"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="500" Width="517">
+    <StackPanel Orientation="Vertical" Margin="0,0,0,-209" IsEnabled="False">
+            <StackPanel Orientation="Horizontal" >
+                <Label Height="26" Width="100" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Target" />
+                <ListBox x:Name="TargetList" ItemsSource="{Binding TargetStructures}" SelectedIndex="{Binding TargetSelected}" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+                <Label Height="26" Width="100"  Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Radius (cm)" />
+                <TextBox x:Name="T_Radius" Text="{Binding RadiusInCM, Mode=TwoWay}" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" >
+                <Label Height="26" Width="100" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="X Spacing (cm)" />
+                <TextBox x:Name="XSpacing" Text="{Binding XSpacingInCM}" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+                <Label Height="26" Width="100" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Y Spacing (cm)" />
+                <TextBox x:Name="YSpacing"  Text="{Binding YSpacingInCM}" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" >
+                <Label Height="26" Width="100" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="x Offset (cm)" />
+                <TextBox x:Name="XOffset" Text="{Binding XOffsetInCM}" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+                <Label Height="26" Width="100" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Y Offset (cm)" />
+                <TextBox x:Name="YOffset" Text="{Binding YOffsetInCM}" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" >
+                <Canvas x:Name="view" HorizontalAlignment="Left" Height="300" Margin="10, 10, 10, 10" VerticalAlignment="Top" Width="350"/>
+            <Button x:Name="ok" HorizontalAlignment="Right" Height="26" Margin="70, 10, 10, 10" VerticalAlignment="Bottom" Width="60" Content="Ok"/>
+        </StackPanel>
+        </StackPanel>
+
+
+
+    </Window>
