@@ -53,7 +53,7 @@ jobs:
         -Source "https://nuget.pkg.github.com/Varian-Innovation-Center/index.json" `
         -UserName craman96 `
         -Password ${{ secrets.ESAPI_READ_TOKEN }} `
-        -StorePasswordInClearText
+        #-StorePasswordInClearText
 
     - name: Download nuget package
       run: nuget install ESAPI -Version 15.6.0 -OutputDirectory packages
