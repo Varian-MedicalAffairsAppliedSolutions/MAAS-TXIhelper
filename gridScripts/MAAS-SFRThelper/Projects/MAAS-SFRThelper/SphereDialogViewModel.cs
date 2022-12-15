@@ -83,6 +83,22 @@ namespace GridBlockCreator
             set { SetProperty(ref isRect, value); }
         }
 
+        private double xShift;
+
+        public double XShift
+        {
+            get { return xShift; }
+            set { SetProperty(ref xShift, value); }
+        }
+
+        private double yShift;
+
+        public double YShift
+        {
+            get { return yShift; }
+            set { SetProperty(ref yShift, value); }
+        }
+
 
         private float radius;
 
@@ -140,6 +156,8 @@ namespace GridBlockCreator
             VThresh = 0;
             IsHex = true; // default to hex
             DeleteIndividual = false; // default to keeping individual structures
+            XShift = 0;
+            YShift = 0;
 
 
             // Set valid spacings based on CT img z resolution
@@ -288,7 +306,7 @@ namespace GridBlockCreator
             }
 
             return true;
-        }
+        } 
 
         public void BuildSpheres(bool makeIndividual, bool alignGrid)
         {
@@ -312,46 +330,41 @@ namespace GridBlockCreator
 
             // Generate a regular grid accross the dummie bounding box 
             var bounds = target.MeshGeometry.Bounds;
-         
+
+            // If alignGrid calculate z to snap to
+            double z0 = bounds.Z;
+            double zf = bounds.Z + bounds.SizeZ;
+            if (alignGrid)
+            {
+                // Snap z to nearest z slice
+                // where z slices = img.origin.z + (c * zres)
+                // x, y, z --> dropdown all equal
+                // z0 --> rounded to nearest grid slice
+                var zSlices = new List<double>();
+                var plane_idx = (bounds.Z - context.Image.Origin.z) / context.Image.ZRes;
+                int plane_int = (int)Math.Round(plane_idx);
+
+                z0 = context.Image.Origin.z + (plane_int * context.Image.ZRes);
+                MessageBox.Show($"Original z | Snapped z = {bounds.Z} | {Math.Round(z0, 2)}");
+            }
+
             // Get points that are not in the image
             List<VVector> grid = null;
+
             if (IsHex)
             {
-                grid = BuildHexGrid(bounds.X, bounds.SizeX, bounds.Y, bounds.SizeY, bounds.Z, bounds.SizeZ);
+                grid = BuildHexGrid(bounds.X + XShift, bounds.SizeX, bounds.Y + YShift, bounds.SizeY, z0, bounds.SizeZ);
                 structMain = CreateStructure("LatticeHex", true, target.IsHighResolution);
             }
             else if (IsRect)
             {
-                if(alignGrid)
-                {
-                    // Snap z to nearest z slice
-                    // where z slices = img.origin.z + (c * zres)
-                    // x, y, z --> dropdown all equal
-                    // z0 --> rounded to nearest grid slice
-                    var zSlices = new List<double>();
-                    var plane_idx = (bounds.Z - context.Image.Origin.z) / context.Image.ZRes;
-                    int plane_int = (int)Math.Round(plane_idx);
+                var xcoords = Arange(bounds.X + XShift, bounds.X + bounds.SizeX + XShift, SpacingSelected.Value);
+                var ycoords = Arange(bounds.Y + XShift, bounds.Y + bounds.SizeY + YShift, SpacingSelected.Value);
+                var zcoords = Arange(z0, zf, SpacingSelected.Value);
 
-                    var z0 = context.Image.Origin.z + (plane_int * context.Image.ZRes);
-                    MessageBox.Show($"Original z | Snapped z = {bounds.Z} | {z0}");
-
-                    var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, SpacingSelected.Value);
-                    var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, SpacingSelected.Value);
-                    var zcoords = Arange(z0, z0 + bounds.SizeZ, SpacingSelected.Value);
-                    grid = BuildGrid(xcoords, ycoords, zcoords);
-
-                }
-                else
-                {
-                    var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, SpacingSelected.Value);
-                    var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, SpacingSelected.Value);
-                    var zcoords = Arange(bounds.Z, bounds.Z + bounds.SizeZ, SpacingSelected.Value);
-                    grid = BuildGrid(xcoords, ycoords, zcoords);
-                }
-
+                grid = BuildGrid(xcoords, ycoords, zcoords);
                 structMain = CreateStructure("LatticeRect", true, target.IsHighResolution);
             }
-
 
             // 4. Make spheres
             int sphere_count = 0;
@@ -400,7 +413,7 @@ namespace GridBlockCreator
                 var singleSphere = context.StructureSet.Structures.Where(x => x.Id == id_).FirstOrDefault();
                 if (singleSphere != null)
                 {
-                    if(singleSphere.Volume <= volThresh || DeleteIndividual || singleSphere.Volume == 0)
+                    if(singleSphere.Volume <= volThresh || singleSphere.Volume == 0)
                     {
                         // Delete
                         //MessageBox.Show($"Deleted sphere based on volume threshold: {singleSphere.Volume} >= {volThresh}");
@@ -410,14 +423,18 @@ namespace GridBlockCreator
                 }
 
                 // If here sphere is big enough
+
                 structMain.SegmentVolume = structMain.SegmentVolume.Or(singleSphere);
-                singleSphere.ConvertToHighResolution();
+
+                // If delete individual delete no
+                if (deleteIndividual) { 
+                    context.StructureSet.RemoveStructure(singleSphere);
+                }
+
 
             }
 
             // And the main structure with target
-            structMain.SegmentVolume = structMain.SegmentVolume.And(target);
-            structMain.ConvertToHighResolution();
 
             MessageBox.Show("Created Spheres");
         }

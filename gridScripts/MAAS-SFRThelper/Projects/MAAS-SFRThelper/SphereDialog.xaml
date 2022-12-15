@@ -34,6 +34,14 @@
         <StackPanel Orientation="Horizontal"/>
 
         <StackPanel Orientation="Horizontal" >
+            <Label Height="26" Width="100" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="X Shift (mm)" />
+            <TextBox x:Name="XShift" Text="{Binding XShift}" IsEnabled="True" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+            <Label Height="26" Width="107" Margin="10,10,10,10" VerticalAlignment="Top" Content="Y Shift (mm)" />
+            <TextBox x:Name="Yshift" Text="{Binding YShift}" IsEnabled="True" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"/>
+
+        <StackPanel Orientation="Horizontal" >
             <CheckBox Margin="20,10,10,10" IsChecked="{Binding DeleteIndividual}">Delete Individuals</CheckBox>
         </StackPanel>
 
