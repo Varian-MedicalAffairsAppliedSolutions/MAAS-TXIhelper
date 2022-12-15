@@ -6,31 +6,17 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 
-// TODO 
-// Add user input for cleanup threshold for deleting fractional spheres
-// Hexagonal = staggered layers
-// Target Border
-// Console for output (lower priority)
-// Get eclipse v16
-// 
 
 namespace GridBlockCreator
 {
     public class Spacing:BindableBase
     {
+        // Helper class for representing Rectagonal vs Hexagonal Spacing
         private double value_;
 
         public double Value
@@ -67,33 +53,11 @@ namespace GridBlockCreator
             this.value_ = rect_spacing;
             this.Hex_Spacing = rect_spacing * Math.Sqrt(3);
             this.StringRep = this.ToString();
-  
-            
         }
     }
   
     public class SphereDialogViewModel : BindableBase
     {
-        public ObservableCollection<string> LogMsgs;
-
-        private string _LogText;
-
-        public string LogText
-        {
-            get { return _LogText; }
-            set { 
-                SetProperty(ref _LogText, value);
-                System.Threading.Thread.Sleep(1000);
-            }
-        }
-
-        private bool progress;
-
-        public bool Progress
-        {
-            get { return progress; }
-            set { SetProperty(ref progress, value); }
-        }
 
         private bool deleteIndividual;
 
@@ -103,39 +67,29 @@ namespace GridBlockCreator
             set { SetProperty(ref deleteIndividual, value); }
         }
 
-
-        private float _MinSpacing;
-
-        public float MinSpacing
-        {
-            get { return _MinSpacing; }
-            set { SetProperty(ref _MinSpacing, value); }
-        }
-
-
-        private bool _IsHex;
+        private bool isHex;
 
         public bool IsHex
         {
-            get { return _IsHex; }
-            set { SetProperty(ref _IsHex, value); }
+            get { return isHex; }
+            set { SetProperty(ref isHex, value); }
         }
 
-        private bool _IsRect;
+        private bool isRect;
 
         public bool IsRect
         {
-            get { return _IsRect; }
-            set { SetProperty(ref _IsRect, value); }
+            get { return isRect; }
+            set { SetProperty(ref isRect, value); }
         }
 
 
-        private float _Radius;
+        private float radius;
 
         public float Radius
         {
-            get { return _Radius; }
-            set { SetProperty(ref _Radius, value); }
+            get { return radius; }
+            set { SetProperty(ref radius, value); }
         }
 
 
@@ -143,20 +97,14 @@ namespace GridBlockCreator
         public List<string> TargetStructures
         {
             get { return targetStructures; }
-            set
-            {
-                SetProperty(ref targetStructures, value);
-            }
+            set { SetProperty(ref targetStructures, value); }
         }
 
         private int targetSelected;
         public int TargetSelected
         {
             get { return targetSelected; }
-            set
-            {
-                SetProperty(ref targetSelected, value);
-            }
+            set { SetProperty(ref targetSelected, value); }
         }
 
         private float vThresh;
@@ -166,59 +114,35 @@ namespace GridBlockCreator
             set { SetProperty(ref vThresh, value); }
         }
 
-        private int zStart;
-        public int ZStart
-        {
-            get { return zStart; }
-            set { SetProperty(ref zStart, value); }
-
-        }
-
-        public Structure target;
-
-        int zEnd;
-        public int ZEnd
-        {
-            get { return zEnd; }
-            set { SetProperty(ref zEnd, value); }
-
-        }
-
+  
         private List<Spacing> validSpacings;
         public List<Spacing> ValidSpacings
         {
             get { return validSpacings; }
-            set
-            {
-                SetProperty(ref validSpacings, value);
-            }
+            set { SetProperty(ref validSpacings, value); }
         }
 
         private Spacing spacingSelected;
         public Spacing SpacingSelected
         {
             get { return spacingSelected; }
-            set
-            {
-                SetProperty(ref spacingSelected, value);
-            }
+            set { SetProperty(ref spacingSelected, value); }    
         }
-
-
-
 
         private ScriptContext context;
 
         public SphereDialogViewModel(ScriptContext context)
         {
-
-            VThresh = 0;
+            // ctor
             this.context = context;
+            
+            // Set UI value defaults
+            VThresh = 0;
             IsHex = true; // default to hex
             DeleteIndividual = false; // default to keeping individual structures
 
 
-            // Set valid spacings
+            // Set valid spacings based on CT img z resolution
             ValidSpacings = new List<Spacing>();
             var spacing = context.Image.ZRes;
             for (int i = 1; i<30; i++) {
@@ -226,18 +150,11 @@ namespace GridBlockCreator
             }
 
             // Default to first value
-            //SpacingSelected = ValidSpacings.FirstOrDefault().Item1;
+            SpacingSelected = ValidSpacings.FirstOrDefault();
 
-          
-            // Set zStart and zEnd
-            zStart = 0;
-            zEnd = context.Image.ZSize;
-
-
-            //target structures
+            // Target structures
             targetStructures = new List<string>();
             targetSelected = -1;
-            //plan target
             string planTargetId = null;
 
             foreach (var i in context.StructureSet.Structures)
@@ -254,7 +171,7 @@ namespace GridBlockCreator
 
         private void BuildSphere(Structure parentStruct, VVector center, float R)
         {
-            for (int z = zStart; z < zEnd; ++z)
+            for (int z = 0; z < context.Image.ZSize; ++z)
             {
                 double zCoord = (double)(z) * (context.Image.ZRes) + context.Image.Origin.z;
 
@@ -269,7 +186,6 @@ namespace GridBlockCreator
                 var r_z = Math.Sqrt(Math.Pow(R, 2) - Math.Pow(z_diff, 2));
                 var contour = CreateContour(center, r_z, 500);
                 parentStruct.AddContourOnImagePlane(contour, z);
-
             }
         }
 
@@ -283,9 +199,6 @@ namespace GridBlockCreator
                 retval.Add(currentval);
                 currentval += step;
             }
-            
-            
-
             return retval;
         }
 
@@ -340,42 +253,72 @@ namespace GridBlockCreator
             return retval;
         }
 
-        
-
-        public void BuildSpheres(bool makeIndividual, bool alignGrid)
+        private bool PreSpheres()
         {
-            Structure structMain;
-            Progress = true;
+            // Check if we are ready to make spheres
+            if (!IsHex && !IsRect)
+            {
+                MessageBox.Show("No pattern selected. Returning.");
+                return false;
+            }
+
             // Check vol thresh for spheres
             if (VThresh > 100 || VThresh < 0)
             {
                 MessageBox.Show("Volume threshold must be between 0 and 100");
+                return false;
             }
-
-
 
             // Check target
             if (targetSelected == -1)
             {
                 MessageBox.Show("Must have target selected, canceling operation.");
+                return false;
+            }
+
+            if (Radius <= 0)
+            {
+                MessageBox.Show("Radius must be greater than zero.");
+                return false;
+            }
+
+            if (SpacingSelected.Value < Radius * 2)
+            {
+                MessageBox.Show($"WARNING: Sphere center spacing is less than sphere diameter ({Radius * 2}) mm.");
+            }
+
+            return true;
+        }
+
+        public void BuildSpheres(bool makeIndividual, bool alignGrid)
+        {
+
+            if (!PreSpheres())
+            {
                 return;
             }
+
+            // Total lattice structure with all spheres
+            Structure structMain = null;
+
             var target_name = targetStructures[targetSelected];
-            //log.Info($"Target selected with ID: {target_name}");
             var target = context.StructureSet.Structures.Where(x => x.Id == target_name).First();
 
-            //(4/3) * Math.PI * Math.Pow((Radius/10), 3) * (VThresh / 100);
+            if (target == null)
+            {
+                MessageBox.Show($"Could not find target with Id: {target_name}");
+                return;
+            }
 
             // Generate a regular grid accross the dummie bounding box 
             var bounds = target.MeshGeometry.Bounds;
          
             // Get points that are not in the image
-            List<VVector> Grid;
+            List<VVector> grid = null;
             if (IsHex)
             {
-                Grid = BuildHexGrid(bounds.X, bounds.SizeX, bounds.Y, bounds.SizeY, bounds.Z, bounds.SizeZ);
-                structMain = CreateStructure("LatticeHex", true);
-                //log.Info($"Hexagonal grid built with {Grid.Count} points.");
+                grid = BuildHexGrid(bounds.X, bounds.SizeX, bounds.Y, bounds.SizeY, bounds.Z, bounds.SizeZ);
+                structMain = CreateStructure("LatticeHex", true, target.IsHighResolution);
             }
             else if (IsRect)
             {
@@ -395,27 +338,19 @@ namespace GridBlockCreator
                     var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, SpacingSelected.Value);
                     var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, SpacingSelected.Value);
                     var zcoords = Arange(z0, z0 + bounds.SizeZ, SpacingSelected.Value);
-                    Grid = BuildGrid(xcoords, ycoords, zcoords);
+                    grid = BuildGrid(xcoords, ycoords, zcoords);
 
                 }
                 else
                 {
-                    var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, MinSpacing);
-                    var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, MinSpacing);
-                    var zcoords = Arange(bounds.Z, bounds.Z + bounds.SizeZ, MinSpacing);
-                    Grid = BuildGrid(xcoords, ycoords, zcoords);
+                    var xcoords = Arange(bounds.X, bounds.X + bounds.SizeX, SpacingSelected.Value);
+                    var ycoords = Arange(bounds.Y, bounds.Y + bounds.SizeY, SpacingSelected.Value);
+                    var zcoords = Arange(bounds.Z, bounds.Z + bounds.SizeZ, SpacingSelected.Value);
+                    grid = BuildGrid(xcoords, ycoords, zcoords);
                 }
 
-                structMain = CreateStructure("LatticeRect", true);
-                //log.Info($"Rectangular grid built with {Grid.Count} points.");
+                structMain = CreateStructure("LatticeRect", true, target.IsHighResolution);
             }
-            else
-            {
-                MessageBox.Show("No pattern selected. Returning.");
-                Progress = false;
-                return;
-            }
-
 
 
             // 4. Make spheres
@@ -436,13 +371,13 @@ namespace GridBlockCreator
             var singleVols = new List<double>();
 
             // Create all individual spheres
-            foreach (VVector ctr in Grid)
+            foreach (VVector ctr in grid)
             { 
                 if (makeIndividual)
                 {
                     // Create a new structure and build sphere on that
                     var singleId = $"Sphere_{sphere_count}";
-                    var singleSphere = CreateStructure(singleId, false);
+                    var singleSphere = CreateStructure(singleId, false, structMain.IsHighResolution);
                     BuildSphere(singleSphere, ctr, Radius);
                     
                     // Crop to target
@@ -465,7 +400,7 @@ namespace GridBlockCreator
                 var singleSphere = context.StructureSet.Structures.Where(x => x.Id == id_).FirstOrDefault();
                 if (singleSphere != null)
                 {
-                    if(singleSphere.Volume <= volThresh || DeleteIndividual)
+                    if(singleSphere.Volume <= volThresh || DeleteIndividual || singleSphere.Volume == 0)
                     {
                         // Delete
                         //MessageBox.Show($"Deleted sphere based on volume threshold: {singleSphere.Volume} >= {volThresh}");
@@ -480,19 +415,11 @@ namespace GridBlockCreator
 
             }
 
-            
-
-
             // And the main structure with target
             structMain.SegmentVolume = structMain.SegmentVolume.And(target);
-
             structMain.ConvertToHighResolution();
 
             MessageBox.Show("Created Spheres");
-
-            Progress = false;
-
-
         }
 
         VVector[] CreateContour(VVector center, double radius, int nOfPoints)
@@ -512,37 +439,7 @@ namespace GridBlockCreator
             return contour;
         }
 
-        public int _GetSlice(double z, StructureSet SS)
-        {
-            var imageRes = SS.Image.ZRes;
-            return Convert.ToInt32((z - SS.Image.Origin.z) / imageRes);
-        }
-
-        private Structure HightoLow(StructureSet structureset, Structure structure)
-        {
-
-            var lowresstructureId = "lowres" + structure.Id;
-            var lowresstructure = structureset.AddStructure("CONTROL", lowresstructureId);
-
-            var mesh = structure.MeshGeometry.Bounds;
-            var meshLow = _GetSlice(mesh.Z, structureset);
-            var meshUp = _GetSlice(mesh.Z + mesh.SizeZ, structureset) + 1;
-
-            for (int j = meshLow; j <= meshUp; j++)
-            {
-                var contours = structure.GetContoursOnImagePlane(j);
-                if (contours.Length > 0)
-                {
-                    lowresstructure.AddContourOnImagePlane(contours[0], j);
-                }
-            }
-
-            lowresstructure.SegmentVolume = lowresstructure;
-            return lowresstructure;
-
-        }
-
-        private Structure CreateStructure(string structName, bool showMessage)
+        private Structure CreateStructure(string structName, bool showMessage, bool makeHiRes)
         {
             string msg = $"New structure ({structName}) created.";
             var prevStruct = context.StructureSet.Structures.Where(x => x.Id == structName).FirstOrDefault();
@@ -553,30 +450,21 @@ namespace GridBlockCreator
             }
 
             var structure = context.StructureSet.AddStructure("PTV", structName);
+            if (makeHiRes)
+            {
+                structure.ConvertToHighResolution();
+                msg += " Converted to Hi-Res";
+            }
 
             if (showMessage) { MessageBox.Show(msg); } 
             return structure;   
         }
         
-        public void CreateGrid()
+        public void CreateLattice()
         {
-            // Caleb Summary
-            // Add 'Grid' structure set base (based how? same struct?) on PTV
-            // pass gridstructure to createGridStructure
-            // This gets some vars related to rod center and position
-            // For each slice between Z start and Z end
-            // NOTE: for checking sphere touching try: https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/point_in_sphere.html
-            //Start prepare the patient
             context.Patient.BeginModifications();
-
-
-            
             BuildSpheres(true, true);
-
         }
-
-
-
 
     }
 }

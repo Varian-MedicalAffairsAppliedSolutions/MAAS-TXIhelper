@@ -58,9 +58,9 @@ namespace GridBlockCreator
         }
 
         
-        private void CreateGrid(object sender, RoutedEventArgs e)
+        private void CreateLattice(object sender, RoutedEventArgs e)
         {
-            vm.CreateGrid();
+            vm.CreateLattice();
         }
 
 
