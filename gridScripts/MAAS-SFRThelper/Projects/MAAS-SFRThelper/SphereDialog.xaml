@@ -27,7 +27,7 @@
 
         <StackPanel Orientation="Horizontal" >
             <Label Height="26" Width="100" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Border (mm)" />
-            <TextBox x:Name="TargetBorder" Text="{Binding TargetBorder}" IsEnabled="True" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
+            <TextBox IsEnabled="False" x:Name="TargetBorder" Text="{Binding TargetBorder}" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
             <Label Height="26" Width="107" Margin="10,10,10,10" VerticalAlignment="Top" Content="Vol Threshold (%)" />
             <TextBox x:Name="VThresh" Text="{Binding VThresh}" IsEnabled="True" HorizontalAlignment="Left" Height="26" Margin="0, 10, 10, 10" VerticalAlignment="Top" Width="123"/>
         </StackPanel>
@@ -56,6 +56,12 @@
                 <ProgressBar Minimum="0" Maximum="100" IsIndeterminate="{Binding Progress}"/>
             </Grid>
         </StackPanel-->
+
+        <StackPanel>
+            <TextBlock Margin="10" Text="{Binding Output}">
+                
+            </TextBlock>
+        </StackPanel>
 
 
     </StackPanel>

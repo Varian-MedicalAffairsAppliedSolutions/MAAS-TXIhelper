@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
@@ -59,6 +60,14 @@ namespace GridBlockCreator
   
     public class SphereDialogViewModel : BindableBase
     {
+        private string output;
+
+        public string Output
+        {
+            get { return output; }
+            set { SetProperty(ref output, value); }
+        }
+
 
         private bool deleteIndividual;
 
@@ -159,6 +168,7 @@ namespace GridBlockCreator
             DeleteIndividual = false; // default to keeping individual structures
             XShift = 0;
             YShift = 0;
+            Output = "Welcome to the SFRT-Helper";
 
 
             // Set valid spacings based on CT img z resolution
@@ -288,7 +298,10 @@ namespace GridBlockCreator
             // Check if we are ready to make spheres
             if (!IsHex && !IsRect)
             {
-                MessageBox.Show("No pattern selected. Returning.");
+                var msg = "No pattern selected. Returning.";
+                Output += "\n" + msg;
+                Thread.Sleep(100);
+                //MessageBox.Show(msg);
                 return false;
             }
 
@@ -332,11 +345,26 @@ namespace GridBlockCreator
             Structure structMain = null;
 
             var target_name = targetStructures[targetSelected];
-            var target = context.StructureSet.Structures.Where(x => x.Id == target_name).First();
+            var target_initial = context.StructureSet.Structures.Where(x => x.Id == target_name).First();
+            Structure target = null;
+            bool deleteAutoTarget = false;
+
+            if (!target_initial.IsHighResolution)
+            {
+                target = context.StructureSet.AddStructure("PTV", "AutoTarget");
+                AddContoursToMain(ref target, ref target_initial);
+                target.ConvertToHighResolution();
+                deleteAutoTarget = true;
+                MessageBox.Show("Created HiRes target.");
+            }
+            else
+            {
+                target = target_initial;
+            }
 
             if (target == null)
             {
-                MessageBox.Show($"Could not find target with Id: {target_name}");
+                //MessageBox.Show($"Could not find target with Id: {target_name}");
                 return;
             }
 
@@ -357,7 +385,9 @@ namespace GridBlockCreator
                 int plane_int = (int)Math.Round(plane_idx);
 
                 z0 = context.Image.Origin.z + (plane_int * context.Image.ZRes);
-                MessageBox.Show($"Original z | Snapped z = {bounds.Z} | {Math.Round(z0, 2)}");
+                //MessageBox.Show($"Original z | Snapped z = {bounds.Z} | {Math.Round(z0, 2)}");
+                Output += $"\nOriginal z | Snapped z = {Math.Round(bounds.Z, 2)} | {Math.Round(z0, 2)}";
+                Thread.Sleep(100);
             }
 
             // Get points that are not in the image
@@ -366,7 +396,7 @@ namespace GridBlockCreator
             if (IsHex)
             {
                 grid = BuildHexGrid(bounds.X + XShift, bounds.SizeX, bounds.Y + YShift, bounds.SizeY, z0, bounds.SizeZ);
-                structMain = CreateStructure("LatticeHex", true, target.IsHighResolution);
+                structMain = CreateStructure("LatticeHex", true, true);
             }
             else if (IsRect)
             {
@@ -375,7 +405,7 @@ namespace GridBlockCreator
                 var zcoords = Arange(z0, zf, SpacingSelected.Value);
 
                 grid = BuildGrid(xcoords, ycoords, zcoords);
-                structMain = CreateStructure("LatticeRect", true, target.IsHighResolution);
+                structMain = CreateStructure("LatticeRect", true, true);
             }
 
             // 4. Make spheres
@@ -395,6 +425,11 @@ namespace GridBlockCreator
             var singleIds = new List<string>();
             var singleVols = new List<double>();
 
+
+            // Starting message
+            Output += "\nCreating spheres, this could take several minutes ...";
+            MessageBox.Show("About to create spheres.");  
+
             // Create all individual spheres
             foreach (VVector ctr in grid)
             { 
@@ -402,7 +437,7 @@ namespace GridBlockCreator
                 {
                     // Create a new structure and build sphere on that
                     var singleId = $"Sphere_{sphere_count}";
-                    var singleSphere = CreateStructure(singleId, false, structMain.IsHighResolution);
+                    var singleSphere = CreateStructure(singleId, false, true);
                     BuildSphere(singleSphere, ctr, Radius);
                     
                     // Crop to target
@@ -449,9 +484,15 @@ namespace GridBlockCreator
 
             }
 
-            // And the main structure with target
+            // Delete the autogenerated target if it exists
+            if (deleteAutoTarget) {
+                context.StructureSet.RemoveStructure(target);
+            }
 
+            // And the main structure with target
+            Output += "\nCreated spheres";
             MessageBox.Show("Created Spheres");
+
         }
 
         VVector[] CreateContour(VVector center, double radius, int nOfPoints)
