@@ -6,10 +6,10 @@ Tools to aid in the creation of structure patterns (spheres) or irregular stuctu
 TO DO (sphere lattice)
 * In app PTV margin for spheres (currently disabled)
 * OK/cancel option when distance between spheres is < radius * 2 (currently, just acknowledge) 
-* check appropriate hex or rec spacing when throwing waring about spacing (actually below spheres do overlap, is hex spacing aaccurate?)
+* check appropriate hex or rec spacing -- below spheres do overlap (is hex spacing aaccurate?)
 ![image](https://user-images.githubusercontent.com/78000769/208203204-f994c36a-5f87-457b-b798-429d7170fa16.png)
  * hyperlink to license
-* config file spash screen / expiration
+* config file spash warning screen / expiration
 * test estimating total sphere volume with formula (or lookup table) rather than finding the volume of each sphere for largest (speed up?)
 * cancel button does nothing (remove?)
 * put licence file in build directory
