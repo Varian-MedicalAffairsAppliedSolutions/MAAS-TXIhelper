@@ -8,3 +8,5 @@ TO DO (sphere lattice)
  
 * hyperlink to license
 * config file spash screen / expiration
+* test estimating total sphere volume with formula (or lookup table) rather than finding the volume of each sphere for largest (speed up?)
+* cancel button does nothing (remove?)
