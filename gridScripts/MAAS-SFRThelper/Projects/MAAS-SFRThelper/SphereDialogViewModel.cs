@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
@@ -186,6 +187,17 @@ namespace GridBlockCreator
 
         }
 
+        private void AddContoursToMain(ref Structure PrimaryStructure, ref Structure SecondaryStructure)
+        {
+            // Loop through each image plane
+            // { foreach (var segment in contours) { lowResSSource.AddContourOnImagePlane(segment, j); } }
+            for (int z = 0; z < context.Image.ZSize; ++z)
+            {
+                var contours = SecondaryStructure.GetContoursOnImagePlane(z);
+                foreach(var seg in contours) { PrimaryStructure.AddContourOnImagePlane(seg, z); }
+            }
+
+        }
 
         private void BuildSphere(Structure parentStruct, VVector center, float R)
         {
@@ -423,10 +435,13 @@ namespace GridBlockCreator
                 }
 
                 // If here sphere is big enough
+                // Set the lattice struct segment = lattice struct segment.
+                // TODO: try other boolean ops to create mainStructure
 
-                structMain.SegmentVolume = structMain.SegmentVolume.Or(singleSphere);
+                //structMain.SegmentVolume = structMain.SegmentVolume.Or(singleSphere); // OLD method
+                AddContoursToMain(ref structMain, ref singleSphere);
 
-                // If delete individual delete no
+                // If delete individual delete 
                 if (deleteIndividual) { 
                     context.StructureSet.RemoveStructure(singleSphere);
                 }

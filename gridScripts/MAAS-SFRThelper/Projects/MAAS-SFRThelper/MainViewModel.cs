@@ -41,7 +41,7 @@ namespace GridBlockCreator
             //Footer += hlink;
             if (isDebug)
             {
-                Footer += " *** Not Valid for clinical use ***";
+                Footer += " *** Not Validated for clinical use ***";
             }
             
         }
