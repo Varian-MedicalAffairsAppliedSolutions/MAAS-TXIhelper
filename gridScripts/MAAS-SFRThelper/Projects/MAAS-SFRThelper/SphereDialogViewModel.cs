@@ -37,7 +37,7 @@ namespace GridBlockCreator
 
         public override string ToString()
         {
-            string v = $"{Math.Round(value_, 2)} (Rect) / {Math.Round(hex_spacing, 2)} (Hex)";
+            string v = $"{Math.Round(value_, 1)} (Rec) | {Math.Round(hex_spacing, 1)} (Hex)";
             return v;
         }
 
@@ -69,12 +69,12 @@ namespace GridBlockCreator
         }
 
 
-        private bool deleteIndividual;
+        private bool createIndividual;
 
-        public bool DeleteIndividual
+        public bool CreateIndividual
         {
-            get { return deleteIndividual; }
-            set { SetProperty(ref deleteIndividual, value); }
+            get { return createIndividual; }
+            set { SetProperty(ref createIndividual, value); }
         }
 
         private bool isHex;
@@ -165,7 +165,7 @@ namespace GridBlockCreator
             // Set UI value defaults
             VThresh = 0;
             IsHex = true; // default to hex
-            DeleteIndividual = false; // default to keeping individual structures
+            createIndividual = true; // default to keeping individual structures
             XShift = 0;
             YShift = 0;
             Output = "Welcome to the SFRT-Helper";
@@ -327,7 +327,9 @@ namespace GridBlockCreator
 
             if (SpacingSelected.Value < Radius * 2)
             {
-                MessageBox.Show($"WARNING: Sphere center spacing is less than sphere diameter ({Radius * 2}) mm.");
+                var buttons = MessageBoxButton.OKCancel;
+                var result = MessageBox.Show($"WARNING: Sphere center spacing is less than sphere diameter ({Radius * 2}) mm.\n Continue?", "", buttons);
+                return result == MessageBoxResult.OK;
             }
 
             return true;
@@ -477,7 +479,7 @@ namespace GridBlockCreator
                 AddContoursToMain(ref structMain, ref singleSphere);
 
                 // If delete individual delete 
-                if (deleteIndividual) { 
+                if (!createIndividual) { 
                     context.StructureSet.RemoveStructure(singleSphere);
                 }
 
