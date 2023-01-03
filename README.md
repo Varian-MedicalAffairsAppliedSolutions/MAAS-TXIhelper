@@ -4,19 +4,19 @@ Tools to aid in the creation of structure patterns (spheres) or irregular stuctu
 ![image](https://user-images.githubusercontent.com/78000769/208208126-4f09074f-26c7-480d-b6c4-e39e48f5a51d.png)
 
 TO DO (sphere lattice)
-[ ] In app PTV margin for spheres (currently disabled)
-[ ] OK/cancel option when distance between spheres is < radius * 2 (currently, just acknowledge) 
-[ ] check appropriate hex or rec spacing -- below spheres do overlap (is hex spacing aaccurate?)
+- [ ] In app PTV margin for spheres (currently disabled)
+- [ ] OK/cancel option when distance between spheres is < radius * 2 (currently, just acknowledge) 
+- [ ] check appropriate hex or rec spacing -- below spheres do overlap (is hex spacing aaccurate?)
 ![image](https://user-images.githubusercontent.com/78000769/208203204-f994c36a-5f87-457b-b798-429d7170fa16.png)
-[ ] hyperlink to license
-[ ] config file spash warning screen / expiration
-[ ] test estimating total sphere volume with formula (or lookup table) rather than finding the volume of each sphere for largest (speed up?)
-[ ] cancel button does nothing (remove?)
-[ ] put licence file in build directory
+- [ ] hyperlink to license
+- [ ] config file spash warning screen / expiration
+- [ ] test estimating total sphere volume with formula (or lookup table) rather than finding the volume of each sphere for largest (speed up?)
+- [ ] cancel button does nothing (remove?)
+- [ ] put licence file in build directory
 
 
 ![image](https://user-images.githubusercontent.com/78000769/208208510-55806c56-9353-43d2-ad0c-a4ed6652ab57.png)
 
 TO DO (RapidRods)
-[ ] correct window size to display buttons
-[ ] further testing (ID already in use)
+- [ ] correct window size to display buttons
+- [ ] further testing (ID already in use)
