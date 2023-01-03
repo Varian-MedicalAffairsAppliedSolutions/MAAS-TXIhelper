@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -35,6 +37,18 @@ namespace GridBlockCreator
 
         public MainViewModel(bool isDebug)
         {
+            // Get app.config value
+            /*
+            string pth = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            MessageBox.Show($"CWD = {pth}");
+            var strConfigPath = Path.Combine(pth, "App.config");
+            System.Configuration.ConfigurationFileMap fileMap = new ConfigurationFileMap(strConfigPath); //Path to your config file
+            System.Configuration.Configuration configuration = System.Configuration.ConfigurationManager.OpenMappedMachineConfiguration(fileMap);
+            var x = configuration.AppSettings.Settings.AllKeys[0];
+            //var showTerms = configuration.AppSettings.Settings["DisplayTerms"].Value;
+            MessageBox.Show($"Is Debug == {x}");
+            */
+            //MessageBox.Show($"{AppDomain.CurrentDomain.SetupInformation.ConfigurationFile}");
             /*
             MessageBox.Show($"Is Debug == {isDebug}");
             Footer = "Bound by the terms of the Varian LUSLA";
@@ -44,7 +58,7 @@ namespace GridBlockCreator
             {
                 Footer += " *** Not Validated for clinical use ***";
             }*/
-            
+
         }
 
     }

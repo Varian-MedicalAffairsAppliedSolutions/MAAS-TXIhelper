@@ -16,8 +16,6 @@ C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\GridBlockCreator\Proj
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\GridBlockCreator\Projects\GridBlockCreator\obj\x64\Release\MAAS-SFRThelper.csproj.CopyComplete
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\GridBlockCreator\Projects\GridBlockCreator\obj\x64\Release\GridBlockCreatorWithTilt.esapi.dll
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\GridBlockCreator\Projects\GridBlockCreator\obj\x64\Release\GridBlockCreatorWithTilt.esapi.pdb
-C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\plugins\app.config
-C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\plugins\MAAS-SFRThelper.esapi.dll.config
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\plugins\MAAS-SFRThelper.esapi.dll
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\plugins\MAAS-SFRThelper.esapi.pdb
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\obj\x64\Release\MAAS-SFRThelper.csproj.AssemblyReference.cache
@@ -34,3 +32,5 @@ C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\Proje
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\obj\x64\Release\MAAS-SFRThelper.csproj.CopyComplete
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\obj\x64\Release\MAAS-SFRThelper.esapi.dll
 C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\obj\x64\Release\MAAS-SFRThelper.esapi.pdb
+C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\plugins\App.config
+C:\Users\craman96\source\repos\MAAS-SFRThelper\gridScripts\MAAS-SFRThelper\plugins\MAAS-SFRThelper.esapi.dll.config
