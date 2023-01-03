@@ -22,12 +22,12 @@ namespace GridBlockCreator
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(ScriptContext context, bool showTerms)
+        public MainWindow(ScriptContext context)
         {
             InitializeComponent();
             SphereLatticeTab.Content = new SphereDialog(context);
             RapidRodsTab.Content = new GridDialog(context);
-            var vm = new MainViewModel(showTerms);
+            var vm = new MainViewModel();
             DataContext = vm;
 
 

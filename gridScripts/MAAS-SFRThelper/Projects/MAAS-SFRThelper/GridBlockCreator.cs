@@ -23,7 +23,6 @@ namespace VMS.TPS
 {
   public class Script
   {
-    private bool isDebug = true;
     /*
     public Script()
     {
@@ -138,7 +137,7 @@ namespace VMS.TPS
 
         //var showBanner = System.Configuration.ConfigurationManager.AppSettings["DisplayTerms"].ToLower() == "true";
           //  MessageBox.Show($"IsDebug Flag: {System.Configuration.ConfigurationManager.AppSettings["DisplayTerms"].ToLower()}");
-        var mainWindow = new GridBlockCreator.MainWindow(context, isDebug);
+        var mainWindow = new GridBlockCreator.MainWindow(context);
         
         mainWindow.ShowDialog();
 

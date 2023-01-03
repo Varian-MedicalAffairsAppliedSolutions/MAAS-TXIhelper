@@ -17,11 +17,11 @@
                 <TabItem Name="RapidRodsTab" Header="RapidRods"/>
             </TabControl>
 
-            <TextBlock Grid.Row="1" Name="Footer" Background="PaleVioletRed">            
-                Bound by the terms of the Varian 
-                <Hyperlink NavigateUri="http://medicalaffairs.varian.com/download/VarianLUSLA.pdf" RequestNavigate="Hyperlink_RequestNavigate">
-                    LUSLA
-                </Hyperlink>
+            <TextBlock Grid.Row="1" Name="Footer" Background="PaleVioletRed">    
+                <Label Margin="0"><Hyperlink NavigateUri="http://medicalaffairs.varian.com/download/VarianLUSLA.pdf" RequestNavigate="Hyperlink_RequestNavigate">
+                    Bound by the terms of the Varian LUSLA
+                </Hyperlink></Label>
+                <Label Margin="0" Content="{Binding PostText}"/>
             </TextBlock>
         </Grid>
 

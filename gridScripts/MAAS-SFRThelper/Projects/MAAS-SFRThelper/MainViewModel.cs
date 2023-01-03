@@ -18,13 +18,16 @@ namespace GridBlockCreator
 
 	public class MainViewModel: BindableBase
     {
-        private string footer;
 
-        public string Footer
+
+        private string postText;
+
+        public string PostText
         {
-            get { return footer; }
-            set { SetProperty(ref footer, value); }
+            get { return postText; }
+            set { SetProperty(ref postText, value); }
         }
+
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
@@ -35,29 +38,13 @@ namespace GridBlockCreator
         }
 
 
-        public MainViewModel(bool isDebug)
+        public MainViewModel()
         {
-            // Get app.config value
-            /*
-            string pth = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            MessageBox.Show($"CWD = {pth}");
-            var strConfigPath = Path.Combine(pth, "App.config");
-            System.Configuration.ConfigurationFileMap fileMap = new ConfigurationFileMap(strConfigPath); //Path to your config file
-            System.Configuration.Configuration configuration = System.Configuration.ConfigurationManager.OpenMappedMachineConfiguration(fileMap);
-            var x = configuration.AppSettings.Settings.AllKeys[0];
-            //var showTerms = configuration.AppSettings.Settings["DisplayTerms"].Value;
-            MessageBox.Show($"Is Debug == {x}");
-            */
-            //MessageBox.Show($"{AppDomain.CurrentDomain.SetupInformation.ConfigurationFile}");
-            /*
-            MessageBox.Show($"Is Debug == {isDebug}");
-            Footer = "Bound by the terms of the Varian LUSLA";
-            var hlink = new Hyperlink() { NavigateUri = new Uri() };
-            Footer += hlink;
-            if (isDebug)
-            {
-                Footer += " *** Not Validated for clinical use ***";
-            }*/
+            var isDebug = MAAS_SFRThelper.Properties.Settings.Default.Debug;
+            //MessageBox.Show($"Display Terms {isDebug}");
+            PostText = "";
+            if ( isDebug ) { PostText += " *** Not Validated For Clinical Use ***"; }
+            
 
         }
 

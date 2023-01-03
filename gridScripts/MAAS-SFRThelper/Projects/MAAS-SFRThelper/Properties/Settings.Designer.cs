@@ -22,5 +22,14 @@ namespace MAAS_SFRThelper.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Debug {
+            get {
+                return ((bool)(this["Debug"]));
+            }
+        }
     }
 }
