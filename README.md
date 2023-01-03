@@ -12,7 +12,7 @@ TO DO (sphere lattice)
 - [ ] config file spash warning screen / expiration
 - [ ] test estimating total sphere volume with formula (or lookup table) rather than finding the volume of each sphere for largest (speed up?)
 - [x] cancel button does nothing (remove?)
-- [ ] put licence file in build directory
+- [x] put licence file in build directory
 
 
 ![image](https://user-images.githubusercontent.com/78000769/208208510-55806c56-9353-43d2-ad0c-a4ed6652ab57.png)
