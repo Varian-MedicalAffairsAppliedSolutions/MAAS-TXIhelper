@@ -48,7 +48,6 @@
 
         <StackPanel Orientation="Horizontal" >
             <Button Height="26" Width="130" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Create" Click="CreateLattice"/>
-            <Button Height="26" Width="130" Margin="20,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Cancel" Click="Cancel"/>
         </StackPanel>
 
         <!--StackPanel Height="50">
