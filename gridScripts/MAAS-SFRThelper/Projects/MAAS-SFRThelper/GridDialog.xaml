@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:GridBlockCreator"
         Height="580" Width="580">
-    <!--UserControl.Resources>
+    <UserControl.Resources>
         <local:BoolToBlue x:Key="BoolToBlue"/>
         <local:BoolToStrike x:Key="BoolToStrike"/>
         <local:RadiusToDiameter x:Key="RadiusToDiameter"/>
-    </UserControl.Resources-->
+    </UserControl.Resources>
 
     <StackPanel Orientation="Vertical" Margin="0,0,0,0" IsEnabled="True">
         <StackPanel Orientation="Horizontal" >
@@ -46,7 +46,7 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.Resources>
-                    <!--DataTemplate DataType="{x:Type local:Circle}" >
+                    <DataTemplate DataType="{x:Type local:Circle}" >
 
                         <Ellipse Width="{Binding R, Converter={StaticResource RadiusToDiameter}}" 
                              Height="{Binding R, Converter={StaticResource RadiusToDiameter}}" 
@@ -57,9 +57,9 @@
 
                     </DataTemplate>
 
-                    <DataTemplate DataType="{x:Type Polygon}" >
+                    <DataTemplate DataType="{x:Type local:Polygon}" >
                         <Polygon  Points="{Binding Points}"  Stroke="Red" StrokeThickness="3"/>
-                    </DataTemplate-->
+                    </DataTemplate>
 
 
                     <Style TargetType="ContentPresenter">
