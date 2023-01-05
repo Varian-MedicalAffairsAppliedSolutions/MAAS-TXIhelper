@@ -5,5 +5,8 @@
     <Setting Name="Debug" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="ExpDate" Type="System.DateTime" Scope="Application">
+      <Value Profile="(Default)">2023-06-01</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

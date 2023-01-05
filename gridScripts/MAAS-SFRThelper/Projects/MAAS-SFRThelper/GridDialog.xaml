@@ -74,7 +74,6 @@
     <StackPanel Orientation="Horizontal" >
         <Button Height="26" Width="130" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Create" Click="CreateGrid"/>
             <Button Height="26" Width="130" Margin="20,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Create with inverse" Click="CreateGridAndInverse"/>
-            <Button Height="26" Width="130" Margin="20,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Cancel" Click="Cancel"/>
 
 
         </StackPanel>

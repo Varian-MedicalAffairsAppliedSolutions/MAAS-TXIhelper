@@ -31,5 +31,14 @@ namespace MAAS_SFRThelper.Properties {
                 return ((bool)(this["Debug"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2023-06-01")]
+        public global::System.DateTime ExpDate {
+            get {
+                return ((global::System.DateTime)(this["ExpDate"]));
+            }
+        }
     }
 }

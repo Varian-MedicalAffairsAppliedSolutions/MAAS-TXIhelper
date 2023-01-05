@@ -9,6 +9,7 @@ using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 using GridBlockCreator;
 using System.Windows.Input;
+using MAAS_SFRThelper.Properties;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
 [assembly: AssemblyVersion("1.0.0.1")]
@@ -67,63 +68,6 @@ namespace VMS.TPS
         }
     }
 
-    /*
-    void createGridStructure(VVector[] gridPoints, Image image, Structure ptv, ref Structure gridStructure, double radius)
-    {
-        for(int z = 0; z < image.ZSize; ++z)
-            addContoursToStructure(gridPoints, image,  ref gridStructure, radius, z);
-        gridStructure.And(ptv);
-        
-    }*/
-
-    //VVector [] getBoundingBox(Structure ptv, int nOfLayers)
-    //{
-    //    VVector[] retval = new VVector[2];
-    //    double highVal = 1.0e+10;
-    //    retval[0].x = retval[0].y =retval[0].z = highVal;
-    //    retval[1].x = retval[1].y =retval[1].z = -highVal;
-    //    for(int z = 0; z < nOfLayers; ++z){
-    //        var contours = ptv.GetContoursOnImagePlane(z);
-    //        foreach (var contour in contours)
-    //            foreach(var p in contour)
-    //            {
-    //                if(retval[0].x > p.x) retval[0].x = p.x;
-    //                if(retval[0].y > p.y) retval[0].y = p.y;
-    //                if(retval[0].z > p.z) retval[0].z = p.z;
-    //                if(retval[1].x < p.x) retval[1].x = p.x;
-    //                if(retval[1].y < p.y) retval[1].y = p.y;
-    //                if(retval[1].z < p.z) retval[1].z = p.z;
-    //            }
-    //    }
-
-    //    return retval;
-
-    //}
-
-    //void create2Dgrid(Structure ptv, Image image, double xDelta, double yDelta, double xCenter, double yCenter, double radius)
-    //{
-    //    var bb = getBoundingBox(ptv, image.ZSize);
-
-    //    int startX = (int)(-Math.Floor((xCenter - bb[0].x + radius) / xDelta)); 
-    //    int endX = (int)(1 + Math.Floor((bb[1].x + radius - xCenter) / xDelta)); 
-    //    int startY = (int)(-Math.Floor((yCenter - bb[0].y + radius) / yDelta)); 
-    //    int endY = (int)(1 + Math.Floor((bb[1].y + radius - yCenter) / yDelta)); 
-
-    //    VVector[] retval = new VVector[(endX - startX)*(endY - startY)];
-    //    int ind = 0;
-    //    for(int x = startX; xCenter < endX; ++x)
-    //        for(int y = startY; yCenter < endY; ++y)
-    //        {
-    //            retval[ind].x = xCenter + (double)(x) *xDelta;
-    //            retval[ind].y = yCenter + (double)(y) * yDelta;
-    //        }
-    //}
-
-
-
-
-
-
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public void Execute(ScriptContext context)
@@ -135,8 +79,26 @@ namespace VMS.TPS
             return;
         }
 
-        //var showBanner = System.Configuration.ConfigurationManager.AppSettings["DisplayTerms"].ToLower() == "true";
-          //  MessageBox.Show($"IsDebug Flag: {System.Configuration.ConfigurationManager.AppSettings["DisplayTerms"].ToLower()}");
+        // Check exp date
+        DateTime exp = MAAS_SFRThelper.Properties.Settings.Default.ExpDate;
+        if (exp < DateTime.Now)
+        {
+            MessageBox.Show($"Application has expired");
+            return;
+        }
+
+        // Display opening msg
+        string msg = $"The current MAAS-SFRThelper application is provided AS IS as a non-clinical, research only tool in evaluation only. The current " +
+        $"application will only be available until {exp.Date} after which the application will be unavailable. " +
+        $"By Clicking 'Yes' you agree that this application will be evaluated and not utilized in providing planning decision support\n\n" +
+        "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/MAAS-SFRThelper\n\n" +
+        "See the FAQ for more information on how to remove this pop-up and expiration";
+        var res = MessageBox.Show(msg, "Agreement  ", MessageBoxButton.YesNo);
+       
+        if (res == MessageBoxResult.No) {
+            return;
+        }
+          
         var mainWindow = new GridBlockCreator.MainWindow(context);
         
         mainWindow.ShowDialog();
