@@ -1,5 +1,5 @@
 name: Build ESAPI Script - v15.6
-# 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
+
 on:
   workflow_dispatch:
     inputs:
@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: windows-2019
     env:
-      GITHUB_WORKSPACE_PACKAGES_PATH: packages\ESAPI.15.6.0\lib\net45\
+      GITHUB_WORKSPACE_PACKAGES_PATH: ..\..\..\..\packages\ESAPI.15.6.0\lib\net45\
       PROJECT_NAME: MAAS-SFRThelper
       MAJOR_VERSION: 2
       MINOR_VERSION: 5
@@ -26,7 +26,7 @@ jobs:
         fetch-depth: 0
 
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v1
 
     - name: Navigate to Workspace
       run: cd $GITHUB_WORKSPACE
@@ -41,15 +41,15 @@ jobs:
           -MinorVersion ${{ env.MINOR_VERSION }} `
           -PatchVersion ${{ env.PATCH_VERSION }} `
           -BuildNumber ${{ env.BUILD_NUMBER }}
+
     - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@v1.0.6
+      uses: NuGet/setup-nuget@v1
       with:
         nuget-version: latest
 
-
-
     - name: Add VIC GitHub NuGet repository
-      run: nuget source add -Name github `
+      run: nuget source add
+        -Name github `
         -Source "https://nuget.pkg.github.com/Varian-Innovation-Center/index.json" `
         -UserName craman96 `
         -Password ${{ secrets.GITHUB_TOKEN }} `
@@ -59,10 +59,13 @@ jobs:
       run: nuget install ESAPI -Version 15.6.0 -OutputDirectory packages
 
     - name: Update hint paths in the csproj file
-      run: .\.github\workflows\Update-EsapiHintPaths.ps1 -CsprojFilePath .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\ -CsprojFileName MAAS-SFRThelper.csproj 
+      run: |
+        .\.github\workflows\Update-EsapiHintPaths.ps1 `
+        -CsprojFilePath .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\ `
+        -CsprojFileName MAAS-SFRThelper.csproj 
 
     - name: Build Solution
-      run: msbuild.exe .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\MAAS-SFRThelper.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform="x64"
+      run: msbuild.exe .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\MAAS-SFRThelper.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Release"
         
     - name: Zip
       run: |
@@ -71,7 +74,7 @@ jobs:
           -DestinationPath "${{ github.workspace }}/${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV156.zip"
     
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v0.1.13
       with:
         name: ${{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV15.6
         tag_name: ${{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV15.6
@@ -79,7 +82,6 @@ jobs:
         draft: false
         prerelease: false
         body: |
-          # ${{ env.PROJECT_NAME }} - V${{ steps.update_assembly_info.outputs.RELEASE_VERSION }}
           This is an official release of the **`${{ env.PROJECT_NAME }}`** project.
           Supported Eclipse version: `v15.6`.
           The generated dll is valid until `${{ github.event.inputs.dateInput }}`.
