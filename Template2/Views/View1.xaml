@@ -5,12 +5,9 @@
         xmlns:vms="clr-namespace:ViewModels"
         Height="580" Width="580">
     <UserControl.Resources>
-        <local:BoolToBlue x:Key="BoolToBlue"/>
-        <local:BoolToStrike x:Key="BoolToStrike"/>
-        <local:RadiusToDiameter x:Key="RadiusToDiameter"/>
     </UserControl.Resources>
 
     <StackPanel Orientation="Vertical" Margin="0,0,0,0" IsEnabled="True">
-        <TextBlock>Content 2 goes here...</TextBlock>
+        <TextBlock>Content 1 goes here...</TextBlock>
     </StackPanel>
 </UserControl>

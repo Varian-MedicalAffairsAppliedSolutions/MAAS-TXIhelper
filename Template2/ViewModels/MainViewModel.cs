@@ -38,10 +38,9 @@ namespace ViewModels
 
         public MainViewModel()
         {
-            var isDebug = Template2.Properties.Settings.Default.Debug;
-            //MessageBox.Show($"Display Terms {isDebug}");
+            var isValidated = Template2.Properties.Settings.Default.Validated;
             PostText = "";
-            if ( isDebug ) { PostText += " *** Not Validated For Clinical Use ***"; }
+            if ( isValidated ) { PostText += " *** Not Validated For Clinical Use ***"; }
             
 
         }

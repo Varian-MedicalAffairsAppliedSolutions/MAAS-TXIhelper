@@ -25,7 +25,7 @@ namespace Template2.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Debug {
             get {
                 return ((bool)(this["Debug"]));
@@ -34,10 +34,31 @@ namespace Template2.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2023-06-01")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Validated {
+            get {
+                return ((bool)(this["Validated"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2024-01-01")]
         public global::System.DateTime ExpDate {
             get {
                 return ((global::System.DateTime)(this["ExpDate"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EULAAgreed {
+            get {
+                return ((bool)(this["EULAAgreed"]));
+            }
+            set {
+                this["EULAAgreed"] = value;
             }
         }
     }

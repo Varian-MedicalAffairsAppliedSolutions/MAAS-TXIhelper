@@ -39,24 +39,6 @@ namespace Views
             DataContext = vm;
         }
 
-        void TimerTick(object state)
-        {
-            var who = state as string;
-            Console.WriteLine(who);
-        }
-
-        private void ToggleCircle(object sender, MouseButtonEventArgs e)
-        {
-            var selectedEllipse = (System.Windows.Shapes.Ellipse)sender;
-            Circle selectedCircle = (Circle)selectedEllipse.DataContext;
-            selectedCircle.Selected = !selectedCircle.Selected;
-        }
-
-        
-        private void CreateLattice(object sender, RoutedEventArgs e)
-        {
-            vm.CreateLattice();
-        }
 
     }
 }
