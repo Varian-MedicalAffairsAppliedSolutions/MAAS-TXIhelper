@@ -17,7 +17,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
 
-namespace GridBlockCreator
+namespace ViewModels
 {
 
     public class BaseObject : INotifyPropertyChanged
@@ -125,7 +125,7 @@ namespace GridBlockCreator
         }
     };
 
-    public class GridDialogViewModel : Notifier
+    public class View1Model : Notifier
     {
 
         double radius;
@@ -602,7 +602,7 @@ namespace GridBlockCreator
         }
 
 
-        public GridDialogViewModel(ScriptContext currentContext)
+        public View1Model(ScriptContext currentContext)
         {
 
             context = currentContext;

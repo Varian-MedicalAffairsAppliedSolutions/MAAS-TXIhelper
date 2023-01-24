@@ -11,11 +11,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
+using ViewModels;
 
-namespace GridBlockCreator
+namespace Views
 {
     public class BoolToBlue : IValueConverter
     {
@@ -74,16 +74,16 @@ namespace GridBlockCreator
     /// <summary>
     /// Interaction logic for GridDialog.xaml
     /// </summary>
-    public partial class GridDialog : UserControl
+    public partial class View1 : UserControl
     {
 
-        public GridDialogViewModel vm;
+        public ViewModels.View1Model vm;
 
 
-        public GridDialog(ScriptContext context)
+        public View1(ScriptContext context)
         {
             InitializeComponent();
-            vm = new GridDialogViewModel(context);
+            vm = new View1Model(context);
             this.DataContext = vm;
 
             //if (vm.CloseAction == null)

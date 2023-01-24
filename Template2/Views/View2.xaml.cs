@@ -19,28 +19,23 @@ using VMS.TPS.Common.Model.Types;
 using NLog;
 using System.Net.NetworkInformation;
 using System.ComponentModel;
+using ViewModels;
  
-namespace GridBlockCreator
+namespace Views
 {
-
-
-
-
 
     /// <summary>
     /// Interaction logic for GridDialog.xaml
     /// </summary>
-    public partial class SphereDialog : UserControl
+    public partial class View2 : UserControl
     {
 
-        public SphereDialogViewModel vm;
+        public View2Model vm;
 
-        public TextBoxOutputter outputter;
-
-        public SphereDialog(ScriptContext context)
+        public View2(ScriptContext context)
         {
             InitializeComponent();
-            vm = new SphereDialogViewModel(context);
+            vm = new View2Model(context);
             DataContext = vm;
         }
 
@@ -61,15 +56,6 @@ namespace GridBlockCreator
         private void CreateLattice(object sender, RoutedEventArgs e)
         {
             vm.CreateLattice();
-        }
-
-
-
-
-        private void Cancel(object sender, RoutedEventArgs e)
-        {
-            //this.Close();
-
         }
 
     }

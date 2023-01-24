@@ -7,8 +7,8 @@
     <ProjectGuid>{2FC15AB5-D196-45CB-AD50-CF6B7C7AB038}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MAAS_SFRThelper</RootNamespace>
-    <AssemblyName>MAAS-SFRThelper.esapi</AssemblyName>
+    <RootNamespace>Template2</RootNamespace>
+    <AssemblyName>Template2.esapi</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -28,7 +28,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\plugins</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -145,42 +145,40 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainViewModel.cs" />
-    <Compile Include="SphereDialogViewModel.cs" />
-    <Compile Include="GridBlockCreator.cs" />
-    <Compile Include="SphereDialog.xaml.cs">
-      <DependentUpon>SphereDialog.xaml</DependentUpon>
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\View2Model.cs" />
+    <Compile Include="Script.cs" />
+    <Compile Include="Views\View2.xaml.cs">
+      <DependentUpon>View2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GridDialog.xaml.cs">
-      <DependentUpon>GridDialog.xaml</DependentUpon>
+    <Compile Include="Views\View1.xaml.cs">
+      <DependentUpon>View1.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GridDialogViewModel.cs" />
+    <Compile Include="ViewModels\View1Model.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TextBoxOutputter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="SphereDialog.xaml">
+    <Page Include="Views\View2.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GridDialog.xaml">
+    <Page Include="Views\View1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

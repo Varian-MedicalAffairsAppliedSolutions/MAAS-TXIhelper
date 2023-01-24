@@ -7,9 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
-using GridBlockCreator;
-using System.Windows.Input;
-using MAAS_SFRThelper.Properties;
+using Views;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
 [assembly: AssemblyVersion("1.0.0.1")]
@@ -24,19 +22,7 @@ namespace VMS.TPS
 {
   public class Script
   {
-    /*
-    public Script()
-    {
-
-    }
-
-    
-
-    int getImagePlaneFromZCoordinate(Image image, double zCoord)
-    {
-        return (int)Math.Round((zCoord - image.Origin.z) / image.ZRes);
-    }*/
-
+  
     VVector[]  CreateContour(VVector center, double radius, int nOfPoints)
     {
         VVector[] contour = new VVector[nOfPoints + 1];
@@ -80,17 +66,17 @@ namespace VMS.TPS
         }
 
         // Check exp date
-        DateTime exp = MAAS_SFRThelper.Properties.Settings.Default.ExpDate;
+        DateTime exp = Template2.Properties.Settings.Default.ExpDate;
         if (exp < DateTime.Now)
         {
-            MessageBox.Show($"Application has expired");
+            MessageBox.Show("Application has expired");
             return;
         }
 
         // Display opening msg
-        string msg = $"The current MAAS-SFRThelper application is provided AS IS as a non-clinical, research only tool in evaluation only. The current " +
-        $"application will only be available until {exp.Date} after which the application will be unavailable. " +
-        $"By Clicking 'Yes' you agree that this application will be evaluated and not utilized in providing planning decision support\n\n" +
+        string msg = "The current MAAS-SFRThelper application is provided AS IS as a non-clinical, research only tool in evaluation only. The current " +
+        "application will only be available until {exp.Date} after which the application will be unavailable. " +
+        "By Clicking 'Yes' you agree that this application will be evaluated and not utilized in providing planning decision support\n\n" +
         "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/MAAS-SFRThelper\n\n" +
         "See the FAQ for more information on how to remove this pop-up and expiration";
         var res = MessageBox.Show(msg, "Agreement  ", MessageBoxButton.YesNo);
@@ -98,8 +84,8 @@ namespace VMS.TPS
         if (res == MessageBoxResult.No) {
             return;
         }
-          
-        var mainWindow = new GridBlockCreator.MainWindow(context);
+
+        var mainWindow = new MainWindow(context);
         
         mainWindow.ShowDialog();
 

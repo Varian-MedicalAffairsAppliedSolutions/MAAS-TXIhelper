@@ -1,9 +1,9 @@
-﻿<Window x:Class="GridBlockCreator.MainWindow"
+﻿<Window x:Class="Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GridBlockCreator"
+        xmlns:local="clr-namespace:Views"
         mc:Ignorable="d"
         Title="MAAS-SFRThelper" Height="635" Width="580">
     <DockPanel LastChildFill="False">
@@ -13,8 +13,8 @@
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             <TabControl>
-                <TabItem Name="SphereLatticeTab" Header="SphereLattice" />
-                <TabItem Name="RapidRodsTab" Header="RapidRods"/>
+                <TabItem Name="Tab1" Header="Tab1" />
+                <TabItem Name="Tab2" Header="Tab2"/>
             </TabControl>
 
             <TextBlock Grid.Row="1" Name="Footer" Background="PaleVioletRed">    

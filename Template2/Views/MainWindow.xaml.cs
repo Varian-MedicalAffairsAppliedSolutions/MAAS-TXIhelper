@@ -14,8 +14,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VMS.TPS.Common.Model.API;
+using ViewModels;
 
-namespace GridBlockCreator
+namespace Views
 {
     /// <summary>
     /// Interaction logic for Window1.xaml
@@ -25,12 +26,10 @@ namespace GridBlockCreator
         public MainWindow(ScriptContext context)
         {
             InitializeComponent();
-            SphereLatticeTab.Content = new SphereDialog(context);
-            RapidRodsTab.Content = new GridDialog(context);
+            Tab1.Content = new View1(context);
+            Tab2.Content = new View2(context);
             var vm = new MainViewModel();
             DataContext = vm;
-
-
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

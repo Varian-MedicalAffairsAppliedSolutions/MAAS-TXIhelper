@@ -12,10 +12,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 
-namespace GridBlockCreator
+namespace ViewModels
 {
-	
-
 	public class MainViewModel: BindableBase
     {
 
@@ -40,7 +38,7 @@ namespace GridBlockCreator
 
         public MainViewModel()
         {
-            var isDebug = MAAS_SFRThelper.Properties.Settings.Default.Debug;
+            var isDebug = Template2.Properties.Settings.Default.Debug;
             //MessageBox.Show($"Display Terms {isDebug}");
             PostText = "";
             if ( isDebug ) { PostText += " *** Not Validated For Clinical Use ***"; }

@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="Views.View1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Views"
+        xmlns:vms="clr-namespace:ViewModels"
+        Height="580" Width="580">
+    <UserControl.Resources>
+        <local:BoolToBlue x:Key="BoolToBlue"/>
+        <local:BoolToStrike x:Key="BoolToStrike"/>
+        <local:RadiusToDiameter x:Key="RadiusToDiameter"/>
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Vertical" Margin="0,0,0,0" IsEnabled="True">
+        <TextBlock>Content 2 goes here...</TextBlock>
+    </StackPanel>
+</UserControl>

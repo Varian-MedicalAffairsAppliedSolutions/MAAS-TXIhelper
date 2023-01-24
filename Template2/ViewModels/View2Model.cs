@@ -14,7 +14,7 @@ using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 
 
-namespace GridBlockCreator
+namespace ViewModels
 {
     public class Spacing:BindableBase
     {
@@ -58,7 +58,7 @@ namespace GridBlockCreator
         }
     }
   
-    public class SphereDialogViewModel : BindableBase
+    public class View2Model : BindableBase
     {
         private string output;
 
@@ -157,7 +157,7 @@ namespace GridBlockCreator
 
         private ScriptContext context;
 
-        public SphereDialogViewModel(ScriptContext context)
+        public View2Model(ScriptContext context)
         {
             // ctor
             this.context = context;
