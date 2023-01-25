@@ -13,7 +13,7 @@ jobs:
     runs-on: windows-2019
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: ..\..\..\..\packages\ESAPI.15.6.0\lib\net45\
-      PROJECT_NAME: MAAS-SFRThelper
+      PROJECT_NAME: Template2
       MAJOR_VERSION: 2
       MINOR_VERSION: 5
       PATCH_VERSION: 6
@@ -35,7 +35,7 @@ jobs:
       id: update_assembly_info
       run: |
         .\.github\workflows\Update-AssemblyInfo.ps1 `
-          -AssemblyInfoFilePath .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\Properties\AssemblyInfo.cs `
+          -AssemblyInfoFilePath .\Template2\Properties\AssemblyInfo.cs `
           -ExpirationDate "${{ github.event.inputs.dateInput }}" `
           -MajorVersion ${{ env.MAJOR_VERSION }} `
           -MinorVersion ${{ env.MINOR_VERSION }} `
@@ -61,16 +61,16 @@ jobs:
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
-        -CsprojFilePath .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\ `
-        -CsprojFileName MAAS-SFRThelper.csproj 
+        -CsprojFilePath .\Template2\Template2\ `
+        -CsprojFileName Template2.csproj 
 
     - name: Build Solution
-      run: msbuild.exe .\gridScripts\MAAS-SFRThelper\Projects\MAAS-SFRThelper\MAAS-SFRThelper.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Release"
+      run: msbuild.exe .\Template2\Template2\Template2.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Debug"
         
     - name: Zip
       run: |
         Compress-Archive `
-          -Path ".\gridScripts\MAAS-SFRThelper\plugins\*" `
+          -Path ".\Template2\Template2\bin\Debug\*" `
           -DestinationPath "${{ github.workspace }}/${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV156.zip"
     
     - name: Create Release
