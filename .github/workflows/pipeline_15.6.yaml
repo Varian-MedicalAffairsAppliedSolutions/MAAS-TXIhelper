@@ -59,7 +59,9 @@ jobs:
       run: nuget install ESAPI -Version 15.6.0 -OutputDirectory packages
       
     - name: Print directory
-      run: dir
+      run: |
+        cd Template2
+        dir
 
     - name: Update hint paths in the csproj file
       run: |
