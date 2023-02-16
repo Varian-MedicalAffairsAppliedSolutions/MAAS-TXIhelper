@@ -57,6 +57,9 @@ jobs:
 
     - name: Download nuget package
       run: nuget install ESAPI -Version 15.6.0 -OutputDirectory packages
+      
+    - name: Print directory
+      run: echo $GITHUB_WORKSPACE
 
     - name: Update hint paths in the csproj file
       run: |
