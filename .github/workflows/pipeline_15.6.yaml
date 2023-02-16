@@ -66,7 +66,7 @@ jobs:
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
-        -CsprojFilePath .`
+        -CsprojFilePath Template2`
         -CsprojFileName Template2.csproj
 
     - name: Build Solution
