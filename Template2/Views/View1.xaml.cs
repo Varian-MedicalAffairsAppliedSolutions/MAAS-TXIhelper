@@ -24,16 +24,24 @@ namespace Views
     public partial class View1 : UserControl
     {
 
-        public ViewModels.View1Model vm;
-
+        public ViewModels.View1Model vm { get; set; }
 
         public View1(ScriptContext context)
         {
             InitializeComponent();
-            vm = new View1Model(context);
-            this.DataContext = vm;
+            //this.vm = new View1Model(context);
+            DataContext = new View1Model(context); //this.vm;
 
         }
+        /*
+        private RoutedEventHandler OnLoaded(object sender, RoutedEventArgs e)
+        {
+
+        }*/
+
+
+        
+
      
     }
 }

@@ -30,16 +30,12 @@ namespace Views
     public partial class View2 : UserControl
     {
 
-        public View2Model vm;
-
         public View2(ScriptContext context)
         {
             InitializeComponent();
-            vm = new View2Model(context);
-            DataContext = vm;
+            DataContext = new View2Model(context);
+
         }
-
-
     }
 }
 

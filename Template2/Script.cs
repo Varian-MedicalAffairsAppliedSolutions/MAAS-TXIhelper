@@ -14,6 +14,7 @@ using System.IO;
 using JR.Utils.GUI.Forms;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
+using ViewModels;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
 [assembly: AssemblyVersion("1.0.0.1")]
@@ -198,11 +199,10 @@ namespace VMS.TPS
                     }
                 }
             }
-        
-        var mainWindow = new MainWindow(context);
-        
-        mainWindow.ShowDialog();
 
-    }
+            var mainWindow = new MainWindow(context, new MainViewModel());
+            mainWindow.ShowDialog();
+        }
+    
   }
 }

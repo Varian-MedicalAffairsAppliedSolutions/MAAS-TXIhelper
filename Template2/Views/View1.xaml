@@ -7,7 +7,25 @@
     <UserControl.Resources>
     </UserControl.Resources>
 
-    <StackPanel Orientation="Vertical" Margin="0,0,0,0" IsEnabled="True">
-        <TextBlock>Content 1 goes here...</TextBlock>
-    </StackPanel>
+
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Button Grid.Row="7" Margin="10" Command="{Binding ExeCmd}">Execute</Button>
+        <Button Grid.Row="8" Margin="10" Command="{Binding SaveCmd}">Save as CSV</Button>
+
+    </Grid>
+        
 </UserControl>

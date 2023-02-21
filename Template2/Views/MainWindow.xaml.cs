@@ -23,14 +23,17 @@ namespace Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(ScriptContext context)
+        private View1 v1;
+
+        public MainWindow(ScriptContext context, MainViewModel vm)
         {
             InitializeComponent();
-            Tab1.Content = new View1(context);
+            this.v1 = new View1(context);
+            Tab1.Content = v1;
             Tab2.Content = new View2(context);
-            var vm = new MainViewModel();
             DataContext = vm;
         }
+
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

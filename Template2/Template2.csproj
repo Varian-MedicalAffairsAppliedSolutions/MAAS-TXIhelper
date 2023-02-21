@@ -157,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FlexibleMessageBox.cs" />
+    <Compile Include="Models\ComplexityModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\View2Model.cs" />
     <Compile Include="Script.cs" />
@@ -203,6 +204,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="License.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NoCompileVer\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
