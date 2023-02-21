@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -171,7 +172,7 @@ namespace Template2.Models
             return _tmp;
         }
 
-        public void Execute()
+        public Tuple<ObservableCollection<ListItem>, string> Execute()
         {
             var plan = context.PlanSetup;
             Dictionary<string, List<double[]>> results = new Dictionary<string, List<double[]>>();
@@ -246,6 +247,8 @@ namespace Template2.Models
                 plan.Id,
                 plan.Name
             );
+
+            var retval = new ObservableCollection<ListItem>();
             foreach (var entry in results)
             {
                 results_string += string.Format(
@@ -253,13 +256,22 @@ namespace Template2.Models
                     entry.Key,
                     stringifyList(entry.Value)
                 );
+
+                foreach(var subL in entry.Value)
+                {
+                    retval.Add(new ListItem(entry.Key, subL));
+                }
+
             }
 
+            /*
             Directory.CreateDirectory(this.outputpath);
             File.WriteAllText(this.outputpath + string.Format("{0} - {1}.csv", context.Patient.Name, plan.Id), results_string);
 
             // MessageBox.Show(msg);
             MessageBox.Show(string.Format("CSV saved in {0}", this.outputpath + string.Format("{0} - {1}.csv", context.Patient.Name, plan.Id)));
+            */
+            return new Tuple<ObservableCollection<ListItem>, string>(retval, results_string);
         }
     }
 }
