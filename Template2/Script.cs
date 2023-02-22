@@ -200,7 +200,7 @@ namespace VMS.TPS
                 }
             }
 
-            var mainWindow = new MainWindow(context, new MainViewModel());
+            var mainWindow = new MainWindow(context, new MainViewModel(context));
             mainWindow.ShowDialog();
         }
     

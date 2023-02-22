@@ -30,7 +30,6 @@ namespace Views
             InitializeComponent();
             this.v1 = new View1(context);
             Tab1.Content = v1;
-            Tab2.Content = new View2(context);
             DataContext = vm;
         }
 

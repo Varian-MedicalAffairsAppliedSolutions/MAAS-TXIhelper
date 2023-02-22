@@ -13,8 +13,8 @@
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             <TabControl>
-                <TabItem Name="Tab1" Header="Tab1" />
-                <TabItem Name="Tab2" Header="Tab2"/>
+                <TabItem Name="Tab1" Header="Complexity Stats"/>
+               
             </TabControl>
 
             <TextBlock Grid.Row="1" Name="Footer" Background="PaleVioletRed">    

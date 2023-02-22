@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
+using VMS.TPS.Common.Model.API;
 
 namespace ViewModels
 {
@@ -19,6 +20,15 @@ namespace ViewModels
 
 
         private string postText;
+
+        private string myHeader;
+
+        public string MyHeader
+        {
+            get { return myHeader; }
+            set { SetProperty(ref myHeader, value); }
+        }
+
 
         public string PostText
         {
@@ -36,12 +46,12 @@ namespace ViewModels
         }
 
 
-        public MainViewModel()
+        public MainViewModel(ScriptContext context)
         {
+            MyHeader = context.ExternalPlanSetup.Id;
             var isValidated = Template2.Properties.Settings.Default.Validated;
             PostText = "";
             if ( isValidated ) { PostText += " *** Not Validated For Clinical Use ***"; }
-            
 
         }
 

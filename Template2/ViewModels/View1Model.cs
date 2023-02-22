@@ -20,9 +20,11 @@ using Template2.Models;
 using Prism.Commands;
 using System.Numerics;
 
+// TODO
+// Button that shows formula
+
 namespace ViewModels
 {
-
 
     public class View1Model : BindableBase
     {
@@ -53,7 +55,6 @@ namespace ViewModels
 
         private void OnSave()
         {
-            MessageBox.Show("On Save called");
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
                 var result = dialog.ShowDialog();
