@@ -63,10 +63,12 @@ namespace ViewModels
                 {
                     var outputpath = dialog.SelectedPath;
                     Directory.CreateDirectory(outputpath);
-                    File.WriteAllText(outputpath + string.Format("{0}.csv", context.Patient.Name), ResultStr);
+
+                    var savepath = Path.Combine(outputpath, string.Format("{0}-complexity.csv", context.Patient.Name));
+                    File.WriteAllText(savepath, ResultStr);
 
                     // MessageBox.Show(msg);
-                    MessageBox.Show(string.Format("CSV saved in {0}", outputpath + string.Format("{0}.csv", context.Patient.Name)));
+                    MessageBox.Show(string.Format("CSV saved in {0}", savepath));
 
                 }
 
