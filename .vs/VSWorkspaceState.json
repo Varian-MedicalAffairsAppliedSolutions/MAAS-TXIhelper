@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Template2",
-    "\\Template2\\Properties"
+    "\\.github\\workflows",
+    "\\ModulationComplexity"
   ],
+  "SelectedNode": "\\ModulationComplexity\\Views",
   "PreviewInSolutionExplorer": false
 }

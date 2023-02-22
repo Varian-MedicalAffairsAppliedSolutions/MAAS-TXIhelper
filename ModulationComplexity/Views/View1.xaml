@@ -9,6 +9,8 @@
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
     </UserControl.Resources>
+    
+        
 
         <Grid>
             <Grid.RowDefinitions>
@@ -24,7 +26,12 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <ListView HorizontalAlignment="Stretch" ItemsSource="{Binding ListItems}" Grid.RowSpan="6" HorizontalContentAlignment="Stretch">
+    
+
+
+        <Button Margin="520, 15, 10, 15" Command="{Binding AboutCmd}">About</Button>
+
+        <ListView HorizontalAlignment="Stretch" ItemsSource="{Binding ListItems}" Grid.Row="1" Grid.RowSpan="6" HorizontalContentAlignment="Stretch">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Field" Width="70" DisplayMemberBinding="{Binding Path=Field, StringFormat=N4}"/>
