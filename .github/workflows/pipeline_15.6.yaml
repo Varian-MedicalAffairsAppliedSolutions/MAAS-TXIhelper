@@ -14,9 +14,9 @@ jobs:
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: ..\..\..\..\packages\ESAPI.15.6.0\lib\net45\
       PROJECT_NAME: ModulationComplexity
-      MAJOR_VERSION: 1
-      MINOR_VERSION: 0
-      PATCH_VERSION: 0
+      MAJOR_VERSION: 2
+      MINOR_VERSION: 5
+      PATCH_VERSION: 6
       BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
@@ -41,7 +41,6 @@ jobs:
           -MinorVersion ${{ env.MINOR_VERSION }} `
           -PatchVersion ${{ env.PATCH_VERSION }} `
           -BuildNumber ${{ env.BUILD_NUMBER }}
-
     - name: Setup NuGet.exe for use with actions
       uses: NuGet/setup-nuget@v1
       with:
@@ -62,13 +61,11 @@ jobs:
       run: |
         cd ModulationComplexity
         dir
-
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
-        -CsprojFilePath .\ModulationComplexity\`
+        -CsprojFilePath .\ModulationComplexity\ `
         -CsprojFileName ModulationComplexity.csproj
-
     - name: Build Solution
       run: msbuild.exe .\ModulationComplexity\ModulationComplexity\ModulationComplexity.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Debug"
         
@@ -91,3 +88,5 @@ jobs:
           Supported Eclipse version: `v15.6`.
           The generated dll is valid until `${{ github.event.inputs.dateInput }}`.
         files: ${{ github.workspace }}/${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV156.zip
+
+
