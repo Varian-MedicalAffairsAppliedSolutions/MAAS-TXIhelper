@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace ModulationComplexity.Models
 {
@@ -17,6 +18,7 @@ namespace ModulationComplexity.Models
         public double stALPO { get; set; }
         public double BI { get; set; }
         public double BA { get; set; }  
+
 
         public ListItem(string field, double[] input)
         {

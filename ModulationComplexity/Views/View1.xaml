@@ -5,9 +5,10 @@
         xmlns:vms="clr-namespace:ViewModels"
         Height="580" Width="580">
     <UserControl.Resources>
+        <Style TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
     </UserControl.Resources>
-
-
 
         <Grid>
             <Grid.RowDefinitions>
@@ -23,16 +24,16 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <ListView ItemsSource="{Binding ListItems}" Grid.RowSpan="6">
+        <ListView HorizontalAlignment="Stretch" ItemsSource="{Binding ListItems}" Grid.RowSpan="6" HorizontalContentAlignment="Stretch">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Field"  DisplayMemberBinding="{Binding Path=Field, StringFormat=N4}"/>
-                    <GridViewColumn Header="Avg Area"  DisplayMemberBinding="{Binding Path=avgArea, StringFormat=N4}"/>
-                    <GridViewColumn Header="Std Area"  DisplayMemberBinding="{Binding Path=stdArea, StringFormat=N4}"/>
-                    <GridViewColumn Header="ALPO"  DisplayMemberBinding="{Binding Path=ALPO, StringFormat=N4}"/>
-                    <GridViewColumn Header="stdALPO"  DisplayMemberBinding="{Binding Path=stdALPO, StringFormat=N4}"/>
-                    <GridViewColumn Header="BI"  DisplayMemberBinding="{Binding Path=BI, StringFormat=N4}"/>
-                    <GridViewColumn Header="BA"  DisplayMemberBinding="{Binding Path=BA, StringFormat=N4}"/>
+                    <GridViewColumn Header="Field" Width="80" DisplayMemberBinding="{Binding Path=Field, StringFormat=N4}"/>
+                    <GridViewColumn Header="Avg Area" Width="80" DisplayMemberBinding="{Binding Path=avgArea, StringFormat=N4}"/>
+                    <GridViewColumn Header="Std Area" Width="80" DisplayMemberBinding="{Binding Path=stdArea, StringFormat=N4}"/>
+                    <GridViewColumn Header="ALPO" Width="80"  DisplayMemberBinding="{Binding Path=ALPO, StringFormat=N4}"/>
+                    <GridViewColumn Header="stdALPO" Width="80"  DisplayMemberBinding="{Binding Path=stdALPO, StringFormat=N4}"/>
+                    <GridViewColumn Header="BI" Width="80"  DisplayMemberBinding="{Binding Path=BI, StringFormat=N4}"/>
+                    <GridViewColumn Header="BA" Width="80" DisplayMemberBinding="{Binding Path=BA, StringFormat=N4}"/>
                 </GridView>
             </ListView.View>
         </ListView>
