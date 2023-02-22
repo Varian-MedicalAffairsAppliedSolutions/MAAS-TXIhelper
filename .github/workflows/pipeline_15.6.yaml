@@ -13,10 +13,10 @@ jobs:
     runs-on: windows-2019
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: ..\..\..\..\packages\ESAPI.15.6.0\lib\net45\
-      PROJECT_NAME: Template2
-      MAJOR_VERSION: 2
-      MINOR_VERSION: 5
-      PATCH_VERSION: 6
+      PROJECT_NAME: ModulationComplexity
+      MAJOR_VERSION: 1
+      MINOR_VERSION: 0
+      PATCH_VERSION: 0
       BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
@@ -35,7 +35,7 @@ jobs:
       id: update_assembly_info
       run: |
         .\.github\workflows\Update-AssemblyInfo.ps1 `
-          -AssemblyInfoFilePath .\Template2\Properties\AssemblyInfo.cs `
+          -AssemblyInfoFilePath .\ModulationComplexity\Properties\AssemblyInfo.cs `
           -ExpirationDate "${{ github.event.inputs.dateInput }}" `
           -MajorVersion ${{ env.MAJOR_VERSION }} `
           -MinorVersion ${{ env.MINOR_VERSION }} `
@@ -60,22 +60,22 @@ jobs:
       
     - name: Print directory
       run: |
-        cd Template2
+        cd ModulationComplexity
         dir
 
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
-        -CsprojFilePath Template2`
-        -CsprojFileName Template2.csproj
+        -CsprojFilePath ModulationComplexity`
+        -CsprojFileName ModulationComplexity.csproj
 
     - name: Build Solution
-      run: msbuild.exe .\Template2\Template2\Template2.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Debug"
+      run: msbuild.exe .\ModulationComplexity\ModulationComplexity\ModulationComplexity.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Debug"
         
     - name: Zip
       run: |
         Compress-Archive `
-          -Path ".\Template2\Template2\bin\Debug\*" `
+          -Path ".\ModulationComplexity\ModulationComplexity\bin\Debug\*" `
           -DestinationPath "${{ github.workspace }}/${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV156.zip"
     
     - name: Create Release
