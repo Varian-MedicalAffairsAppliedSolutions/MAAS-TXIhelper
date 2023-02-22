@@ -49,7 +49,7 @@ namespace ViewModels
         public MainViewModel(ScriptContext context)
         {
             MyHeader = context.ExternalPlanSetup.Id;
-            var isValidated = Template2.Properties.Settings.Default.Validated;
+            var isValidated = ModulationComplexity.Properties.Settings.Default.Validated;
             PostText = "";
             if ( isValidated ) { PostText += " *** Not Validated For Clinical Use ***"; }
 

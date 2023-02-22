@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Template2.Models
+namespace ModulationComplexity.Models
 {
     public class ListItem
     {

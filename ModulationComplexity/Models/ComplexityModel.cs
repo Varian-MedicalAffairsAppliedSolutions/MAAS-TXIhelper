@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using VMS.TPS.Common.Model.API;
 
-namespace Template2.Models
+namespace ModulationComplexity.Models
 {
     internal class ComplexityModel
     {

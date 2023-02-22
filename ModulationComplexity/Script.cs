@@ -144,7 +144,7 @@ namespace VMS.TPS
             }
 
             // Check exp date
-            DateTime exp = Template2.Properties.Settings.Default.ExpDate;
+            DateTime exp = ModulationComplexity.Properties.Settings.Default.ExpDate;
             if (exp < DateTime.Now)
             {
                 MessageBox.Show("Application has expired");
@@ -152,7 +152,7 @@ namespace VMS.TPS
             }
 
             // Initial EULA agreement
-            if (!Template2.Properties.Settings.Default.EULAAgreed)
+            if (!ModulationComplexity.Properties.Settings.Default.EULAAgreed)
             {
                 var res = FlexibleMessageBox.Show(EULA_TEXT, "EULA Agreement", MessageBoxButtons.YesNo);
                 if (res == DialogResult.No)
@@ -161,28 +161,28 @@ namespace VMS.TPS
                 }
                 else
                 {
-                    Template2.Properties.Settings.Default.EULAAgreed = true;
-                    Template2.Properties.Settings.Default.Save();
+                    ModulationComplexity.Properties.Settings.Default.EULAAgreed = true;
+                    ModulationComplexity.Properties.Settings.Default.Save();
                 }
             }
 
             // Display opening msg
-            string msg = $"The current Template2 application is provided AS IS as a non-clinical, research only tool in evaluation only. The current " +
+            string msg = $"The current ModulationComplexity application is provided AS IS as a non-clinical, research only tool in evaluation only. The current " +
             $"application will only be available until {exp.Date} after which the application will be unavailable. " +
             "By Clicking 'Yes' you agree that this application will be evaluated and not utilized in providing planning decision support\n\n" +
-            "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/Template2\n\n" +
+            "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/ModulationComplexity\n\n" +
             "See the FAQ for more information on how to remove this pop-up and expiration";
 
             string msg2 = $"Application will only be available until {exp.Date} after which the application will be unavailable. " +
             "By Clicking 'Yes' you agree that this application will be evaluated and not utilized in providing planning decision support\n\n" +
-            "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/Template2\n\n" +
+            "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/ModulationComplexity\n\n" +
             "See the FAQ for more information on how to remove this pop-up and expiration";
 
             bool foundNoExpire = File.Exists("NOEXPIRE");
 
             if (!foundNoExpire)
             {
-                if (!Template2.Properties.Settings.Default.Validated)
+                if (!ModulationComplexity.Properties.Settings.Default.Validated)
                 {
                     var res = MessageBox.Show(msg, "Agreement  ", MessageBoxButton.YesNo);
                     if (res == MessageBoxResult.No)
@@ -190,7 +190,7 @@ namespace VMS.TPS
                         return;
                     }
                 }
-                else if (Template2.Properties.Settings.Default.Validated)
+                else if (ModulationComplexity.Properties.Settings.Default.Validated)
                 {
                     var res = MessageBox.Show(msg2, "Agreement  ", MessageBoxButton.YesNo);
                     if (res == MessageBoxResult.No)

@@ -16,7 +16,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using Prism.Mvvm;
-using Template2.Models;
+using ModulationComplexity.Models;
 using Prism.Commands;
 using System.Numerics;
 
