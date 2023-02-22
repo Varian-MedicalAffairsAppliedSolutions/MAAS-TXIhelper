@@ -15,10 +15,10 @@ namespace ModulationComplexity.Models
         public double avgArea { get; set; }
         public double stdArea { get; set; }
         public double ALPO { get; set; }    
-        public double stALPO { get; set; }
+        public double stdALPO { get; set; }
         public double BI { get; set; }
         public double BA { get; set; }  
-
+        public double BM { get; set; }
 
         public ListItem(string field, double[] input)
         {
@@ -26,9 +26,10 @@ namespace ModulationComplexity.Models
             avgArea = input[0];
             stdArea = input[1];
             ALPO = input[2];
-            stALPO = input[3];
+            stdALPO = input[3];
             BI = input[4];
             BA = input[5];
+            BM = input[6];
         }
     }
 }
