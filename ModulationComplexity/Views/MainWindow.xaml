@@ -13,7 +13,7 @@
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             <TabControl>
-                <TabItem Name="Tab1" Header="Complexity Stats"/>
+                <TabItem Name="Tab1" Header="{Binding MyHeader}"/>
                
             </TabControl>
 

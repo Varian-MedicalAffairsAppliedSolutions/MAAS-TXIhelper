@@ -17,19 +17,14 @@ namespace ViewModels
 {
 	public class MainViewModel: BindableBase
     {
-
-
-        private string postText;
-
         private string myHeader;
-
         public string MyHeader
         {
             get { return myHeader; }
             set { SetProperty(ref myHeader, value); }
         }
 
-
+        private string postText;
         public string PostText
         {
             get { return postText; }
@@ -48,7 +43,7 @@ namespace ViewModels
 
         public MainViewModel(ScriptContext context)
         {
-            MyHeader = context.ExternalPlanSetup.Id;
+            MyHeader = $"PLAN: {context.ExternalPlanSetup.Id}";
             var isValidated = ModulationComplexity.Properties.Settings.Default.Validated;
             PostText = "";
             if ( isValidated ) { PostText += " *** Not Validated For Clinical Use ***"; }
