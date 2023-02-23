@@ -20,6 +20,10 @@ using ModulationComplexity.Models;
 using Prism.Commands;
 using System.Numerics;
 using JR.Utils.GUI.Forms;
+using System.Windows.Controls;
+using NLog.Layouts;
+using System.Resources;
+using ModulationComplexity.CustomWidgets;
 
 // TODO
 // Button that shows formula
@@ -30,6 +34,10 @@ namespace ViewModels
     public class View1Model : BindableBase
     {
         private ScriptContext context;
+
+        private Window SubWindow;
+
+        public string AboutURI { get; set; }
 
         public DelegateCommand AboutCmd { get; set; }
 
@@ -42,6 +50,13 @@ namespace ViewModels
 
         internal ComplexityModel ComplexityModel { get; }
 
+        private bool showWindow;
+
+        public bool ShowWindow
+        {
+            get { return showWindow; }
+            set { SetProperty(ref showWindow, value); }
+        }
 
 
         public View1Model(ScriptContext currentContext)
@@ -56,35 +71,28 @@ namespace ViewModels
             //ExeCmd = new DelegateCommand(OnExe);
             SaveCmd = new DelegateCommand(OnSave);
             AboutCmd = new DelegateCommand(OnAbout);
+
+            SubWindow = new Window();
+            SubWindow.Height = 500;
+            SubWindow.Width = 500;
+            SubWindow.Title = "About";
+            SubWindow.Content = new BindableRichTextBox()
+            {
+                IsReadOnly= true,
+                Source = new Uri(@"pack://application:,,,/ModulationComplexity.esapi;component/Resources/About.rtf"),
+                
+            };
+            
+
+            
         }
 
         private void OnAbout()
         {
-            // Read XML Text
 
-            string txt = @"
-Plan Complexity Analyser
-Authors: 
-Esa Kuusela, Varian Medical Systems.
-Filippo Cozzi. Liceo Scientifico A. Sereni, Luino, Italy
-
-The script executes an analysis of the plan complexity for IMRT and VMAT on a field per field basis and extracts some quantitative metrics from the MLC sequences.
-NOTE:  the tool currently works only for c-arm linacs (e.g. TrueBeam) and it is not intended for dual layer MLC based machines like Halcyon.  It will be upgraded soon.
-
-Average aperture area (in mm2).  It is the MLC defined open field averaged over all the control points in the field.  It is provided with its standard deviation.
-
-Average aperture per leaf couple (in mm), ALPO:  it is the per-leaf-pair aperture averaged per each control point and over all the control points in the field. It is provided with its standard deviation.
-
-Detailed descriptions and discussion of BA, BI and BM can be found in Du et al [1] and a more general overview in the chapter 8 of [2].
-
-References:
-[1] Du W, Cho S H, Zhang X, Hoffman K E and Kudchadker R J 2014 Quantification of beam complexity in intensity-modulated radiation therapy treatment plans Med. Phys. 41 021716
-
-[2]. Das. I. , Sanfilippo N, Fogliata A, Cozzi L.    Intensity modulated radiation therapy. A clinical overview.    IOP Publishing, Bristol, UK, 2020";
-
-            
-            FlexibleMessageBox.Show(txt, "About Modulation-Complexity Plugin");
+            SubWindow.Show();
         }
+
 
         private void OnSave()
         {

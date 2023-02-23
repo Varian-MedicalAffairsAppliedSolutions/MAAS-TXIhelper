@@ -157,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FlexibleMessageBox.cs" />
+    <Compile Include="CustomWidgets\BindableRichTextBox.cs" />
     <Compile Include="Models\ComplexityModel.cs" />
     <Compile Include="Models\ListItem.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -201,6 +202,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Resource Include="Resources\About.rtf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <None Include="VarianLUSLA.pdf" />
   </ItemGroup>
   <ItemGroup>
