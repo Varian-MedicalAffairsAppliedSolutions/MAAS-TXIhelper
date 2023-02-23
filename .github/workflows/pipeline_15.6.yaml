@@ -78,7 +78,7 @@ jobs:
     - name: Zip
       run: |
         Compress-Archive `
-          -Path ".\Template2\bin\Release\*" `
+          -Path ".\Template2\bin\Debug\*" `
           -DestinationPath "${{ github.workspace }}/${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV156.zip"
     
     - name: Create Release
