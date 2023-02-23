@@ -48,7 +48,7 @@ jobs:
         nuget-version: latest
         
     - name: Download nuget packages
-      run: nuget install .\Template2\packages.config -OutputDirectory packages
+      run: nuget install .\Template2\packages.config -OutputDirectory Template2\packages
 
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
@@ -59,7 +59,7 @@ jobs:
         -StorePasswordInClearText
 
     - name: Download nuget package
-      run: nuget install ESAPI -Version 15.6.0 -OutputDirectory ..\packages
+      run: nuget install ESAPI -Version 15.6.0 -OutputDirectory Template2\packages
       
     - name: Print directory
       run: |
