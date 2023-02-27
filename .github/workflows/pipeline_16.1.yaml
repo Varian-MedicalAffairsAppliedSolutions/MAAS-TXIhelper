@@ -69,6 +69,9 @@ jobs:
     - name: Download nuget package
       run: nuget install ESAPI -Version 16.1.0 -OutputDirectory ModulationComplexity\packages
 
+    - name: Update nuget packages to match framework
+      run: nuget Update-Package -Reinstall
+
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
