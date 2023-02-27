@@ -34,7 +34,7 @@ jobs:
     - name: Update Target Framework Version to 4.8
       uses: Nambers/ReplaceStringInFile@v1.1
       with:
-        path: .\ModulationComplexity\ModulationComplexity.csproj
+        path: .\odulationComplexity\ModulationComplexity.csproj
         oldString: "TargetFrameworkVersion>v[\\d\\.]+<"
         newString: 'TargetFrameworkVersion>v4.8<'
 
