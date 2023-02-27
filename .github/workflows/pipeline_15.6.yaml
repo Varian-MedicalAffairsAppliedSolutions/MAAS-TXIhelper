@@ -13,7 +13,11 @@ jobs:
     runs-on: windows-2019
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: packages\ESAPI.15.6.0\lib\net45\
+<<<<<<< HEAD
       PROJECT_NAME: ModulationComplexity
+=======
+      PROJECT_NAME: Template2
+>>>>>>> 1efd1708de10f90043d4b4039f1d1bf2a3811d0f
       MAJOR_VERSION: 2
       MINOR_VERSION: 5
       PATCH_VERSION: 6
@@ -48,7 +52,11 @@ jobs:
         nuget-version: latest
         
     - name: Download nuget packages
+<<<<<<< HEAD
       run: nuget install .\ModulationComplexity\packages.config -OutputDirectory ModulationComplexity\packages
+=======
+      run: nuget install .\Template2\packages.config -OutputDirectory Template2\packages
+>>>>>>> 1efd1708de10f90043d4b4039f1d1bf2a3811d0f
 
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
@@ -59,22 +67,38 @@ jobs:
         -StorePasswordInClearText
 
     - name: Download nuget package
+<<<<<<< HEAD
       run: nuget install ESAPI -Version 15.6.0 -OutputDirectory ModulationComplexity\packages
+=======
+      run: nuget install ESAPI -Version 15.6.0 -OutputDirectory Template2\packages
+>>>>>>> 1efd1708de10f90043d4b4039f1d1bf2a3811d0f
       
 
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
+<<<<<<< HEAD
         -CsprojFilePath .\ModulationComplexity\ `
         -CsprojFileName ModulationComplexity.csproj
     
     - name: Build Solution
       run: msbuild.exe .\ModulationComplexity\ModulationComplexity.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Release"
+=======
+        -CsprojFilePath .\Template2\ `
+        -CsprojFileName Template2.csproj
+
+    - name: Build Solution
+      run: msbuild.exe .\Template2\Template2.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Release"
+>>>>>>> 1efd1708de10f90043d4b4039f1d1bf2a3811d0f
         
     - name: Zip
       run: |
         Compress-Archive `
+<<<<<<< HEAD
           -Path ".\ModulationComplexity\bin\Debug\*" `
+=======
+          -Path ".\Template2\bin\Debug\*" `
+>>>>>>> 1efd1708de10f90043d4b4039f1d1bf2a3811d0f
           -DestinationPath "${{ github.workspace }}/${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV156.zip"
     
     - name: Create Release

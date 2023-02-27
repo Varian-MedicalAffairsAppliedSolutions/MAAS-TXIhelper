@@ -1,9 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\.github",
     "\\.github\\workflows",
     "\\ModulationComplexity"
   ],
-  "SelectedNode": "\\ModulationComplexity\\Views",
+  "SelectedNode": "\\.github\\workflows\\pipeline_15.6.yaml",
   "PreviewInSolutionExplorer": false
 }
