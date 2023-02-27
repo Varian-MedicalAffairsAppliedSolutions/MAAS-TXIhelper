@@ -1,10 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\.github",
     "\\.github\\workflows",
     "\\ModulationComplexity"
   ],
-  "SelectedNode": "\\.github\\workflows\\pipeline_15.6.yaml",
+  "SelectedNode": "\\.gitattributes",
   "PreviewInSolutionExplorer": false
 }
