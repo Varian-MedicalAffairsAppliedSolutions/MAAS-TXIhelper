@@ -70,7 +70,7 @@ jobs:
       run: nuget install ESAPI -Version 16.1.0 -OutputDirectory ModulationComplexity\packages
 
     - name: Update nuget packages to match framework
-      run: nuget update .\ModulationComplexity\ModulationComplexity.csproj -RepositoryPath ModulationComplexity\packages
+      run: nuget update .\ModulationComplexity\ModulationComplexity.csproj -RepositoryPath ModulationComplexity\packages -Id Prism
 
     - name: Update hint paths in the csproj file
       run: |
