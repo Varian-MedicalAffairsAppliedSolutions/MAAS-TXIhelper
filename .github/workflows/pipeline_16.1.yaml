@@ -69,7 +69,7 @@ jobs:
         -StorePasswordInClearText
 
     - name: Download nuget package
-      run: nuget install ESAPI -Version 16.1.0 -OutputDirectory packages
+      run: nuget install ESAPI -Version 16.1.0 -OutputDirectory ModulationComplexity\packages
 
     - name: Update hint paths in the csproj file
       run: |
