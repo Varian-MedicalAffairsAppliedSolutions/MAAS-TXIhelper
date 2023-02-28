@@ -54,6 +54,9 @@ jobs:
       with:
         nuget-version: latest
 
+    - name: Download nuget packages
+      run: nuget install .\ModulationComplexity\packages.config -OutputDirectory ModulationComplexity\packages
+
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
         -Name github `
@@ -62,7 +65,7 @@ jobs:
         -Password ${{ secrets.GITHUB_TOKEN }} `
         -StorePasswordInClearText
 
-    - name: Download nuget package
+    - name: Download ESAPI nuget package
       run: nuget install ESAPI -Version 17.0.0 -OutputDirectory ModulationComplexity/packages
 
     - name: Update hint paths in the csproj file
