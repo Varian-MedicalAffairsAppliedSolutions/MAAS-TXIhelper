@@ -20,9 +20,9 @@ jobs:
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: packages\ESAPI.16.1.0\lib\net461\
       PROJECT_NAME: ModulationComplexity
-      MAJOR_VERSION: 2
-      MINOR_VERSION: 5
-      PATCH_VERSION: 6
+      MAJOR_VERSION: 1
+      MINOR_VERSION: 0
+      PATCH_VERSION: 0
       BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
@@ -69,8 +69,6 @@ jobs:
     - name: Download ESAPI package
       run: nuget install ESAPI -Version 16.1.0 -OutputDirectory ModulationComplexity\packages
 
-    #- name: Update nuget packages to match framework
-    #  run: nuget update .\ModulationComplexity\ModulationComplexity.csproj -RepositoryPath ModulationComplexity\packages -Id Prism
 
     - name: Update hint paths in the csproj file
       run: |

@@ -14,9 +14,9 @@ jobs:
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: packages\ESAPI.17.0.0\lib\net48\
       PROJECT_NAME: ModulationComplexity
-      MAJOR_VERSION: 2
-      MINOR_VERSION: 5
-      PATCH_VERSION: 6
+      MAJOR_VERSION: 1
+      MINOR_VERSION: 0
+      PATCH_VERSION: 0
       BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
@@ -65,7 +65,7 @@ jobs:
         -Password ${{ secrets.GITHUB_TOKEN }} `
         -StorePasswordInClearText
 
-    - name: Download ESAPI nuget package
+    - name: Download ESAPI package
       run: nuget install ESAPI -Version 17.0.0 -OutputDirectory ModulationComplexity/packages
 
     - name: Update hint paths in the csproj file
