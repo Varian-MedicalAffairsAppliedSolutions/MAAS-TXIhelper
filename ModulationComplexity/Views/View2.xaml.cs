@@ -16,7 +16,6 @@ using System.Windows.Shapes;
 
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
-using NLog;
 using System.Net.NetworkInformation;
 using System.ComponentModel;
 using ViewModels;

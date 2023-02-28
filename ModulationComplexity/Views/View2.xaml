@@ -1,7 +1,6 @@
 ﻿<UserControl x:Class="Views.View2"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:nlog ="clr-namespace:NlogViewer;assembly=NlogViewer"
         xmlns:local="clr-namespace:Views" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         Height="580" Width="580">

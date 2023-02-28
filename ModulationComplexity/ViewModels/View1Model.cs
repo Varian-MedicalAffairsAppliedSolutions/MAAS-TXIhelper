@@ -21,7 +21,6 @@ using Prism.Commands;
 using System.Numerics;
 using JR.Utils.GUI.Forms;
 using System.Windows.Controls;
-using NLog.Layouts;
 using System.Resources;
 using ModulationComplexity.CustomWidgets;
 

@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 using Views;
-using NLog.LayoutRenderers;
+
 using System.Net.NetworkInformation;
 using System.IO;
 using JR.Utils.GUI.Forms;

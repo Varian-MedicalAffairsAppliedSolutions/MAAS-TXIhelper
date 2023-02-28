@@ -1,9 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\.github",
     "\\.github\\workflows",
     "\\ModulationComplexity"
   ],
-  "SelectedNode": "\\.gitattributes",
+  "SelectedNode": "\\ModulationComplexity\\packages2.config",
   "PreviewInSolutionExplorer": false
 }

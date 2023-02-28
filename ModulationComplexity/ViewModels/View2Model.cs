@@ -1,6 +1,4 @@
-﻿using NLog;
-using NLog.Config;
-using NLog.Extensions.Logging;
+﻿
 using Prism.Modularity;
 using Prism.Mvvm;
 using System;
