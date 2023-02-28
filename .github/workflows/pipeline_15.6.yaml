@@ -6,7 +6,7 @@ on:
       dateInput:
         description: 'Expiration Date'
         required: true
-        default: '7/11/2023'
+        default: '1/1/2024'
 
 jobs:
   build:
