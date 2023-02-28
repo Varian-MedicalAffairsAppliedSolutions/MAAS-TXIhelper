@@ -23,6 +23,8 @@ using JR.Utils.GUI.Forms;
 using System.Windows.Controls;
 using System.Resources;
 using ModulationComplexity.CustomWidgets;
+using System.Windows.Controls.Primitives;
+using Views;
 
 // TODO
 // Button that shows formula
@@ -49,13 +51,7 @@ namespace ViewModels
 
         internal ComplexityModel ComplexityModel { get; }
 
-        private bool showWindow;
-
-        public bool ShowWindow
-        {
-            get { return showWindow; }
-            set { SetProperty(ref showWindow, value); }
-        }
+        public DelegateCommand ShowWindowCmd { get;set ; }
 
 
         public View1Model(ScriptContext currentContext)
@@ -70,6 +66,7 @@ namespace ViewModels
             //ExeCmd = new DelegateCommand(OnExe);
             SaveCmd = new DelegateCommand(OnSave);
             AboutCmd = new DelegateCommand(OnAbout);
+            //ShowWindowCmd = new DelegateCommand(OnShowWindow);
 
             SubWindow = new Window();
             SubWindow.Height = 500;
@@ -79,16 +76,21 @@ namespace ViewModels
             {
                 IsReadOnly= true,
                 Source = new Uri(@"pack://application:,,,/ModulationComplexity.esapi;component/Resources/About.rtf"),
-                
+               
             };
-            
 
-            
+            SubWindow.Closing += OnClosing;
+
+        }
+
+        private void OnClosing(object sender, CancelEventArgs e)
+        {
+            SubWindow.Hide();
+            e.Cancel = true;
         }
 
         private void OnAbout()
         {
-
             SubWindow.Show();
         }
 

@@ -24,8 +24,6 @@ namespace Views
     public partial class View1 : UserControl
     {
 
-        public ViewModels.View1Model vm { get; set; }
-
         public View1(ScriptContext context)
         {
             InitializeComponent();

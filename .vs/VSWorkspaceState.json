@@ -3,8 +3,9 @@
     "",
     "\\.github",
     "\\.github\\workflows",
-    "\\ModulationComplexity"
+    "\\ModulationComplexity",
+    "\\ModulationComplexity\\Properties"
   ],
-  "SelectedNode": "\\ModulationComplexity\\packages2.config",
+  "SelectedNode": "\\ModulationComplexity\\Resources",
   "PreviewInSolutionExplorer": false
 }
