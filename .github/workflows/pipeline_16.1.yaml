@@ -19,7 +19,7 @@ jobs:
     runs-on: windows-2019
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: packages\ESAPI.16.1.0\lib\net461\
-      PROJECT_NAME: ModulationComplexity
+      PROJECT_NAME: PlanComplexity
       MAJOR_VERSION: 1
       MINOR_VERSION: 0
       PATCH_VERSION: 0
@@ -89,7 +89,7 @@ jobs:
       uses: softprops/action-gh-release@v0.1.13
       with:
         name: ${{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV16.1
-        tag_name: ${{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV16.1
+        tag_name: ${{env.PROJECT_NAME}}-{{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV16.1
         token: ${{ secrets.GITHUB_TOKEN }}
         draft: false
         prerelease: false
@@ -97,4 +97,4 @@ jobs:
           This is an official release of the **`${{ env.PROJECT_NAME }}`** project.
           Supported Eclipse version: `v16.1`.
           The generated dll is valid until `${{ github.event.inputs.dateInput }}`.
-        files: $PlanComplexity {{ github.workspace }}/${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV161.zip
+        files: ${{ github.workspace }}/${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV161.zip
