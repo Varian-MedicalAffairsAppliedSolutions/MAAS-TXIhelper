@@ -87,4 +87,4 @@ jobs:
           This is an official release of the **`${{ env.PROJECT_NAME }}`** project.
           Supported Eclipse version: `v15.6`.
           The generated dll is valid until `${{ github.event.inputs.dateInput }}`.
-        files: ${{ github.workspace }}/${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV156.zip
+        files: $PlanComplexity {{ github.workspace }}/${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV156.zip
