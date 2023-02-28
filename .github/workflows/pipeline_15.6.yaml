@@ -46,8 +46,8 @@ jobs:
       with:
         nuget-version: latest
         
-    - name: Download nuget packages
-      run: nuget install .\ModulationComplexity\packages.config -OutputDirectory ModulationComplexity\packages
+    #- name: Download nuget packages
+    #  run: nuget install .\ModulationComplexity\packages.config -OutputDirectory ModulationComplexity\packages
 
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
