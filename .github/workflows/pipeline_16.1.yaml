@@ -55,8 +55,8 @@ jobs:
           -PatchVersion ${{ env.PATCH_VERSION }} `
           -BuildNumber ${{ env.BUILD_NUMBER }}
 
-    #- name: Download nuget packages
-    #  run: nuget install .\ModulationComplexity\packages.config -OutputDirectory ModulationComplexity\packages
+    - name: Download nuget packages
+      run: nuget install .\ModulationComplexity\packages.config -OutputDirectory ModulationComplexity\packages
 
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
