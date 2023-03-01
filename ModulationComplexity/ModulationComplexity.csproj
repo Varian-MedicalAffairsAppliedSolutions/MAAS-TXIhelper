@@ -135,7 +135,7 @@
     <Compile Include="Models\ListItem.cs" />
     <Compile Include="Models\SettingsClass.cs" />
     <Compile Include="Properties\AssemblyExpirationDate.cs" />
-    <Compile Include="Properties\AssemblyInfo1.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\View2Model.cs" />
     <Compile Include="Script.cs" />
