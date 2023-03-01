@@ -10,7 +10,6 @@ namespace ModulationComplexity.Models
     {
         public bool Debug { get; set; }
         public bool Validated { get; set; }
-        public DateTime ExpirationDate { get; set; }
         public bool EULAAgreed { get; set; }
     }
 }
