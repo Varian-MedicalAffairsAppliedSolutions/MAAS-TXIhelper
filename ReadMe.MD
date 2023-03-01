@@ -1,5 +1,6 @@
 ***MAAS-PlanComplexity
-![image](https://user-images.githubusercontent.com/78000769/222256063-1d4b63a3-8825-49f1-95f9-d8da49fb2336.png)
+![image](https://user-images.githubusercontent.com/78000769/222256724-04f3dbb9-7178-4f26-8e8c-e25cdaa2c38a.png)
+
 Plan Complexity Analyser
 Authors: 
 Esa Kuusela, Varian Medical Systems.
