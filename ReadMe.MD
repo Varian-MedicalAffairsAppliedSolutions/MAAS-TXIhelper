@@ -49,6 +49,6 @@ Detailed descriptions and discussion of BA, BI and BM can be found in Du et al [
 
 References:
 
-[1] Du W, Cho S H, Zhang X, Hoffman K E and Kudchadker R J 2014 Quantification of beam complexity in intensity-modulated radiation therapy treatment plans Med. Phys. 41 021716 https://aapm.onlinelibrary.wiley.com/doi/abs/10.1118/1.4861821
+[1] Du W, Cho S H, Zhang X, Hoffman K E and Kudchadker R J 2014 Quantification of beam complexity in intensity-modulated radiation therapy treatment plans Med. Phys.  https://aapm.onlinelibrary.wiley.com/doi/abs/10.1118/1.4861821
 
 [2]. Das. I. , Sanfilippo N, Fogliata A, Cozzi L.    Intensity modulated radiation therapy. A clinical overview.    IOP Publishing, Bristol, UK, 2020 https://store.ioppublishing.org/page/detail/Intensity-Modulated-Radiation-Therapy//?k=9780750313360
