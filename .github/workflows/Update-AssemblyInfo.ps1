@@ -58,12 +58,12 @@ Foreach-Object {
         Write-Host "Updated $_ to $updatedLine"
         $updatedLine
     }
-    elseif ($_ -match '^\[assembly: ExpirationDateAsmAttribute')
+    elseif ($_ -match '^\[assembly: AssemblyExpirationDate')
     {
-        $_ -match "ExpirationDateAsmAttribute\(`"(?<CurrentExpiration>\S+)`"\)" | Out-Null
+        $_ -match "AssemblyExpirationDate\(`"(?<CurrentExpiration>\S+)`"\)" | Out-Null
         Write-Host "Changing expiration date from $($matches.CurrentExpiration) to $ExpirationDate"
         
-        $updatedLine = $_ -replace "ExpirationDateAsmAttribute\(\S+\)","ExpirationDateAsmAttribute(`"$ExpirationDate`")"
+        $updatedLine = $_ -replace "AssemblyExpirationDate\(\S+\)","AssemblyExpirationDate(`"$ExpirationDate`")"
         Write-Host "Updated $_ to $updatedLine"
 
         $updatedLine
