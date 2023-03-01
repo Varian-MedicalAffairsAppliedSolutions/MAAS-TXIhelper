@@ -16,16 +16,23 @@ NOTE:  the tool currently works only for c-arm linacs (e.g. TrueBeam) and it is 
 * Average aperture per leaf couple (in mm), ALPO:  it is the per-leaf-pair aperture averaged per each control point and over all the control points in the field. It is provided with its standard deviation.
 
 * BA:  it is the beam area weighted on the MU per control point.  BA is defined as:
+
 ![image](https://user-images.githubusercontent.com/78000769/222257941-510952a3-c1ea-46cd-a246-e1ad9bbc2960.png)
+
 Where AAj is the aperture area and j is extended to all the control points.
 
 * BI: beam irregularity. BI is defined as:
+
 ![image](https://user-images.githubusercontent.com/78000769/222258095-3e811fda-a40a-436c-9708-b5f0c176eb79.png)
+
 Where AIj is the aperture irregularity defined as:
+
 ![image](https://user-images.githubusercontent.com/78000769/222258180-e8812303-e411-4d7f-b2ae-a3ede8039ec7.png)
+
 And APj is the aperture perimeter per each control point
 
 * BM: beam modulation. BM is efined as:
+* 
 ![image](https://user-images.githubusercontent.com/78000769/222258323-1fecae2d-8a29-4624-9606-1d3f23261601.png)
 
 Detailed descriptions and discussion of BA, BI and BM can be found in Du et al [1] and a more general overview in the chapter 8 of [2].
