@@ -176,12 +176,14 @@ namespace VMS.TPS
 
             // Check exp date
             //DateTime exp = settings.ExpirationDate;
+            
 
-            if (exp < DateTime.Now)
+            if (exp < DateTime.Now && !foundNoExpire)
             {
                 MessageBox.Show("Application has expired");
                 return;
             }
+            
 
             // Initial EULA agreement
             if (!settings.EULAAgreed)
