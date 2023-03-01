@@ -86,8 +86,8 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v0.1.13
       with:
-        name: ${{env.PROJECT_NAME}}{{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV17.0
-        tag_name: ${{env.PROJECT_NAME}}-{{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV17.0
+        name: ${{env.PROJECT_NAME}}-${{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV17.0
+        tag_name: ${{env.PROJECT_NAME}}-${{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV17.0
         token: ${{ secrets.GITHUB_TOKEN }}
         draft: false
         prerelease: false
