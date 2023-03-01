@@ -40,12 +40,12 @@ namespace ViewModels
         }
 
 
-        public MainViewModel(ScriptContext context)
+        public MainViewModel(ScriptContext context, bool isValidated)
         {
             MyHeader = $"PLAN: {context.ExternalPlanSetup.Id}";
-            var isValidated = ModulationComplexity.Properties.Settings.Default.Validated;
+           
             PostText = "";
-            if ( isValidated ) { PostText += " *** Not Validated For Clinical Use ***"; }
+            if ( !isValidated ) { PostText += " *** Not Validated For Clinical Use ***"; }
 
         }
 

@@ -15,6 +15,9 @@ using JR.Utils.GUI.Forms;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 using ViewModels;
+using ModulationComplexity.Models;
+using Newtonsoft.Json;
+using System.Globalization;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
 [assembly: AssemblyVersion("1.0.0.1")]
@@ -137,14 +140,45 @@ namespace VMS.TPS
         public void Execute(ScriptContext context)
         {
 
+            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var noexp_path = Path.Combine(path, "NOEXPIRE");
+            bool foundNoExpire = File.Exists(noexp_path);
+
+            // search for json config in current dir
+            var json_path = Path.Combine(path, "config.json");
+            if (!File.Exists(json_path)) { throw new Exception($"Could not locate json path {json_path}"); }
+
+            // Test
+            // Create serialized verion of settings
+            /*
+            var settings = new SettingsClass();
+            settings.Debug = false;
+            settings.EULAAgreed = false;
+            settings.Validated= false;
+            settings.ExpirationDate = DateTime.Parse("1/1/2024");
+            File.WriteAllText(Path.Combine(path, "config.json"), JsonConvert.SerializeObject(settings));*/
+
+            var settings = JsonConvert.DeserializeObject<SettingsClass>(File.ReadAllText(json_path));
+
             if (context.Patient == null || context.PlanSetup == null)
             {
                 MessageBox.Show("No active plan selected - exiting.");
                 return;
             }
 
+            //var asmCa = typeof(StartupCore).Assembly.CustomAttributes.FirstOrDefault(ca => ca.AttributeType == typeof(AssemblyExpirationDate));
+            //if (configUpdate != null && DateTime.TryParse(asmCa.ConstructorArguments.FirstOrDefault().Value as string, provider, DateTimeStyles.None, out endDate) && eulaValue == "true")
+
+            var asmCa = Assembly.GetExecutingAssembly().CustomAttributes.FirstOrDefault(ca => ca.AttributeType == typeof(AssemblyExpirationDate));
+            DateTime exp;
+            var provider = new CultureInfo("en-US");
+            DateTime.TryParse(asmCa.ConstructorArguments.FirstOrDefault().Value as string, provider, DateTimeStyles.None, out exp);
+
+            //MessageBox.Show(exp.ToString());
+
             // Check exp date
-            DateTime exp = ModulationComplexity.Properties.Settings.Default.ExpDate;
+            //DateTime exp = settings.ExpirationDate;
+
             if (exp < DateTime.Now)
             {
                 MessageBox.Show("Application has expired");
@@ -152,7 +186,7 @@ namespace VMS.TPS
             }
 
             // Initial EULA agreement
-            if (!ModulationComplexity.Properties.Settings.Default.EULAAgreed)
+            if (!settings.EULAAgreed)
             {
                 var res = FlexibleMessageBox.Show(EULA_TEXT, "EULA Agreement", MessageBoxButtons.YesNo);
                 if (res == DialogResult.No)
@@ -161,8 +195,8 @@ namespace VMS.TPS
                 }
                 else
                 {
-                    ModulationComplexity.Properties.Settings.Default.EULAAgreed = true;
-                    ModulationComplexity.Properties.Settings.Default.Save();
+                    settings.EULAAgreed = true;
+                    File.WriteAllText(json_path, JsonConvert.SerializeObject(settings));
                 }
             }
 
@@ -178,11 +212,15 @@ namespace VMS.TPS
             "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/MAAS-PlanComplexity\n\n" +
             "See the FAQ for more information on how to remove this pop-up and expiration";
 
-            bool foundNoExpire = File.Exists("NOEXPIRE");
+            
+
+
+            // Test
+            //MessageBox.Show($"Noexpire found: {foundNoExpire} looked in : {noexp_path}");
 
             if (!foundNoExpire)
             {
-                if (!ModulationComplexity.Properties.Settings.Default.Validated)
+                if (!settings.Validated)
                 {
                     var res = MessageBox.Show(msg, "Agreement  ", MessageBoxButton.YesNo);
                     if (res == MessageBoxResult.No)
@@ -190,7 +228,7 @@ namespace VMS.TPS
                         return;
                     }
                 }
-                else if (ModulationComplexity.Properties.Settings.Default.Validated)
+                else if (settings.Validated)
                 {
                     var res = MessageBox.Show(msg2, "Agreement  ", MessageBoxButton.YesNo);
                     if (res == MessageBoxResult.No)
@@ -200,7 +238,7 @@ namespace VMS.TPS
                 }
             }
 
-            var mainWindow = new MainWindow(context, new MainViewModel(context));
+            var mainWindow = new MainWindow(context, new MainViewModel(context, settings.Validated));
             mainWindow.ShowDialog();
         }
     

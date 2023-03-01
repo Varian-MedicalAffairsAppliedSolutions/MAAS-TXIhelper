@@ -4,8 +4,8 @@
     "\\.github",
     "\\.github\\workflows",
     "\\ModulationComplexity",
-    "\\ModulationComplexity\\Properties"
+    "\\ModulationComplexity\\Views"
   ],
-  "SelectedNode": "\\ModulationComplexity\\Resources",
+  "SelectedNode": "\\ModulationComplexity\\Script.cs",
   "PreviewInSolutionExplorer": false
 }
