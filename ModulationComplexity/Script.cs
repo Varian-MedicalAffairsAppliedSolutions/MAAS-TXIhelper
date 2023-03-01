@@ -20,9 +20,7 @@ using Newtonsoft.Json;
 using System.Globalization;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
-[assembly: AssemblyVersion("1.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
-[assembly: AssemblyInformationalVersion("1.0")]
+
 
 // TODO: Uncomment the following line if the script requires write access.
 //15.x or later:
