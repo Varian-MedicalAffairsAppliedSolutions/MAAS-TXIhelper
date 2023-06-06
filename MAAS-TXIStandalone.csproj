@@ -39,6 +39,9 @@
     <Reference Include="Autofac, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>packages\Autofac.4.0.0\lib\net451\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="EvilDICOM, Version=2.0.2.9, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\EvilDICOM.2.0.2.9\lib\net45\EvilDICOM.dll</HintPath>
+    </Reference>
     <Reference Include="Prism, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Prism.Core.6.0.0\lib\net45\Prism.dll</HintPath>
     </Reference>
@@ -46,6 +49,9 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />

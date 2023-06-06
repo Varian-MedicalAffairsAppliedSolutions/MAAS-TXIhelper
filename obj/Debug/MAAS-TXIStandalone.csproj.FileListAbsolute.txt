@@ -22,3 +22,6 @@ C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone.p
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\bin\Debug\Prism.dll
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\Views\MainView.g.cs
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\Views\MainView.baml
+C:\Users\craman96\source\repos\MAAS-TXIStandalone\bin\Debug\EvilDICOM.dll
+C:\Users\craman96\source\repos\MAAS-TXIStandalone\bin\Debug\System.ValueTuple.dll
+C:\Users\craman96\source\repos\MAAS-TXIStandalone\bin\Debug\System.ValueTuple.xml
