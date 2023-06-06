@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using VMS.TPS.Common.Model.API;
 using System.ComponentModel;
 using Autofac;
+using MAAS_TXIStandalone.Views;
+using MAAS_TXIStandalone.ViewModels;
 
 namespace MAAS_TXIStandalone.Startup
 {
@@ -22,8 +24,8 @@ namespace MAAS_TXIStandalone.Startup
             container.RegisterInstance<PlanSetup>(plan);
 
             //startup components.
-            //container.RegisterType<MainView>().AsSelf();
-            //container.RegisterType<MainViewModel>().AsSelf();
+            container.RegisterType<MainView>().AsSelf();
+            container.RegisterType<MainViewModel>().AsSelf();
 
             return container.Build();
         }
