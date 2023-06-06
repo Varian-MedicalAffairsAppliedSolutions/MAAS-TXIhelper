@@ -1,4 +1,6 @@
-﻿using MAAS_TXIStandalone.Startup;
+﻿using Autofac;
+using MAAS_TXIStandalone.Startup;
+using MAAS_TXIStandalone.Views;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -21,6 +23,7 @@ namespace MAAS_TXIStandalone
         private Patient _patient;
         private Course _course;
         private PlanSetup _plan;
+        private MainView MV;
         private void shutdown()
         {
             _app.Dispose();
@@ -75,7 +78,7 @@ namespace MAAS_TXIStandalone
 
                 var container = bootstrap.Bootstrap(_app.CurrentUser, _app, _patient, _course, _plan);
 
-                //MV = container.Resolve<MainView>();
+                MV = container.Resolve<MainView>();
 
                 //MV.DataContext = container.Resolve<MainViewModel>();
 

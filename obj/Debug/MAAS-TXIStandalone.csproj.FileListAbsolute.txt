@@ -1,6 +1,5 @@
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone.csproj.AssemblyReference.cache
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone.csproj.SuggestedBindingRedirects.cache
-C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MainWindow.g.cs
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\App.g.cs
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone_MarkupCompile.cache
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone_MarkupCompile.lref
@@ -13,7 +12,6 @@ C:\Users\craman96\source\repos\MAAS-TXIStandalone\bin\Debug\VMS.TPS.Common.Model
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\bin\Debug\Autofac.xml
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\bin\Debug\VMS.TPS.Common.Model.API.xml
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\bin\Debug\VMS.TPS.Common.Model.Types.xml
-C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MainWindow.baml
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone.g.resources
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS_TXIStandalone.Properties.Resources.resources
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone.csproj.GenerateResource.cache
@@ -21,3 +19,6 @@ C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone.c
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone.csproj.CopyComplete
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone.exe
 C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\MAAS-TXIStandalone.pdb
+C:\Users\craman96\source\repos\MAAS-TXIStandalone\bin\Debug\Prism.dll
+C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\Views\MainView.g.cs
+C:\Users\craman96\source\repos\MAAS-TXIStandalone\obj\Debug\Views\MainView.baml
