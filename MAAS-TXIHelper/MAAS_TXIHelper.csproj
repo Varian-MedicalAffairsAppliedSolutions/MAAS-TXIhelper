@@ -132,6 +132,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\PlanRotation.cs" />
     <Compile Include="FlexibleMessageBox.cs" />
     <Compile Include="CustomWidgets\BindableRichTextBox.cs" />
     <Compile Include="Models\ListItem.cs" />
