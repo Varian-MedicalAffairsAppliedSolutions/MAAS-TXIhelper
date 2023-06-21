@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Views"
         mc:Ignorable="d"
-        Title="ModulationComplexity" Height="635" Width="635">
+        Title="MAAS_TXIHelper" Height="635" Width="635">
     <DockPanel LastChildFill="False">
         <Grid DockPanel.Dock="Top">
             <Grid.RowDefinitions>

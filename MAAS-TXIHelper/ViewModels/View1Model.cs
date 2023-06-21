@@ -16,13 +16,13 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using Prism.Mvvm;
-using ModulationComplexity.Models;
+using MAAS_TXIHelper.Models;
 using Prism.Commands;
 using System.Numerics;
 using JR.Utils.GUI.Forms;
 using System.Windows.Controls;
 using System.Resources;
-using ModulationComplexity.CustomWidgets;
+using MAAS_TXIHelper.CustomWidgets;
 using System.Windows.Controls.Primitives;
 using Views;
 
@@ -49,7 +49,6 @@ namespace ViewModels
 
         public ObservableCollection<ListItem> ListItems { get; set; }
 
-        internal ComplexityModel ComplexityModel { get; }
 
         public DelegateCommand ShowWindowCmd { get;set ; }
 
@@ -75,7 +74,7 @@ namespace ViewModels
             SubWindow.Content = new BindableRichTextBox()
             {
                 IsReadOnly= true,
-                Source = new Uri(@"pack://application:,,,/ModulationComplexity.esapi;component/Resources/About.rtf"),
+                Source = new Uri(@"pack://application:,,,/MAAS_TXIHelper.esapi;component/Resources/About.rtf"),
                
             };
 

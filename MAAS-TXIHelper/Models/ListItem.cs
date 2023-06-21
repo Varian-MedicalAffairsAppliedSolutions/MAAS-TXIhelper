@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace ModulationComplexity.Models
+namespace MAAS_TXIHelper.Models
 {
     public class ListItem
     {

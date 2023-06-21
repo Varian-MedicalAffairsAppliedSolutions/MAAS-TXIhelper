@@ -1,10 +1,10 @@
 ﻿<UserControl x:Class="Views.View1"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ui="clr-namespace:ModulationComplexity.CustomWidgets"
+        xmlns:ui="clr-namespace:MAAS_TXIHelper.CustomWidgets"
         xmlns:local="clr-namespace:Views"
         xmlns:vms="clr-namespace:ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:customwidgets="clr-namespace:ModulationComplexity.CustomWidgets"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:customwidgets="clr-namespace:MAAS_TXIHelper.CustomWidgets"
              Height="580" Width="580">
     <UserControl.Resources>
         <Style TargetType="ListViewItem">

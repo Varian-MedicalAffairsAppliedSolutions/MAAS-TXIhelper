@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace ModulationComplexity.CustomWidgets
+namespace MAAS_TXIHelper.CustomWidgets
 {
     public sealed class BindableRichTextBox : RichTextBox
     {
