@@ -14,39 +14,34 @@
 
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Button Margin="520, 15, 10, 15" Command="{Binding AboutCmd}">About</Button>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Patient Name:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Course ID:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Plan ID:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Plan Modality:" VerticalAlignment="Center" Margin="5"/>
 
-        <ListView HorizontalAlignment="Stretch" ItemsSource="{Binding ListItems}" Grid.Row="1" Grid.RowSpan="6" 
-                  HorizontalContentAlignment="Stretch">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Field" Width="70" DisplayMemberBinding="{Binding Path=Field, StringFormat=N4}"/>
-                    <GridViewColumn Header="Avg Area" Width="70" DisplayMemberBinding="{Binding Path=avgArea, StringFormat=N4}"/>
-                    <GridViewColumn Header="Std Area" Width="70" DisplayMemberBinding="{Binding Path=stdArea, StringFormat=N4}"/>
-                    <GridViewColumn Header="ALPO" Width="70"  DisplayMemberBinding="{Binding Path=ALPO, StringFormat=N4}"/>
-                    <GridViewColumn Header="stdALPO" Width="70"  DisplayMemberBinding="{Binding Path=stdALPO, StringFormat=N4}"/>
-                    <GridViewColumn Header="BI" Width="70"  DisplayMemberBinding="{Binding Path=BI, StringFormat=N4}"/>
-                    <GridViewColumn Header="BA" Width="70" DisplayMemberBinding="{Binding Path=BA, StringFormat=N4}"/>
-                    <GridViewColumn Header="BM" Width="70" DisplayMemberBinding="{Binding Path=BM, StringFormat=N4}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <TextBlock x:Name="lblPatientName" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock x:Name="lblCourseId" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock x:Name="lblPlanId" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock x:Name="lblPlanModality" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
 
-        <Button Grid.Row="8" Margin="10" Command="{Binding SaveCmd}">Save as CSV</Button>
-
+        <Label Grid.Row="4" Grid.Column="0" Content="Log File Path:" VerticalAlignment="Center" Margin="5"/>
+        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+            <TextBlock x:Name="lblLogFilePath" VerticalAlignment="Center"/>
+            <Button Content="Select File" Click="{Binding SelectLogPathCmd}" Margin="5"/>
+        </StackPanel>
     </Grid>
-        
+
 </UserControl>
