@@ -27,18 +27,10 @@ namespace Views
         public View1(ScriptContext context)
         {
             InitializeComponent();
-            //this.vm = new View1Model(context);
             DataContext = new View1Model(context); //this.vm;
 
         }
-        /*
-        private RoutedEventHandler OnLoaded(object sender, RoutedEventArgs e)
-        {
 
-        }*/
-
-
-        
 
      
     }
