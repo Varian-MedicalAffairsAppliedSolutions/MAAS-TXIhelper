@@ -9,8 +9,8 @@ using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 using System.Windows.Documents;
 using System.Windows.Controls;
-
-
+using System.Windows;
+using Application = VMS.TPS.Common.Model.API.Application;
 
 namespace PlanRotation
 {
@@ -93,6 +93,607 @@ namespace PlanRotation
             }
             return newLeaves;
         }
+        
+        public void FlipHalcyonArc(Course course, ExternalPlanSetup ps, string logName, bool toNewPlan, bool calcDose, bool usePresetMU)
+        {
+            var beams = ps.Beams.Where(b => !b.IsImagingTreatmentField && !b.IsSetupField).ToList();
+            int numTxBeams = beams.Count();
+            ExternalBeamMachineParameters[] machineParameters = new ExternalBeamMachineParameters[numTxBeams];
+            string[] machineID = new string[numTxBeams];
+            string[] beamId = new string[numTxBeams];
+            string[] newBeamId = new string[numTxBeams];
+            string[] beamName = new string[numTxBeams];
+            int[] doseRate = new int[numTxBeams];
+            string[] energyModeId = new string[numTxBeams];
+            string[] primaryFluenceModeId = new string[numTxBeams];
+            string[] technique = new string[numTxBeams];
+            MLCPlanType[] mlcType = new MLCPlanType[numTxBeams];
+            double[] collimatorAngle = new double[numTxBeams];
+            double[] gantryStartAngle = new double[numTxBeams];
+            double[] gantryStopAngle = new double[numTxBeams];
+            GantryDirection[] gantryDirection = new GantryDirection[numTxBeams];
+            int[] numControlPoints = new int[numTxBeams];
+            double[] patientSupportAngle = new double[numTxBeams];
+            VVector[] isocenterPosition = new VVector[numTxBeams];
+            VRect<double>[] jawPositions = new VRect<double>[numTxBeams];
+            double[] weightFactor = new double[numTxBeams];
+            MetersetValue[] meterset = new MetersetValue[numTxBeams];
+            float[][,] leafPositions = new float[numTxBeams][,];
+            var cpsList = new ArrayList();
+            int indexTxBeams = 0;
+
+            foreach (Beam beam in beams)
+            {
+                
+                using (StreamWriter w = File.AppendText(logName))  // log original beam data
+                {
+                    w.AutoFlush = true;
+                    string log = $"Analyzing beam: \"{beam.Id}\" (name: \"{beam.Name}\"). Technique: \"{beam.Technique.Id}\".";
+                    log += $" Control point number = {beam.ControlPoints.Count}.";
+                    log += $" Weight factor = {beam.WeightFactor}.";
+                    Log(log, w);
+                    foreach (var cps in beam.ControlPoints)
+                    {
+                        log = $"Control Point {cps.Index}. Gantry = {cps.GantryAngle}; Collimator = {cps.CollimatorAngle}; ";
+                        log += $"X1 Jaw = {cps.JawPositions.X1} mm; ";
+                        log += $"X2 Jaw = {cps.JawPositions.X2} mm; ";
+                        log += $"Y1 Jaw = {cps.JawPositions.Y1} mm; ";
+                        log += $"Y2 Jaw = {cps.JawPositions.Y2} mm; ";
+                        log += $"Meterweight = {cps.MetersetWeight}, ";
+                        float[,] leaves = cps.LeafPositions;
+                        log += $"{leaves.Length} leaf positions. ";
+                        log += $"Leaf position array rank: {leaves.Rank}.";
+                        for (int i = 0; i < leaves.Rank; i++)
+                        {
+                            log += $" Array length at dimension {i}: {leaves.GetLength(i)}";
+                        }
+                        Log(log, w);
+                        for (int i = 0; i < leaves.GetLength(0); i++)
+                        {
+                            log = $"[{i}, x]: ";
+                            for (int j = 0; j < leaves.GetLength(1); j++)
+                            {
+                                log += $"{string.Format("{0, 7:##0.00}", leaves[i, j])}";
+                                if (j < leaves.GetLength(1) - 1)
+                                {
+                                    log += ", ";
+                                }
+                                else
+                                {
+                                    Log(log, w);
+                                }
+                            }
+                        }
+                    }
+                }
+                ExternalBeamTreatmentUnit machine = beam.TreatmentUnit;
+                machineID[indexTxBeams] = machine.Id;
+                beamId[indexTxBeams] = beam.Id;
+                beamName[indexTxBeams] = beam.Name;
+                doseRate[indexTxBeams] = beam.DoseRate;
+                energyModeId[indexTxBeams] = beam.EnergyModeDisplayName;
+                technique[indexTxBeams] = beam.Technique.ToString();
+                if (energyModeId[indexTxBeams].Contains("-") && energyModeId[indexTxBeams].Split('-')[1] == "FFF")
+                {
+                    primaryFluenceModeId[indexTxBeams] = energyModeId[indexTxBeams].Split('-')[1];
+                    energyModeId[indexTxBeams] = energyModeId[indexTxBeams].Split('-')[0];
+                }
+                else
+                {
+                    primaryFluenceModeId[indexTxBeams] = null;
+                }
+                mlcType[indexTxBeams] = beam.MLCPlanType;
+                weightFactor[indexTxBeams] = beam.WeightFactor;
+                meterset[indexTxBeams] = beam.Meterset;
+                machineParameters[indexTxBeams] = new ExternalBeamMachineParameters(machineID[indexTxBeams], energyModeId[indexTxBeams],
+                    doseRate[indexTxBeams], technique[indexTxBeams], primaryFluenceModeId[indexTxBeams]);
+                machineParameters[indexTxBeams].MLCId = @"SX2 MLC";
+                collimatorAngle[indexTxBeams] = beam.ControlPoints[0].CollimatorAngle;
+                patientSupportAngle[indexTxBeams] = beam.ControlPoints[0].PatientSupportAngle;
+                numControlPoints[indexTxBeams] = beam.ControlPoints.Count;
+                isocenterPosition[indexTxBeams] = beam.IsocenterPosition;
+                jawPositions[indexTxBeams] = beam.ControlPoints[0].JawPositions;
+                leafPositions[indexTxBeams] = beam.ControlPoints[0].LeafPositions;
+                gantryStartAngle[indexTxBeams] = beam.ControlPoints.First().GantryAngle;
+                gantryStopAngle[indexTxBeams] = beam.ControlPoints.Last().GantryAngle;
+                gantryDirection[indexTxBeams] = beam.GantryDirection;
+                // Next we rotate the beam.
+                // First rotate the gantry for the beam.
+                if (gantryStartAngle[indexTxBeams] != 0)
+                {
+                    gantryStartAngle[indexTxBeams] = 360 - gantryStartAngle[indexTxBeams];
+                }
+                if (gantryStopAngle[indexTxBeams] != 0)
+                {
+                    gantryStopAngle[indexTxBeams] = 360 - gantryStopAngle[indexTxBeams];
+                }
+                if (gantryDirection[indexTxBeams] == GantryDirection.Clockwise)
+                {
+                    gantryDirection[indexTxBeams] = GantryDirection.CounterClockwise;
+                }
+                else if (gantryDirection[indexTxBeams] == GantryDirection.CounterClockwise)
+                {
+                    gantryDirection[indexTxBeams] = GantryDirection.Clockwise;
+                }
+                VRect<double> currentJaws = jawPositions[indexTxBeams];
+                VRect<double> newJaws = new VRect<double>(-currentJaws.X2, -currentJaws.Y2, -currentJaws.X1, -currentJaws.Y1);
+                jawPositions[indexTxBeams] = newJaws;
+                if (collimatorAngle[indexTxBeams] >= 90 && collimatorAngle[indexTxBeams] <= 270)
+                {
+                    collimatorAngle[indexTxBeams] += 180;
+                    if (collimatorAngle[indexTxBeams] >= 360)
+                    {
+                        collimatorAngle[indexTxBeams] = collimatorAngle[indexTxBeams] - 360;
+                    }
+                    List<CPModel> cpList = new List<CPModel>();
+                    foreach (var cps in beam.ControlPoints)
+                    {
+                        int numLeafPairs = cps.LeafPositions.GetLength(1);
+                        cpList.Add(new CPModel(numLeafPairs)
+                        {
+                            GantryAngle = cps.GantryAngle,
+                            JawPositions = cps.JawPositions,
+                            MetersetWeight = cps.MetersetWeight,
+                            CollimatorAngle = cps.CollimatorAngle,
+                            MLCPositions = cps.LeafPositions
+                        });
+                    }
+                    cpsList.Add(cpList);
+                }
+                else
+                {
+                    List<CPModel> cpList = new List<CPModel>();
+                    float icp = 0;
+                    foreach (var cps in beam.ControlPoints)
+                    {
+                        float[,] currentLeaves = cps.LeafPositions;
+                        float[,] newLeaves = Rotated(cps.LeafPositions);
+                        cpList.Add(new CPModel
+                        {
+                            GantryAngle = cps.GantryAngle,
+                            JawPositions = new VRect<double>(-cps.JawPositions.X2, -cps.JawPositions.Y2, -cps.JawPositions.X1, -cps.JawPositions.Y1),
+                            MetersetWeight = cps.MetersetWeight,
+                            CollimatorAngle = cps.CollimatorAngle,
+                            MLCPositions = newLeaves
+                        });
+                        icp++;
+                    }
+                    cpsList.Add(cpList);
+                }
+                indexTxBeams++;
+            }
+            
+            if (toNewPlan)
+            {
+                ExternalPlanSetup newPlan = course.AddExternalPlanSetup(ps.StructureSet);
+                WriteInColor($"New plan created with ID: {newPlan.Id}.\n");
+                for (int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++) // create new beams with rotated geometry
+                {
+                    // ESAPI manual shows that the number of meterset weight items define the number of created control points.
+                    List<CPModel> cpList = (List<CPModel>)cpsList[idxTxBeam];
+                    var metersetWeights = from cp in cpList select cp.MetersetWeight;
+                    Beam newBeam = newPlan.AddVMATBeamForFixedJaws(machineParameters[idxTxBeam], metersetWeights, collimatorAngle[idxTxBeam],
+                        gantryStartAngle[idxTxBeam], gantryStopAngle[idxTxBeam], gantryDirection[idxTxBeam],
+                        patientSupportAngle[idxTxBeam], isocenterPosition[idxTxBeam]);
+                    BeamParameters bParam = newBeam.GetEditableParameters();
+                    for (int indCP = 0; indCP < cpList.Count; indCP++)
+                    {
+                        using (StreamWriter w = File.AppendText(logName))  // log new beam data
+                        {
+                            w.AutoFlush = true;
+                            string log = $"New control point data for control point {indCP}: ";
+                            log += $"Gantry {bParam.ControlPoints.ElementAt(indCP).GantryAngle} Collimator {bParam.ControlPoints.ElementAt(indCP).CollimatorAngle}";
+                            Log(log, w);
+                            for (int i = 0; i < 2; i++)
+                            {
+                                log = "";
+                                log += $"[{i}, x]: ";
+                                for (int j = 0; j < 57; j++)
+                                {
+                                    log += $"{string.Format("{0, 7:##0.00}", cpList[indCP].MLCPositions[i, j])} ";
+                                }
+                                Log(log, w);
+                            }
+                        }
+                        //                        bParam.ControlPoints.ElementAt(indCP).JawPositions = cpList[indCP].JawPositions;
+                        bParam.ControlPoints.ElementAt(indCP).LeafPositions = cpList[indCP].MLCPositions;
+                        bParam.WeightFactor = weightFactor[idxTxBeam];
+                        try
+                        {
+                            newBeam.ApplyParameters(bParam);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Exception: \n" + ex.ToString());
+                        }
+                    }
+                    newBeam.Name = beamName[idxTxBeam];
+                    newBeamId[idxTxBeam] = newBeam.Id;
+                    using (StreamWriter w = File.AppendText(logName))
+                    {
+                        w.AutoFlush = true;
+                        string log = $"A new beam for original beam: \"{beamId[idxTxBeam]}\" was created with new beam ID: \"{newBeam.Id}\" (name: \"{newBeam.Name}\").";
+                        Log(log, w);
+                    }
+                }
+            }
+            else
+            {
+                for (int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++) // create new beams with rotated geometry
+                {
+                    // ESAPI manual shows that the number of meterset weight items define the number of created control points.
+                    List<CPModel> cpList = (List<CPModel>)cpsList[idxTxBeam];
+                    var metersetWeights = from cp in cpList select cp.MetersetWeight;
+                    Beam newBeam = ps.AddVMATBeamForFixedJaws(machineParameters[idxTxBeam], metersetWeights, collimatorAngle[idxTxBeam],
+                        gantryStartAngle[idxTxBeam], gantryStopAngle[idxTxBeam], gantryDirection[idxTxBeam],
+                        patientSupportAngle[idxTxBeam], isocenterPosition[idxTxBeam]);
+                    BeamParameters bParam = newBeam.GetEditableParameters();
+                    for (int indCP = 0; indCP < cpList.Count; indCP++)
+                    {
+                        using (StreamWriter w = File.AppendText(logName))  // log new beam data
+                        {
+                            w.AutoFlush = true;
+                            string log = $"New control point data for control point {indCP}: ";
+                            log += $"Gantry {bParam.ControlPoints.ElementAt(indCP).GantryAngle} Collimator {bParam.ControlPoints.ElementAt(indCP).CollimatorAngle}";
+                            Log(log, w);
+                            for (int i = 0; i < 2; i++)
+                            {
+                                log = "";
+                                log += $"[{i}, x]: ";
+                                for (int j = 0; j < 57; j++)
+                                {
+                                    log += $"{string.Format("{0, 7:##0.00}", cpList[indCP].MLCPositions[i, j])} ";
+                                }
+                                Log(log, w);
+                            }
+                        }
+                        //                        bParam.ControlPoints.ElementAt(indCP).JawPositions = cpList[indCP].JawPositions;
+                        bParam.ControlPoints.ElementAt(indCP).LeafPositions = cpList[indCP].MLCPositions;
+                        bParam.WeightFactor = weightFactor[idxTxBeam];
+                        try
+                        {
+                            newBeam.ApplyParameters(bParam);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Exception: \n" + ex.ToString());
+                        }
+                    }
+                    newBeam.Name = beamName[idxTxBeam];
+                    newBeamId[idxTxBeam] = newBeam.Id;
+                    using (StreamWriter w = File.AppendText(logName))
+                    {
+                        w.AutoFlush = true;
+                        string log = $"A new beam for original beam: \"{beamId[idxTxBeam]}\" was created with new beam ID: \"{newBeam.Id}\" (name: \"{newBeam.Name}\").";
+                        Log(log, w);
+                    }
+                }
+                bool originalBeamsRemoved = true;
+                foreach (string eachTxBeamId in beamId)  // Remove the original treatment beams.
+                {
+                    try
+                    {
+                        ps.RemoveBeam(ps.Beams.Where(b => b.Id == eachTxBeamId).Single());
+                    }
+                    catch (Exception e)
+                    {
+                        string log = e.ToString();
+                        using (StreamWriter w = File.AppendText(logName))
+                        {
+                            Log("Exception encountered in beam removal. ", w);
+                            w.AutoFlush = true;
+                            Log(log, w);
+                        }
+                        Console.Error.WriteLine($"Failed to remove one existing beam: \"{eachTxBeamId}\". Please remove it manually.");
+                        originalBeamsRemoved = false;
+                    }
+                }
+                if (originalBeamsRemoved)
+                {
+                    try  // Calculate plan dose with the new beams
+                    {
+                        
+                        if (calcDose)
+                        {
+                            bool presetValid = true;
+                            for (int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++)
+                            {
+                                if (Double.IsNaN(meterset[idxTxBeam].Value))
+                                {
+                                    presetValid = false;
+                                }
+                            }
+                            if (presetValid)
+                            {
+                                
+                                if (usePresetMU)
+                                {
+                                    List<KeyValuePair<string, MetersetValue>> presetValues = new List<KeyValuePair<string, MetersetValue>>();
+                                    for (int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++)
+                                    {
+                                        presetValues.Add(new KeyValuePair<string, MetersetValue>(newBeamId[idxTxBeam], meterset[idxTxBeam]));
+                                        WriteInColor($"Meterset for \"{newBeamId[idxTxBeam]}\": {string.Format("{0:0.##}", meterset[idxTxBeam].Value)} {meterset[idxTxBeam].Unit}\n", ConsoleColor.Yellow);
+                                    }
+                                    WriteInColor("Calculating plan dose. This may take a few minutes.\n", Console.ForegroundColor);
+                                    ps.CalculateDoseWithPresetValues(presetValues);
+                                }
+                                else
+                                {
+                                    WriteInColor("Calculating plan dose. This may take a few minutes.\n", Console.ForegroundColor);
+                                    ps.CalculateDose();
+                                }
+                            }
+                            else
+                            {
+                                WriteInColor("Original fields do not have valid meterset.\n", ConsoleColor.Yellow);
+                                WriteInColor("Calculating plan dose. This may take a few minutes.\n", Console.ForegroundColor);
+                                ps.CalculateDose();
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        string log = e.ToString();
+                        using (StreamWriter w = File.AppendText(logName))
+                        {
+                            Log("Exception encountered in dose calculation. ", w);
+                            w.AutoFlush = true;
+                            Log(log, w);
+                        }
+                        Console.Error.WriteLine("Failed to calculate plan dose. Please do it manually.");
+                    }
+                }
+                else
+                {
+                    WriteInColor("INFO: Since original beams were not removed, dose calculation is not performed.\n", ConsoleColor.Yellow);
+                }
+            }
+        }
+
+        public static void FlipHalcyonStatic()
+        {
+
+        }
+        
+        public static void FlipArc(Course course, ExternalPlanSetup ps, string logName, bool toNewPlan, bool calcDose, bool usePresetMU)
+        {
+            var beams = ps.Beams.Where(b => !b.IsImagingTreatmentField && !b.IsSetupField).ToList();
+            int numTxBeams = beams.Count();
+            ExternalBeamMachineParameters[] machineParameters = new ExternalBeamMachineParameters[numTxBeams];
+            string[] machineID = new string[numTxBeams];
+            string[] beamId = new string[numTxBeams];
+            string[] newBeamId = new string[numTxBeams];
+            string[] beamName = new string[numTxBeams];
+            int[] doseRate = new int[numTxBeams];
+            string[] energyModeId = new string[numTxBeams];
+            string[] primaryFluenceModeId = new string[numTxBeams];
+            string[] technique = new string[numTxBeams];
+            MLCPlanType[] mlcType = new MLCPlanType[numTxBeams];
+            double[] collimatorAngle = new double[numTxBeams];
+            double[] gantryStartAngle = new double[numTxBeams];
+            double[] gantryStopAngle = new double[numTxBeams];
+            GantryDirection[] gantryDirection = new GantryDirection[numTxBeams];
+            int[] numControlPoints = new int[numTxBeams];
+            double[] patientSupportAngle = new double[numTxBeams];
+            VVector[] isocenterPosition = new VVector[numTxBeams];
+            VRect<double>[] jawPositions = new VRect<double>[numTxBeams];
+            double[] weightFactor = new double[numTxBeams];
+            float[][,] leafPositions = new float[numTxBeams][,];
+            var cpsList = new ArrayList();
+            int indexTxBeams = 0;
+            foreach (Beam beam in beams)
+            {
+                if (beam.IsSetupField)
+                {
+                    continue;
+                }
+                using (StreamWriter w = File.AppendText(logName))  // record some log data
+                {
+                    w.AutoFlush = true;
+                    string log = $"Analyzing beam: {beam.Id}: \"{beam.Name}\". Technique: {beam.Technique.Id}. ";
+                    log += $"It has {beam.ControlPoints.Count} control points.";
+                    Log(log, w);
+                    foreach (var cps in beam.ControlPoints)
+                    {
+                        log = $"Control Point {cps.Index}. Gantry = {cps.GantryAngle}; Collimator = {cps.CollimatorAngle}; ";
+                        log += $"X1 Jaw = {cps.JawPositions.X1} mm; ";
+                        log += $"X2 Jaw = {cps.JawPositions.X2} mm; ";
+                        log += $"Y1 Jaw = {cps.JawPositions.Y1} mm; ";
+                        log += $"Y2 Jaw = {cps.JawPositions.Y2} mm; ";
+                        log += $"Meterweight = {cps.MetersetWeight}\n";
+                        float[,] leaves = cps.LeafPositions;
+                        log += $"{leaves.Length} leaf positions are found. ";
+                        log += $"Leaf position array rank: {leaves.Rank}. ";
+                        for (int i = 0; i < leaves.Rank; i++)
+                        {
+                            log += $"Array length at dimension {i}: {leaves.GetLength(i)}";
+                        }
+                        Log(log, w);
+                        log = "";
+                        for (int i = 0; i < leaves.GetLength(0); i++)
+                        {
+                            log += $"[{i}, x]: ";
+                            for (int j = 0; j < leaves.GetLength(1); j++)
+                            {
+                                log += $"{leaves[i, j]}, ";
+                            }
+                        }
+                        Log(log, w);
+                    }
+                }
+                ExternalBeamTreatmentUnit machine = beam.TreatmentUnit;
+                machineID[indexTxBeams] = machine.Id;
+                beamId[indexTxBeams] = beam.Id;
+                beamName[indexTxBeams] = beam.Name;
+                doseRate[indexTxBeams] = beam.DoseRate;
+                energyModeId[indexTxBeams] = beam.EnergyModeDisplayName;
+                technique[indexTxBeams] = beam.Technique.ToString();
+                if (energyModeId[indexTxBeams].Contains("-") && energyModeId[indexTxBeams].Split('-')[1] == "FFF")
+                {
+                    primaryFluenceModeId[indexTxBeams] = energyModeId[indexTxBeams].Split('-')[1];
+                    energyModeId[indexTxBeams] = energyModeId[indexTxBeams].Split('-')[0];
+                }
+                else
+                {
+                    primaryFluenceModeId[indexTxBeams] = null;
+                }
+                mlcType[indexTxBeams] = beam.MLCPlanType;
+                weightFactor[indexTxBeams] = beam.WeightFactor;
+                machineParameters[indexTxBeams] = new ExternalBeamMachineParameters(machineID[indexTxBeams], energyModeId[indexTxBeams],
+                    doseRate[indexTxBeams], technique[indexTxBeams], primaryFluenceModeId[indexTxBeams]);
+                collimatorAngle[indexTxBeams] = beam.ControlPoints[0].CollimatorAngle;
+                patientSupportAngle[indexTxBeams] = beam.ControlPoints[0].PatientSupportAngle;
+                numControlPoints[indexTxBeams] = beam.ControlPoints.Count;
+                isocenterPosition[indexTxBeams] = beam.IsocenterPosition;
+                jawPositions[indexTxBeams] = beam.ControlPoints[0].JawPositions;
+                leafPositions[indexTxBeams] = beam.ControlPoints[0].LeafPositions;
+                gantryStartAngle[indexTxBeams] = beam.ControlPoints.First().GantryAngle;
+                gantryStopAngle[indexTxBeams] = beam.ControlPoints.Last().GantryAngle;
+                gantryDirection[indexTxBeams] = beam.GantryDirection;
+                // Next we rotate the beam.
+                // First rotate the gantry for the beam.
+                if (gantryStartAngle[indexTxBeams] != 0)
+                {
+                    gantryStartAngle[indexTxBeams] = 360 - gantryStartAngle[indexTxBeams];
+                }
+                if (gantryStopAngle[indexTxBeams] != 0)
+                {
+                    gantryStopAngle[indexTxBeams] = 360 - gantryStopAngle[indexTxBeams];
+                }
+                if (gantryDirection[indexTxBeams] == GantryDirection.Clockwise)
+                {
+                    gantryDirection[indexTxBeams] = GantryDirection.CounterClockwise;
+                }
+                else if (gantryDirection[indexTxBeams] == GantryDirection.CounterClockwise)
+                {
+                    gantryDirection[indexTxBeams] = GantryDirection.Clockwise;
+                }
+                // On a Varian TrueBeam, the collimator angle cannot be in (175, 185).
+                // if the collimator angle is within (355, 5), we cannot rotate the collimator to the opposite side.
+                if (collimatorAngle[indexTxBeams] >= 5 && collimatorAngle[indexTxBeams] <= 355)
+                {
+                    collimatorAngle[indexTxBeams] += 180;
+                    if (collimatorAngle[indexTxBeams] >= 360)
+                    {
+                        collimatorAngle[indexTxBeams] = collimatorAngle[indexTxBeams] - 360;
+                    }
+                    List<CPModel> cpList = new List<CPModel>();
+                    foreach (var cps in beam.ControlPoints)
+                    {
+                        int numLeafPairs = cps.LeafPositions.GetLength(1);
+                        cpList.Add(new CPModel(numLeafPairs)
+                        {
+                            GantryAngle = cps.GantryAngle,
+                            JawPositions = cps.JawPositions,
+                            MetersetWeight = cps.MetersetWeight,
+                            CollimatorAngle = cps.CollimatorAngle,
+                            MLCPositions = cps.LeafPositions
+                        });
+                    }
+                    cpsList.Add(cpList);
+                }
+                else  // we rotate the jaw and MLC aperture here instead of the collimator.
+                {
+                    VRect<double> currentJaws = jawPositions[indexTxBeams];
+                    VRect<double> newJaws = new VRect<double>(-currentJaws.X2, -currentJaws.Y2, -currentJaws.X1, -currentJaws.Y1);
+                    jawPositions[indexTxBeams] = newJaws;
+                    List<CPModel> cpList = new List<CPModel>();
+                    foreach (var cps in beam.ControlPoints)
+                    {
+                        float[,] currentLeaves = cps.LeafPositions;
+                        float[,] newLeaves = new float[currentLeaves.GetLength(0), currentLeaves.GetLength(1)];
+                        for (int i = 0; i < currentLeaves.GetLength(1); i++)
+                        {
+                            newLeaves[0, i] = -currentLeaves[1, currentLeaves.GetLength(1) - i - 1];
+                            newLeaves[1, currentLeaves.GetLength(1) - i - 1] = -currentLeaves[0, i];
+                        }
+                        cpList.Add(new CPModel
+                        {
+                            GantryAngle = cps.GantryAngle,
+                            JawPositions = new VRect<double>(-cps.JawPositions.X2, -cps.JawPositions.Y2, -cps.JawPositions.X1, -cps.JawPositions.Y1),
+                            MetersetWeight = cps.MetersetWeight,
+                            CollimatorAngle = cps.CollimatorAngle,
+                            MLCPositions = newLeaves
+                        });
+                    }
+                    cpsList.Add(cpList);
+                }
+                indexTxBeams++;
+            }
+            // create new beams with rotated geometry
+            for (int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++)
+            {
+                using (StreamWriter w = File.AppendText(logName))
+                {
+                    w.AutoFlush = true;
+                    string log = $"Creating a new rotated beam for beam: \"{beamId[idxTxBeam]}\"";
+                    Log(log, w);
+                }
+                // ESAPI manual shows that the number of meterset weight items define the number of created control points.
+                List<CPModel> cpList = (List<CPModel>)cpsList[idxTxBeam];
+                var metersetWeights = from cp in cpList select cp.MetersetWeight;
+                Beam newBeam = ps.AddVMATBeam(machineParameters[idxTxBeam], metersetWeights, collimatorAngle[idxTxBeam],
+                    gantryStartAngle[idxTxBeam], gantryStopAngle[idxTxBeam], gantryDirection[idxTxBeam],
+                    patientSupportAngle[idxTxBeam], isocenterPosition[idxTxBeam]);
+                BeamParameters bParam = newBeam.GetEditableParameters();
+                for (int indCP = 0; indCP < cpList.Count; indCP++)
+                {
+                    bParam.ControlPoints.ElementAt(indCP).JawPositions = cpList[indCP].JawPositions;
+                    bParam.ControlPoints.ElementAt(indCP).LeafPositions = cpList[indCP].MLCPositions;
+                }
+                bParam.WeightFactor = weightFactor[idxTxBeam];
+                newBeam.ApplyParameters(bParam);
+                newBeam.Name = beamName[idxTxBeam];
+                newBeamId[idxTxBeam] = newBeam.Id;
+            }
+            // Remove the old treatment beams.
+            foreach (string eachTxBeamId in beamId)
+            {
+                try
+                {
+                    ps.RemoveBeam(ps.Beams.Where(b => b.Id == eachTxBeamId).Single());
+                }
+                catch (Exception e)
+                {
+                    string log = e.ToString();
+                    using (StreamWriter w = File.AppendText(logName))
+                    {
+                        w.AutoFlush = true;
+                        Log(log, w);
+                    }
+                    Console.Error.WriteLine($"Failed to remove one existing beam: \"{eachTxBeamId}\". Please remove it manually.");
+                }
+            }
+            // Calculate plan dose with the new beams
+            try
+            {
+                // first create a <beamID, beam meterset> list as preset values.
+                List<KeyValuePair<string, MetersetValue>> presetValues = new List<KeyValuePair<string, MetersetValue>>();
+                // create new beams with rotated geometry
+                for (int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++)
+                {
+                    presetValues.Add(new KeyValuePair<string, MetersetValue>(newBeamId[idxTxBeam],
+                        ps.Beams.FirstOrDefault(b => b.Id == beamId[idxTxBeam]).Meterset));
+                }
+                ps.CalculateDoseWithPresetValues(presetValues);
+            }
+            catch (Exception e)
+            {
+                string log = e.ToString();
+                using (StreamWriter w = File.AppendText(logName))
+                {
+                    w.AutoFlush = true;
+                    Log(log, w);
+                }
+                Console.Error.WriteLine("Failed to calculate plan dose. Please do it manually.");
+            }
+        }
+
+        public void FlipStatic()
+        {
+
+        }
+
         static void Execute(Application app)
         {
             string logName = System.AppDomain.CurrentDomain.FriendlyName + ".log";
@@ -1544,6 +2145,9 @@ namespace PlanRotation
             app.ClosePatient();
         }
     }
+
+    
+
     public class CPModel
     { 
         public double MetersetWeight { get; set; }

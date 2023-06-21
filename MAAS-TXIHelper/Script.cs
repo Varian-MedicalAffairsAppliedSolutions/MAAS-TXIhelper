@@ -212,8 +212,6 @@ namespace VMS.TPS
             "See the FAQ for more information on how to remove this pop-up and expiration";
 
             
-
-
             // Test
             //MessageBox.Show($"Noexpire found: {foundNoExpire} looked in : {noexp_path}");
 
