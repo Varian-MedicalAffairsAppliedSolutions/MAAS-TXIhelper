@@ -34,64 +34,41 @@ namespace ViewModels
 
     public class View1Model : BindableBase
     {
-        private ScriptContext context;
+        private ScriptContext _Context;
+        private Patient _Patient {get; set;}
+        private Course _Course { get; set;}
+        private ExternalPlanSetup _Plan { get; set;}
 
-        private Window SubWindow;
-
-        public string AboutURI { get; set; }
-
-        public DelegateCommand AboutCmd { get; set; }
-
-        public DelegateCommand SaveCmd { get; set; }  
-
-        public ObservableCollection<ListItem> ListItems { get; set; }
-
-
-        public DelegateCommand ShowWindowCmd { get;set ; }
-
+        public DelegateCommand FlipCmd { get; set;} 
+        public DelegateCommand SelectLogPathCmd { get; set;}
 
         public View1Model(ScriptContext currentContext)
         {
 
-            this.context = currentContext;
+            _Context = currentContext;
+            _Patient = currentContext.Patient;
+            _Course = currentContext.Course;
+            _Plan = currentContext.PlanSetup as ExternalPlanSetup;
 
-            //ExeCmd = new DelegateCommand(OnExe);
-            SaveCmd = new DelegateCommand(OnSave);
-            AboutCmd = new DelegateCommand(OnAbout);
-            //ShowWindowCmd = new DelegateCommand(OnShowWindow);
-
-            SubWindow = new Window();
-            SubWindow.Height = 500;
-            SubWindow.Width = 500;
-            SubWindow.Title = "About";
-            SubWindow.Content = new BindableRichTextBox()
-            {
-                IsReadOnly= true,
-                Source = new Uri(@"pack://application:,,,/MAAS_TXIHelper.esapi;component/Resources/About.rtf"),
-               
-            };
-
-            SubWindow.Closing += OnClosing;
+            FlipCmd = new DelegateCommand(OnFlip);
+            SelectLogPathCmd = new DelegateCommand(OnSelectLogPath);
 
         }
 
-        private void OnClosing(object sender, CancelEventArgs e)
+        private void OnSelectLogPath()
         {
-            SubWindow.Hide();
-            e.Cancel = true;
+            MessageBox.Show("Select log path placeholder");
         }
 
-        private void OnAbout()
+        private void OnFlip()
         {
-            SubWindow.Show();
+            MessageBox.Show("Starting flip CPs per COH code");
+            MessageBox.Show("Finished flip CPs");
         }
 
+        
 
-        private void OnSave()
-        {
-            
-
-        }
+       
 
     }
 }

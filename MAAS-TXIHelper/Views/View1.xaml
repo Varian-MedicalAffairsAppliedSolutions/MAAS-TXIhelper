@@ -41,7 +41,15 @@
         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
             <TextBlock x:Name="lblLogFilePath" VerticalAlignment="Center"/>
             <Button Content="Select File" Click="{Binding SelectLogPathCmd}" Margin="5"/>
+            
         </StackPanel>
+        
+        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+            <Button Content="Flip Control Points" Command="{Binding FlipCmd}"></Button>
+        </StackPanel>
+
+        
+
     </Grid>
 
 </UserControl>
