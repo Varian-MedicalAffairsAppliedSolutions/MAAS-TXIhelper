@@ -56,7 +56,7 @@
 
         <Label Grid.Row="9" Grid.Column="0" Content="Log File Path:" VerticalAlignment="Center" Margin="5"/>
         <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
-            <TextBlock x:Name="lblLogFilePath" Text="Placeholder/File.log" VerticalAlignment="Center"/>
+            <TextBlock x:Name="lblLogFilePath" Text="{Binding LogPath}" VerticalAlignment="Center"/>
             <Button Content="Select File" Command="{Binding SelectLogPathCmd}" Margin="5"/>
         </StackPanel>
 

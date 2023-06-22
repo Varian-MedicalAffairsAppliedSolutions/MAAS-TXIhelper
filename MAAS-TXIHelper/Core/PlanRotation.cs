@@ -12,11 +12,11 @@ using System.Windows.Controls;
 using System.Windows;
 using Application = VMS.TPS.Common.Model.API.Application;
 
-namespace PlanRotation
+namespace MAAS_TXIHelper.Core
 {
-    class Program
+    public class Core
     {
-        [STAThread]
+        /*
         static void Main(string[] args)
         {
             string logName = System.AppDomain.CurrentDomain.FriendlyName + ".log";
@@ -93,8 +93,9 @@ namespace PlanRotation
             }
             return newLeaves;
         }
+        */
         
-        public void FlipHalcyonArc(Course course, ExternalPlanSetup ps, string logName, bool toNewPlan, bool calcDose, bool usePresetMU)
+        public static void FlipHalcyonArc(Course course, ExternalPlanSetup ps, string logName, bool toNewPlan, bool calcDose, bool usePresetMU)
         {
             var beams = ps.Beams.Where(b => !b.IsImagingTreatmentField && !b.IsSetupField).ToList();
             int numTxBeams = beams.Count();
@@ -689,7 +690,7 @@ namespace PlanRotation
             }
         }
 
-        public void FlipStatic()
+        public static void FlipStatic()
         {
 
         }

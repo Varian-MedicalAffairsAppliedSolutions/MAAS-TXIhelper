@@ -12,6 +12,7 @@ using VMS.TPS.Common.Model.Types;
 using System.Threading;
 using System.Net;
 using System.IO;
+using MAAS_TXIHelper.Core;
 
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
@@ -25,6 +26,7 @@ using System.Resources;
 using MAAS_TXIHelper.CustomWidgets;
 using System.Windows.Controls.Primitives;
 using Views;
+using System.Reflection;
 
 // TODO
 // Button that shows formula
@@ -100,6 +102,15 @@ namespace ViewModels
             set { SetProperty(ref _IsHalcyon, value); }
         }
 
+        private string logPath;
+
+        public string LogPath
+        {
+            get { return logPath; }
+            set { SetProperty(ref logPath, value); }
+        }
+
+
 
 
         public View1Model(ScriptContext currentContext)
@@ -109,6 +120,9 @@ namespace ViewModels
             _Patient = currentContext.Patient;
             _Course = currentContext.Course;
             _Plan = currentContext.PlanSetup as ExternalPlanSetup;
+
+            var dirInfo = new DirectoryInfo(Assembly.GetExecutingAssembly().Location);
+            logPath = Path.Combine(dirInfo.Name, "TXILog.log");
 
             FlipCmd = new DelegateCommand(OnFlip);
             SelectLogPathCmd = new DelegateCommand(OnSelectLogPath);
@@ -159,12 +173,13 @@ namespace ViewModels
         private void OnFlip()
         {
             MessageBox.Show("Starting flip CPs per COH code");
+
+            if (_IsSX2MLC == false && _IsArcBeamPlan) {
+                MessageBox.Show("Flipping arc plan");
+                Core.FlipArc(_Course, _Plan, LogPath, true, true, true);
+            }
             MessageBox.Show("Finished flip CPs");
         }
-
-        
-
-       
 
     }
 }
