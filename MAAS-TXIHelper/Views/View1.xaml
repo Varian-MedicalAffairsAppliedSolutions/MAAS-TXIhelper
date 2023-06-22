@@ -18,8 +18,13 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -31,26 +36,34 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Patient Name:" VerticalAlignment="Center" Margin="5"/>
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Course ID:" VerticalAlignment="Center" Margin="5"/>
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Plan ID:" VerticalAlignment="Center" Margin="5"/>
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Plan Modality:" VerticalAlignment="Center" Margin="5"/>
-
-        <TextBlock x:Name="lblPatientName" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
-        <TextBlock x:Name="lblCourseId" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
-        <TextBlock x:Name="lblPlanId" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
-        <TextBlock x:Name="lblPlanModality" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
-
-        <Label Grid.Row="4" Grid.Column="0" Content="Log File Path:" VerticalAlignment="Center" Margin="5"/>
-        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
-            <TextBlock x:Name="lblLogFilePath" VerticalAlignment="Center"/>
-            <Button Content="Select File" Command="{Binding SelectLogPathCmd}" Margin="5"/>
-            
-        </StackPanel>
         
-        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="IsHalcyon:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="IsArcBeamPlan:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="IsSX2MLC:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="IsDynamicBeamPlan:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Row="8" Grid.Column="0" Text="IsStaticBeamPlan:" VerticalAlignment="Center" Margin="5"/>
+
+        <TextBlock x:Name="lblPatientName" Text="{Binding Patient.Id}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock x:Name="lblCourseId" Text="{Binding Course.Id}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock x:Name="lblPlanId" Text="{Binding Plan.Id}" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
+        
+        
+        <CheckBox x:Name="chkIsHalcyon" IsEnabled="False" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Margin="5" IsChecked="{Binding IsHalcyon}"/>
+        <CheckBox x:Name="chkIsArcBeamPlan" IsEnabled="False" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Margin="5" IsChecked="{Binding IsArcBeamPlan}"/>
+        <CheckBox x:Name="chkIsSX2MLC" IsEnabled="False" Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" Margin="5" IsChecked="{Binding IsSX2MLC}"/>
+        <CheckBox x:Name="chkIsDynamicBeamPlan" IsEnabled="False" Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" Margin="5" IsChecked="{Binding IsDynamicBeamPlan}"/>
+        <CheckBox x:Name="chkIsStaticBeamPlan" IsEnabled="False" Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" Margin="5" IsChecked="{Binding IsStaticBeamPlan}"/>
+
+        <Label Grid.Row="9" Grid.Column="0" Content="Log File Path:" VerticalAlignment="Center" Margin="5"/>
+        <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+            <TextBlock x:Name="lblLogFilePath" Text="Placeholder/File.log" VerticalAlignment="Center"/>
+            <Button Content="Select File" Command="{Binding SelectLogPathCmd}" Margin="5"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="10" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
             <Button Content="Flip Control Points" Command="{Binding FlipCmd}"></Button>
         </StackPanel>
-
-        
-
     </Grid>
+
 
 </UserControl>

@@ -35,9 +35,27 @@ namespace ViewModels
     public class View1Model : BindableBase
     {
         private ScriptContext _Context;
-        private Patient _Patient {get; set;}
-        private Course _Course { get; set;}
-        private ExternalPlanSetup _Plan { get; set;}
+
+        private Patient _Patient;
+        public Patient Patient
+        {
+            get { return _Patient; }
+            set { SetProperty(ref _Patient, value); }
+        }
+
+        private Course _Course;
+        public Course Course
+        {
+            get { return _Course; }
+            set { SetProperty(ref _Course, value); }
+        }
+
+        private ExternalPlanSetup _Plan;
+        public ExternalPlanSetup Plan
+        {
+            get { return _Plan; }
+            set { SetProperty(ref _Plan, value); }
+        }
 
         public DelegateCommand FlipCmd { get; set;} 
         public DelegateCommand SelectLogPathCmd { get; set;}
