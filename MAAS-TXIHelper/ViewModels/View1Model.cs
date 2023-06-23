@@ -121,8 +121,17 @@ namespace ViewModels
             _Course = currentContext.Course;
             _Plan = currentContext.PlanSetup as ExternalPlanSetup;
 
+            /*
             var dirInfo = new DirectoryInfo(Assembly.GetExecutingAssembly().Location);
-            logPath = Path.Combine(dirInfo.Name, "TXILog.log");
+            logPath = Path.Combine(dirInfo.Parent.Name, "TXILog.log");
+            MessageBox.Show($"Logpath debug is: {logPath}");*/
+
+            // Get the directory path of the current DLL
+            string dllDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            // Build the log file path
+            LogPath = Path.Combine(dllDirectory, "TXILog.log");
+            MessageBox.Show($"logfile {LogPath}");
 
             FlipCmd = new DelegateCommand(OnFlip);
             SelectLogPathCmd = new DelegateCommand(OnSelectLogPath);
@@ -173,6 +182,8 @@ namespace ViewModels
         private void OnFlip()
         {
             MessageBox.Show("Starting flip CPs per COH code");
+
+            _Patient.BeginModifications();
 
             if (_IsSX2MLC == false && _IsArcBeamPlan) {
                 MessageBox.Show("Flipping arc plan");
