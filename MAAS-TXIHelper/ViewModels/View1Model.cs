@@ -1,31 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Xml;
-using System.Collections.ObjectModel;
+﻿using System.Windows;
 using VMS.TPS.Common.Model.API;
-using VMS.TPS.Common.Model.Types;
-using System.Threading;
-using System.Net;
 using System.IO;
 using MAAS_TXIHelper.Core;
-
-using System.Runtime.CompilerServices;
-using System.Windows.Media;
 using Prism.Mvvm;
-using MAAS_TXIHelper.Models;
 using Prism.Commands;
-using System.Numerics;
-using JR.Utils.GUI.Forms;
-using System.Windows.Controls;
-using System.Resources;
-using MAAS_TXIHelper.CustomWidgets;
-using System.Windows.Controls.Primitives;
-using Views;
 using System.Reflection;
 
 // TODO

@@ -16,12 +16,6 @@ namespace ViewModels
 {
 	public class MainViewModel: BindableBase
     {
-        private string myHeader;
-        public string MyHeader
-        {
-            get { return myHeader; }
-            set { SetProperty(ref myHeader, value); }
-        }
 
         private string postText;
         public string PostText
@@ -42,7 +36,7 @@ namespace ViewModels
 
         public MainViewModel(ScriptContext context, bool isValidated)
         {
-            MyHeader = $"PLAN: {context.ExternalPlanSetup.Id}";
+            //MyHeader = $"PLAN: {context.ExternalPlanSetup.Id}";
            
             PostText = "";
             if ( !isValidated ) { PostText += " *** Not Validated For Clinical Use ***"; }

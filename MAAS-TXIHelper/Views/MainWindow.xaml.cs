@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VMS.TPS.Common.Model.API;
 using ViewModels;
+using MAAS_TXIHelper.Views;
 
 namespace Views
 {
@@ -24,12 +25,15 @@ namespace Views
     public partial class MainWindow : Window
     {
         private View1 v1;
+        private View2 v2;
 
         public MainWindow(ScriptContext context, MainViewModel vm)
         {
             InitializeComponent();
             this.v1 = new View1(context);
+            this.v2 = new View2(context);
             Tab1.Content = v1;
+            Tab2.Content = v2;
             DataContext = vm;
         }
 

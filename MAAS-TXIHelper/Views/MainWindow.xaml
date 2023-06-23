@@ -12,9 +12,10 @@
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
+            
             <TabControl>
-                <TabItem Name="Tab1" Header="{Binding MyHeader}"/>
-               
+                <TabItem Name="Tab1" Header="Aperture Rotation"/>
+                <TabItem Name="Tab2" Header="CT Concatenation"/>
             </TabControl>
             
             
