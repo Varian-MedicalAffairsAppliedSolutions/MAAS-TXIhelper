@@ -163,10 +163,32 @@ namespace ViewModels
 
             _Patient.BeginModifications();
 
+            if (_IsHalcyon && _IsArcBeamPlan)
+            {
+                MessageBox.Show("Flipping Halcyon Arc");
+                Core.FlipHalcyonArc(_Course, _Plan, LogPath, true, true, true);
+            }
+
+            if (_IsHalcyon && _IsStaticBeamPlan)
+            {
+                Core.FlipHalcyonStatic();
+            }
+
+            if (_IsSX2MLC && _IsStaticBeamPlan)
+            {
+                Core.FlipHalcyonStatic(); // Check if this is the same case
+            }
+
+            if (_IsSX2MLC == false && _IsStaticBeamPlan) {
+                Core.FlipStatic();
+            }
+
             if (_IsSX2MLC == false && _IsArcBeamPlan) {
                 MessageBox.Show("Flipping arc plan");
                 Core.FlipArc(_Course, _Plan, LogPath, true, true, true);
             }
+
+
             MessageBox.Show("Finished flip CPs");
         }
 

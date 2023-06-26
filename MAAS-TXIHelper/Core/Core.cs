@@ -93,8 +93,7 @@ namespace MAAS_TXIHelper.Core
             }
             return newLeaves;
         }
-        
-        
+            
         public static void FlipHalcyonArc(Course course, ExternalPlanSetup ps, string logName, bool toNewPlan, bool calcDose, bool usePresetMU)
         {
             var beams = ps.Beams.Where(b => !b.IsImagingTreatmentField && !b.IsSetupField).ToList();
@@ -453,7 +452,7 @@ namespace MAAS_TXIHelper.Core
 
         public static void FlipHalcyonStatic()
         {
-
+            throw new NotImplementedException();
         }
         
         public static void FlipArc(Course course, ExternalPlanSetup ps, string logName, bool toNewPlan, bool calcDose, bool usePresetMU)
@@ -692,7 +691,7 @@ namespace MAAS_TXIHelper.Core
 
         public static void FlipStatic()
         {
-
+            throw new NotImplementedException();
         }
 
         static void Execute(Application app)
