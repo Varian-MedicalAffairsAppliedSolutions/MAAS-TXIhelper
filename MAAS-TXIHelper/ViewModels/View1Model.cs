@@ -5,6 +5,7 @@ using MAAS_TXIHelper.Core;
 using Prism.Mvvm;
 using Prism.Commands;
 using System.Reflection;
+using System;
 
 // TODO
 // Button that shows formula
@@ -162,30 +163,45 @@ namespace ViewModels
             MessageBox.Show("Starting flip CPs per COH code");
 
             _Patient.BeginModifications();
+            bool flipComplete = false;
 
             if (_IsHalcyon && _IsArcBeamPlan)
             {
-                MessageBox.Show("Flipping Halcyon Arc");
+                MessageBox.Show("Flipping arc halcyon plan");
                 Core.FlipHalcyonArc(_Course, _Plan, LogPath, true, true, true);
+                flipComplete = true;
             }
 
             if (_IsHalcyon && _IsStaticBeamPlan)
             {
-                Core.FlipHalcyonStatic();
+                MessageBox.Show("Flipping static halcyon plan");
+                Core.FlipHalcyonStatic(_Course, _Plan, LogPath);
+                flipComplete = true;
             }
 
             if (_IsSX2MLC && _IsStaticBeamPlan)
             {
-                Core.FlipHalcyonStatic(); // Check if this is the same case
+                MessageBox.Show("Flipping static halcyon plan");
+                Core.FlipHalcyonStatic(_Course, _Plan, LogPath); // Check if this is the same case
+                flipComplete = true;
             }
 
             if (_IsSX2MLC == false && _IsStaticBeamPlan) {
-                Core.FlipStatic();
+                MessageBox.Show("Flipping static non-halcyon plan");
+                Core.FlipStatic(_Course, _Plan, LogPath);
+                flipComplete = true;
             }
 
             if (_IsSX2MLC == false && _IsArcBeamPlan) {
-                MessageBox.Show("Flipping arc plan");
+                MessageBox.Show("Flipping arc non-halcyon plan");
                 Core.FlipArc(_Course, _Plan, LogPath, true, true, true);
+                flipComplete = true;
+            }
+
+            // Check to make sure one of the cases was triggered
+            if (!flipComplete)
+            {
+                throw new Exception("No flip case caught: Please check plan type and try again.");
             }
 
 

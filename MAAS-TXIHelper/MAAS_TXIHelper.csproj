@@ -186,5 +186,8 @@
   <ItemGroup>
     <Folder Include="NoCompileVer\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="TODO.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

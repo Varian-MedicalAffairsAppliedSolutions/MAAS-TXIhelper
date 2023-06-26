@@ -450,9 +450,78 @@ namespace MAAS_TXIHelper.Core
             }
         }
 
-        public static void FlipHalcyonStatic()
+        public static void FlipHalcyonStatic(Course course, ExternalPlanSetup ps, string logName)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Halcyon static plan.");
+            var newPlan = course.CopyPlanSetup(ps);
+            newPlan.Id = $"inv_{ps.Id}";
+            foreach (var bm in newPlan.Beams.Where(bm_ => !(bm_.IsSetupField || bm_.IsImagingTreatmentField)))
+            {
+                var bPars = bm.GetEditableParameters();
+                Console.WriteLine($"# of control points = {bPars.ControlPoints.Count()}");
+                int count = 0;
+                foreach (var cpp in bPars.ControlPoints)
+                {
+                    count++;
+                    float[,] leaves = cpp.LeafPositions;
+                    if (count <= 2)
+                    {
+                        using (StreamWriter w = File.AppendText(logName))
+                        {
+                            string log = "";
+                            for (int i = 0; i < leaves.Rank; i++)
+                            {
+                                log += $"Array length at dimension {i}: {leaves.GetLength(i)}";
+                            }
+                            Log(log, w);
+                            for (int i = 0; i < leaves.GetLength(0); i++)
+                            {
+                                log = "";
+                                log += $"[{i}, x]: ";
+                                for (int j = 0; j < leaves.GetLength(1); j++)
+                                {
+                                    log += $"{leaves[i, j]}, ";
+                                }
+                                Log(log, w);
+                            }
+                        }
+                    }
+                    cpp.LeafPositions = Rotated(cpp.LeafPositions);
+                    leaves = cpp.LeafPositions;
+                    if (count <= 2)
+                    {
+                        using (StreamWriter w = File.AppendText(logName))
+                        {
+                            Log("After:...", w);
+                            string log = "";
+                            for (int i = 0; i < leaves.Rank; i++)
+                            {
+                                log += $"Array length at dimension {i}: {leaves.GetLength(i)}";
+                            }
+                            Log(log, w);
+                            for (int i = 0; i < leaves.GetLength(0); i++)
+                            {
+                                log = "";
+                                log += $"[{i}, x]: ";
+                                for (int j = 0; j < leaves.GetLength(1); j++)
+                                {
+                                    log += $"{leaves[i, j]}, ";
+                                }
+                                Log(log, w);
+                            }
+                        }
+                    }
+                }
+                bm.AddFlatteningSequence();
+                try
+                {
+                    bm.ApplyParameters(bPars);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception: \n" + ex.ToString());
+                }
+            }
         }
         
         public static void FlipArc(Course course, ExternalPlanSetup ps, string logName, bool toNewPlan, bool calcDose, bool usePresetMU)
@@ -689,9 +758,266 @@ namespace MAAS_TXIHelper.Core
             }
         }
 
-        public static void FlipStatic()
+        public static void FlipStatic(Course course, ExternalPlanSetup ps, string logName)
         {
-            throw new NotImplementedException();
+            bool isDynamicBeamPlan = false;
+            var beams = ps.Beams.Where(b => !b.IsImagingTreatmentField && !b.IsSetupField).ToList();
+            int numTxBeams = beams.Count();
+            ExternalBeamMachineParameters[] machineParameters = new ExternalBeamMachineParameters[numTxBeams];
+            string[] machineID = new string[numTxBeams];
+            string[] beamId = new string[numTxBeams];
+            string[] newBeamId = new string[numTxBeams];
+            string[] beamName = new string[numTxBeams];
+            int[] doseRate = new int[numTxBeams];
+            string[] energyModeId = new string[numTxBeams];
+            string[] technique = new string[numTxBeams];
+            string[] primaryFluenceModeId = new string[numTxBeams];
+            MLCPlanType[] mlcType = new MLCPlanType[numTxBeams];
+            double[] collimatorAngle = new double[numTxBeams];
+            double[] gantryAngle = new double[numTxBeams];
+            int[] numControlPoints = new int[numTxBeams];
+            double[] patientSupportAngle = new double[numTxBeams];
+            VVector[] isocenterPosition = new VVector[numTxBeams];
+            VRect<double>[] jawPositions = new VRect<double>[numTxBeams];
+            double[] weightFactor = new double[numTxBeams];
+            float[][,] leafPositions = new float[numTxBeams][,];
+            var cpsList = new ArrayList();
+            int indexTxBeams = 0;
+            foreach (Beam beam in beams)
+            {
+                
+                using (StreamWriter w = File.AppendText(logName))  // record some log data
+                {
+                    w.AutoFlush = true;
+                    string log = $"Analyzing beam: {beam.Id}: \"{beam.Name}\". Technique: {beam.Technique.Id}. ";
+                    log += $"It has {beam.ControlPoints.Count} control points.";
+                    Log(log, w);
+                    foreach (var cps in beam.ControlPoints)
+                    {
+                        log = $"Control Point {cps.Index}. Gantry = {cps.GantryAngle}; Collimator = {cps.CollimatorAngle}; ";
+                        log += $"X1 Jaw = {cps.JawPositions.X1} mm; ";
+                        log += $"X2 Jaw = {cps.JawPositions.X2} mm; ";
+                        log += $"Y1 Jaw = {cps.JawPositions.Y1} mm; ";
+                        log += $"Y2 Jaw = {cps.JawPositions.Y2} mm; ";
+                        log += $"Meterweight = {cps.MetersetWeight}\n";
+                        float[,] leaves = cps.LeafPositions;
+                        log += $"{leaves.Length} leaf positions are found. ";
+                        log += $"Leaf position array rank: {leaves.Rank}. ";
+                        for (int i = 0; i < leaves.Rank; i++)
+                        {
+                            log += $"Array length at dimension {i}: {leaves.GetLength(i)}";
+                        }
+                        Log(log, w);
+                        log = "";
+                        for (int i = 0; i < leaves.GetLength(0); i++)
+                        {
+                            log += $"[{i}, x]: ";
+                            for (int j = 0; j < leaves.GetLength(1); j++)
+                            {
+                                log += $"{leaves[i, j]}, ";
+                            }
+                        }
+                        Log(log, w);
+                    }
+                }
+                ExternalBeamTreatmentUnit machine = beam.TreatmentUnit;
+                machineID[indexTxBeams] = machine.Id;
+                beamId[indexTxBeams] = beam.Id;
+                beamName[indexTxBeams] = beam.Name;
+                doseRate[indexTxBeams] = beam.DoseRate;
+                energyModeId[indexTxBeams] = beam.EnergyModeDisplayName;
+                technique[indexTxBeams] = beam.Technique.ToString();
+                mlcType[indexTxBeams] = beam.MLCPlanType;
+                weightFactor[indexTxBeams] = beam.WeightFactor;
+                if (energyModeId[indexTxBeams].Contains("-") && energyModeId[indexTxBeams].Split('-')[1] == "FFF")
+                {
+                    primaryFluenceModeId[indexTxBeams] = energyModeId[indexTxBeams].Split('-')[1];
+                    energyModeId[indexTxBeams] = energyModeId[indexTxBeams].Split('-')[0];
+                }
+                else
+                {
+                    primaryFluenceModeId[indexTxBeams] = null;
+                }
+                machineParameters[indexTxBeams] = new ExternalBeamMachineParameters(machineID[indexTxBeams], energyModeId[indexTxBeams],
+                doseRate[indexTxBeams], technique[indexTxBeams], primaryFluenceModeId[indexTxBeams]);
+                collimatorAngle[indexTxBeams] = beam.ControlPoints[0].CollimatorAngle;
+                patientSupportAngle[indexTxBeams] = beam.ControlPoints[0].PatientSupportAngle;
+                numControlPoints[indexTxBeams] = beam.ControlPoints.Count;
+                isocenterPosition[indexTxBeams] = beam.IsocenterPosition;
+                jawPositions[indexTxBeams] = beam.ControlPoints[0].JawPositions;
+                leafPositions[indexTxBeams] = beam.ControlPoints[0].LeafPositions;
+                gantryAngle[indexTxBeams] = beam.ControlPoints[0].GantryAngle;
+                // Next we rotate the beam.
+                // First rotate the gantry for the beam.
+                if (gantryAngle[indexTxBeams] != 0)
+                {
+                    gantryAngle[indexTxBeams] = 360 - gantryAngle[indexTxBeams];
+                }
+                // On a Varian TrueBeam, the collimator angle cannot be in (175, 185).
+                // if the collimator angle is within (355, 5), we cannot rotate the collimator to the opposite side.
+                if (collimatorAngle[indexTxBeams] >= 5 && collimatorAngle[indexTxBeams] <= 355)
+                {
+                    collimatorAngle[indexTxBeams] += 180;
+                    if (collimatorAngle[indexTxBeams] >= 360)
+                    {
+                        collimatorAngle[indexTxBeams] = collimatorAngle[indexTxBeams] - 360;
+                    }
+                    List<CPModel> cpList = new List<CPModel>();
+                    foreach (var cps in beam.ControlPoints)
+                    {
+                        cpList.Add(new CPModel
+                        {
+                            GantryAngle = cps.GantryAngle,
+                            JawPositions = cps.JawPositions,
+                            MetersetWeight = cps.MetersetWeight,
+                            CollimatorAngle = cps.CollimatorAngle,
+                            MLCPositions = cps.LeafPositions
+                        });
+                    }
+                    cpsList.Add(cpList);
+                }
+                else  // we rotate the jaw and MLC aperture here instead of the collimator.
+                {
+                    VRect<double> currentJaws = jawPositions[indexTxBeams];
+                    VRect<double> newJaws = new VRect<double>(-currentJaws.X2, -currentJaws.Y2, -currentJaws.X1, -currentJaws.Y1);
+                    jawPositions[indexTxBeams] = newJaws;
+                    if (mlcType[indexTxBeams] == MLCPlanType.Static)
+                    {
+                        float[,] currentLeaves = leafPositions[indexTxBeams];
+                        float[,] newLeaves = new float[currentLeaves.GetLength(0), currentLeaves.GetLength(1)];
+                        for (int i = 0; i < currentLeaves.GetLength(1); i++)
+                        {
+                            newLeaves[0, i] = -currentLeaves[1, currentLeaves.GetLength(1) - i - 1];
+                            newLeaves[1, currentLeaves.GetLength(1) - i - 1] = -currentLeaves[0, i];
+                        }
+                        leafPositions[indexTxBeams] = newLeaves;
+                    }
+                    else if (mlcType[indexTxBeams] == MLCPlanType.DoseDynamic)
+                    {
+                        List<CPModel> cpList = new List<CPModel>();
+                        foreach (var cps in beam.ControlPoints)
+                        {
+                            float[,] currentLeaves = cps.LeafPositions;
+                            float[,] newLeaves = new float[currentLeaves.GetLength(0), currentLeaves.GetLength(1)];
+                            for (int i = 0; i < currentLeaves.GetLength(1); i++)
+                            {
+                                newLeaves[0, i] = -currentLeaves[1, currentLeaves.GetLength(1) - i - 1];
+                                newLeaves[1, currentLeaves.GetLength(1) - i - 1] = -currentLeaves[0, i];
+                            }
+                            cpList.Add(new CPModel
+                            {
+                                GantryAngle = cps.GantryAngle,
+                                JawPositions = new VRect<double>(-cps.JawPositions.X2, -cps.JawPositions.Y2, -cps.JawPositions.X1, -cps.JawPositions.Y1),
+                                MetersetWeight = cps.MetersetWeight,
+                                CollimatorAngle = cps.CollimatorAngle,
+                                MLCPositions = newLeaves
+                            });
+                        }
+                        cpsList.Add(cpList);
+
+                    }
+                }
+                indexTxBeams++;
+            }
+            // create new beams with rotated geometry
+            for (int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++)
+            {
+                using (StreamWriter w = File.AppendText(logName))
+                {
+                    w.AutoFlush = true;
+                    string log = $"Creating a new rotated beam for beam: \"{beamId[idxTxBeam]}\"";
+                    Log(log, w);
+                }
+                if (mlcType[idxTxBeam] == MLCPlanType.NotDefined)  // this beam does not have an MLC.
+                {
+                    Beam newBeam = ps.AddStaticBeam(machineParameters[idxTxBeam], jawPositions[idxTxBeam],
+                        collimatorAngle[idxTxBeam], gantryAngle[idxTxBeam], patientSupportAngle[idxTxBeam], isocenterPosition[idxTxBeam]);
+                    BeamParameters bParam = newBeam.GetEditableParameters();
+                    bParam.WeightFactor = weightFactor[idxTxBeam];
+                    bParam.SetAllLeafPositions(leafPositions[idxTxBeam]);
+                    newBeam.ApplyParameters(bParam);
+                    newBeam.Name = beamName[idxTxBeam];
+                    newBeamId[idxTxBeam] = newBeam.Id;
+                }
+                else if (mlcType[idxTxBeam] == MLCPlanType.Static)  // this beam has a static MLC.
+                {
+                    Beam newBeam = ps.AddMLCBeam(machineParameters[idxTxBeam], leafPositions[idxTxBeam], jawPositions[idxTxBeam],
+                        collimatorAngle[idxTxBeam], gantryAngle[idxTxBeam], patientSupportAngle[idxTxBeam], isocenterPosition[idxTxBeam]);
+                    BeamParameters bParam = newBeam.GetEditableParameters();
+                    bParam.WeightFactor = weightFactor[idxTxBeam];
+                    bParam.SetAllLeafPositions(leafPositions[idxTxBeam]);
+                    newBeam.ApplyParameters(bParam);
+                    newBeam.Name = beamName[idxTxBeam];
+                    newBeamId[idxTxBeam] = newBeam.Id;
+                }
+                else if (mlcType[idxTxBeam] == MLCPlanType.DoseDynamic)  // this field uses dynamic MLC positions.
+                {
+                    isDynamicBeamPlan = true;
+                    // ESAPI manual shows that the number of meterset weight items define the number of created control points.
+                    List<CPModel> cpList = (List<CPModel>)cpsList[idxTxBeam];
+                    var metersetWeights = from cp in cpList select cp.MetersetWeight;
+                    Beam newBeam = ps.AddMultipleStaticSegmentBeam(machineParameters[idxTxBeam], metersetWeights, collimatorAngle[idxTxBeam],
+                        gantryAngle[idxTxBeam], patientSupportAngle[idxTxBeam], isocenterPosition[idxTxBeam]);
+                    BeamParameters bParam = newBeam.GetEditableParameters();
+                    for (int indCP = 0; indCP < cpList.Count; indCP++)
+                    {
+                        bParam.ControlPoints.ElementAt(indCP).JawPositions = cpList[indCP].JawPositions;
+                        bParam.ControlPoints.ElementAt(indCP).LeafPositions = cpList[indCP].MLCPositions;
+                    }
+                    bParam.WeightFactor = weightFactor[idxTxBeam];
+                    newBeam.ApplyParameters(bParam);
+                    newBeam.Name = beamName[idxTxBeam];
+                    newBeamId[idxTxBeam] = newBeam.Id;
+                }
+            }
+            // Remove the old treatment beams.
+            foreach (string eachTxBeamId in beamId)
+            {
+                try
+                {
+                    ps.RemoveBeam(ps.Beams.Where(b => b.Id == eachTxBeamId).Single());
+                }
+                catch (Exception e)
+                {
+                    string log = e.ToString();
+                    using (StreamWriter w = File.AppendText(logName))
+                    {
+                        w.AutoFlush = true;
+                        Log(log, w);
+                    }
+                    Console.Error.WriteLine($"Failed to remove one existing beam: \"{eachTxBeamId}\". Please remove it manually.");
+                }
+            }
+            // Calculate plan dose with the new beams
+            try
+            {
+                if (isDynamicBeamPlan == false)
+                {
+                    ps.CalculateDose();
+                }
+                else
+                {
+                    // first create a <beamID, beam meterset> list as preset values.
+                    List<KeyValuePair<string, MetersetValue>> presetValues = new List<KeyValuePair<string, MetersetValue>>();
+                    // create new beams with rotated geometry
+                    for (int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++)
+                    {
+                        presetValues.Add(new KeyValuePair<string, MetersetValue>(newBeamId[idxTxBeam],
+                            ps.Beams.FirstOrDefault(b => b.Id == beamId[idxTxBeam]).Meterset));
+                    }
+                    ps.CalculateDoseWithPresetValues(presetValues);
+                }
+            }
+            catch (Exception e)
+            {
+                string log = e.ToString();
+                using (StreamWriter w = File.AppendText(logName))
+                {
+                    w.AutoFlush = true;
+                    Log(log, w);
+                }
+                Console.Error.WriteLine("Failed to calculate plan dose. Please do it manually.");
+            }
         }
 
         static void Execute(Application app)
@@ -2141,6 +2467,9 @@ namespace MAAS_TXIHelper.Core
                     Console.Error.WriteLine("Failed to calculate plan dose. Please do it manually.");
                 }
             }
+            
+            
+            
             app.SaveModifications();
             app.ClosePatient();
         }
