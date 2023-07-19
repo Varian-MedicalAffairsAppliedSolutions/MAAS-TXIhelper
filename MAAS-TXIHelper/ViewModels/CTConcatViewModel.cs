@@ -1,5 +1,6 @@
 ﻿
 using MAAS_TXIHelper.Core;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace MAAS_TXIHelper.ViewModels
     
     public class CTConcatViewModel: BindableBase
     {
+        public DelegateCommand ConcatenateCmd { get; set; } 
         public ObservableCollection<Image> PrimaryImages { get; set; }
         public ObservableCollection<Image> SecondaryImages { get; set; }
         public ObservableCollection<Registration> Registrations { get; set; }
@@ -76,12 +78,29 @@ namespace MAAS_TXIHelper.ViewModels
             }
         }
 
-        private CTConcat core;
+        private void OnConcatenate()
+        {
+            MessageBox.Show("Starting concat");
+            var core = new CTConcat(_patient, PrimaryImage, SecondaryImage, Registration);
+            core.Execute();
+        }
+
+        private bool CanConcatenate()
+        {
+            /*if (Registration != null && PrimaryImage != null && SecondaryImage != null)
+            {
+                return true;
+            }
+            return false;*/
+            return true;
+        }
+
         public CTConcatViewModel(ScriptContext context) {
 
             PrimaryImages = new ObservableCollection<Image>();
             SecondaryImages = new ObservableCollection<Image>();
             Registrations = new ObservableCollection<Registration>();
+            ConcatenateCmd = new DelegateCommand(OnConcatenate, CanConcatenate);
 
             _patient = context.Patient;
 
@@ -90,6 +109,8 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 PrimaryImages.Add(pi);
             }
+
+            
 
 
 

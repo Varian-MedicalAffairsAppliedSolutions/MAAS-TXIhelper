@@ -11,6 +11,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -29,5 +32,9 @@
         <ComboBox ItemsSource="{Binding Registrations}" SelectedItem="{Binding Registration}" DisplayMemberPath="Id"  Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" Padding="5">
             
         </ComboBox>
+
+        <Button Command="{Binding ConcatenateCmd}" Grid.Row="3" Content="Concatenate" Margin="10,10,10,10" Padding="5">
+            
+        </Button>
     </Grid>
 </UserControl>
