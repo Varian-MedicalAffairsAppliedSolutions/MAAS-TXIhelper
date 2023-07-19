@@ -1,0 +1,9 @@
+- Switch to MahApps interface
+- Add CT code to window
+- Implement all flip cases
+- Test all flip cases
+
+- Add treatment preparation (3rd tab)
+	- split all plans into individual isocenters
+	- create a plan sum
+
