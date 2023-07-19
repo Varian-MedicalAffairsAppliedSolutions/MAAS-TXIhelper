@@ -19,8 +19,6 @@ using System.Globalization;
 using Newtonsoft.Json;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
-
-
 // TODO: Uncomment the following line if the script requires write access.
 //15.x or later:
 [assembly: ESAPIScript(IsWriteable = true)]
@@ -136,6 +134,7 @@ namespace VMS.TPS
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void Execute(ScriptContext context)
         {
+            //var mw = new MahApps.Metro.Controls.MetroWindow();
 
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var noexp_path = Path.Combine(path, "NOEXPIRE");

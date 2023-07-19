@@ -17,6 +17,9 @@ using VMS.TPS.Common.Model.API;
 using ViewModels;
 using MAAS_TXIHelper.Views;
 
+using System.Windows.Forms;
+using System.CodeDom;
+
 namespace Views
 {
     /// <summary>
@@ -24,16 +27,25 @@ namespace Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private View1 v1;
-        private View2 v2;
+        private CPFlipView v1;
+        private CTConcatView v2;
+        private PlaceIsocentersView v3;
+        private FinalPlanPrepView v4;
 
         public MainWindow(ScriptContext context, MainViewModel vm)
         {
             InitializeComponent();
-            this.v1 = new View1(context);
-            this.v2 = new View2(context);
-            Tab1.Content = v1;
-            Tab2.Content = v2;
+            this.v1 = new CPFlipView(context);
+            this.v2 = new CTConcatView(context);
+            this.v3 = new PlaceIsocentersView(context);
+            this.v4 = new FinalPlanPrepView(context);
+            // Access individual TabItems by their names
+            // Access the TabControl by its name
+
+            Tab1.Content = v2;
+            Tab2.Content = v3;
+            Tab3.Content = v1;
+            Tab4.Content = v4;
             DataContext = vm;
         }
 
