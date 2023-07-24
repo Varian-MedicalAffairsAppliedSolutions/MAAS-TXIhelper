@@ -15,7 +15,6 @@ namespace ViewModels
 
     public class CPFlipViewModel : BindableBase
     {
-        private ScriptContext _Context;
 
         private Patient _Patient;
         public Patient Patient
@@ -95,7 +94,6 @@ namespace ViewModels
         public CPFlipViewModel(ScriptContext currentContext)
         {
 
-            _Context = currentContext;
             _Patient = currentContext.Patient;
             _Course = currentContext.Course;
             _Plan = currentContext.PlanSetup as ExternalPlanSetup;

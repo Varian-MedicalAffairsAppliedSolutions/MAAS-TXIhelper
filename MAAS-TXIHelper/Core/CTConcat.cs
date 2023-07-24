@@ -6,6 +6,8 @@ using V = VMS.TPS.Common.Model.API;
 using SimpleProgressWindow;
 using System.Windows.Forms;
 using System.Threading;
+using System.IO;
+
 
 namespace MAAS_TXIHelper.Core
 {
@@ -15,12 +17,14 @@ namespace MAAS_TXIHelper.Core
         private V.Image _imagePrimary;
         private V.Image _imageSecondary;
         private Registration _registration;
+        private string _saveDir;
 
-        public CTConcat(V.Patient patient, V.Image imagePrimary, V.Image imageSecondary, V.Registration registration) {
+        public CTConcat(V.Patient patient, V.Image imagePrimary, V.Image imageSecondary, V.Registration registration, string saveDir) {
             _patient = patient;
             _imagePrimary = imagePrimary;
             _imageSecondary = imageSecondary;
             _registration = registration;
+            _saveDir = saveDir;
         }
         
         public override bool Run()
@@ -77,6 +81,7 @@ namespace MAAS_TXIHelper.Core
             {
                 double progDec = (double)z / nPlanes2;
                 int progInt = 50 + (int)(progDec * 50);
+                ProvideUIUpdate(progInt);
                 var point = itkImagePrimary.TransformIndexToPhysicalPoint(new VectorInt64(new Int64[] { 0, 0, z }));
                 ProvideUIUpdate($"\rReading secondary image plane at index: {z}\tZ coordinate: {point[2]}                   \t");
                 _imageSecondary.GetVoxels(z, voxelPlane);
@@ -103,9 +108,6 @@ namespace MAAS_TXIHelper.Core
             itk.simple.Image itkImageMerged = MergeImages(itkImagePrimary, itkImageSecondaryTransformed);
             //ProvideUIUpdate("About to save dicom");
             SaveImagesDICOM(itkImageMerged, _imagePrimary);
-
-
-
             return true;
         }
 
@@ -122,9 +124,10 @@ namespace MAAS_TXIHelper.Core
                 return true;
             return false;
         }
-
+        
         private void SaveImagesDICOM(itk.simple.Image itkImageMerged, VMS.TPS.Common.Model.API.Image imagePrimary)
         {
+
             PixelIDValueEnum pixelType = PixelIDValueEnum.sitkFloat32;
             PixelIDValueEnum pixelTypeDCM = PixelIDValueEnum.sitkInt16;
             VectorUInt32 imageSize = new VectorUInt32(new uint[] { (uint)imagePrimary.XSize, (uint)imagePrimary.YSize });
@@ -174,7 +177,8 @@ namespace MAAS_TXIHelper.Core
                 itkImageDCM.SetMetaData("0020|0032", imagePositionPatient);  // image position patient.
                 itkImageDCM.SetMetaData("0020|1041", $"{z * imagePrimary.ZRes}");  // slice location
                 Console.Write($"\rSaving DICOM file for slice index: {z}   ");
-                writer.SetFileName($@"C:\Temp\merged_{z}.DCM");
+                
+                writer.SetFileName(Path.Combine(_saveDir, $"merged_{z}.DCM"));
                 writer.Execute(itkImageDCM);
             }
             Console.WriteLine($"All DICOM files were saved.");

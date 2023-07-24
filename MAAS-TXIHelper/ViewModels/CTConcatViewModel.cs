@@ -3,6 +3,7 @@ using MAAS_TXIHelper.Core;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Windows;
 using VMS.TPS;
 using VMS.TPS.Common.Model.API;
 using V = VMS.TPS.Common.Model.API;
+
 
 namespace MAAS_TXIHelper.ViewModels
 {
@@ -25,12 +27,23 @@ namespace MAAS_TXIHelper.ViewModels
 
         private Patient _patient;
 
+        private string _SaveDir;
+        public string SaveDir
+        {
+            get { return _SaveDir; }
+            set
+            {
+                SetProperty(ref _SaveDir, value);
+            }
+        }
+
         private Image _PrimaryImage;
         public Image PrimaryImage
         {
             get { return _PrimaryImage; }
             set { 
                 SetProperty(ref _PrimaryImage, value);
+                //ConcatenateCmd.RaiseCanExecuteChanged();
                 PopulateSecondaryImages();
             }
         }
@@ -39,14 +52,20 @@ namespace MAAS_TXIHelper.ViewModels
         public Image SecondaryImage
         {
             get { return _SecondaryImage; }
-            set { SetProperty(ref _SecondaryImage, value); }
+            set { 
+                SetProperty(ref _SecondaryImage, value);
+                //ConcatenateCmd.RaiseCanExecuteChanged();
+            }
         }
 
         private Registration _Registration;
         public Registration Registration
         {
             get { return _Registration; }
-            set { SetProperty(ref _Registration, value); }
+            set { 
+                SetProperty(ref _Registration, value);
+                //ConcatenateCmd.RaiseCanExecuteChanged();
+            }
         }
 
         private void PopulateSecondaryImages()
@@ -78,24 +97,33 @@ namespace MAAS_TXIHelper.ViewModels
             }
         }
 
+        private void AssertDirectoryExists(string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                throw new Exception($"Directory {directoryPath} not found!");
+            }
+        }
+       
         private void OnConcatenate()
         {
-            MessageBox.Show("Starting concat");
-            var core = new CTConcat(_patient, PrimaryImage, SecondaryImage, Registration);
+            AssertDirectoryExists(SaveDir);
+            var core = new CTConcat(_patient, PrimaryImage, SecondaryImage, Registration, SaveDir);
             core.Execute();
         }
 
         private bool CanConcatenate()
         {
-            /*if (Registration != null && PrimaryImage != null && SecondaryImage != null)
+            if (_Registration != null && _PrimaryImage != null && _SecondaryImage != null)
             {
                 return true;
             }
-            return false;*/
-            return true;
+            return false;
         }
 
         public CTConcatViewModel(ScriptContext context) {
+
+            SaveDir = @"C:\Temp";
 
             PrimaryImages = new ObservableCollection<Image>();
             SecondaryImages = new ObservableCollection<Image>();
@@ -109,15 +137,6 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 PrimaryImages.Add(pi);
             }
-
-            
-
-
-
-            
-            //MessageBox.Show($"Added {PrimaryImages.Count()} primary images");
-            //MessageBox.Show($"First ID = {PrimaryImages.First().Id}");
-            //core = new CTConcat();
             
         }
     }
