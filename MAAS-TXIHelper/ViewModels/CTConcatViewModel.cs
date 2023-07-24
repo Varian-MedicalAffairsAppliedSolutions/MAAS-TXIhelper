@@ -107,18 +107,22 @@ namespace MAAS_TXIHelper.ViewModels
        
         private void OnConcatenate()
         {
-            AssertDirectoryExists(SaveDir);
-            var core = new CTConcat(_patient, PrimaryImage, SecondaryImage, Registration, SaveDir);
-            core.Execute();
+            if (_Registration != null && _PrimaryImage != null && _SecondaryImage != null)
+            {
+
+                AssertDirectoryExists(SaveDir);
+                var core = new CTConcat(_patient, PrimaryImage, SecondaryImage, Registration, SaveDir);
+                core.Execute();
+            }
+            else
+            {
+                MessageBox.Show("Must have Primary, secondary, and registration selected to concatenate.");
+            }
         }
 
         private bool CanConcatenate()
         {
-            if (_Registration != null && _PrimaryImage != null && _SecondaryImage != null)
-            {
-                return true;
-            }
-            return false;
+            return true;
         }
 
         public CTConcatViewModel(ScriptContext context) {
