@@ -37,8 +37,8 @@ jobs:
     - name: Update AssemblyInfo.cs
       id: update_assembly_info
       run: |
-        .\.github\workflows\Update-AssemblyInfo.ps1 `
-          -AssemblyInfoFilePath .\MAAS_TXIHelper\Properties\AssemblyInfo.cs `
+       ${{GITHUB_WORKSPACE}}\.github\workflows\Update-AssemblyInfo.ps1 `
+          -AssemblyInfoFilePath ${{GITHUB_WORKSPACE}}\MAAS_TXIHelper\Properties\AssemblyInfo.cs `
           -ExpirationDate "${{ github.event.inputs.dateInput }}" `
           -MajorVersion ${{ env.MAJOR_VERSION }} `
           -MinorVersion ${{ env.MINOR_VERSION }} `
