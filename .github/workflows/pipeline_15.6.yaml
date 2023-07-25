@@ -30,6 +30,9 @@ jobs:
 
     - name: Navigate to Workspace
       run: cd $GITHUB_WORKSPACE
+      
+    - name: Print dir contents
+      run: dir -a
 
     - name: Update AssemblyInfo.cs
       id: update_assembly_info
