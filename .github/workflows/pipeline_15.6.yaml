@@ -27,12 +27,12 @@ jobs:
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
-
-    - name: Navigate to Workspace
-      run: cd $GITHUB_WORKSPACE
       
     - name: Print dir contents
       run: dir
+
+    - name: Navigate to Workspace
+      run: cd $GITHUB_WORKSPACE    
 
     - name: Update AssemblyInfo.cs
       id: update_assembly_info
