@@ -57,7 +57,7 @@ jobs:
     - name: Download and Extract
       shell: powershell
       run: |
-        $url = 'https://sourceforge.net/projects/simpleitk/files/SimpleITK/1.2.2/CSharp/SimpleITK-1.2.2-CSharp-win64-x64.zip #./download' # Replace with the actual URL of the zip file on SourceForge
+        $url = 'https://sourceforge.net/projects/simpleitk/files/SimpleITK/1.2.2/CSharp/SimpleITK-1.2.2-CSharp-win64-x64.zip' # Replace with the actual URL of the zip file on SourceForge
         $zipFile = "$env:TEMP\downloaded_itk.zip"
         $extractedPath = "$env:TEMP\extracted_files"
 
