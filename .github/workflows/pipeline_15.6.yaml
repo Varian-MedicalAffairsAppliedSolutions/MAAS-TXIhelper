@@ -32,7 +32,7 @@ jobs:
       run: cd $GITHUB_WORKSPACE
       
     - name: Print dir contents
-      run: dir -a
+      run: dir
 
     - name: Update AssemblyInfo.cs
       id: update_assembly_info
