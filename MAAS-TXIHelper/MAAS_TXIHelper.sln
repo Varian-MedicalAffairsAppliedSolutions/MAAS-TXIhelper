@@ -10,8 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.github\workflows\pipeline_15.6.yaml = ..\.github\workflows\pipeline_15.6.yaml
 		..\.github\workflows\pipeline_16.1.yaml = ..\.github\workflows\pipeline_16.1.yaml
 		..\.github\workflows\pipeline_17.0.yaml = ..\.github\workflows\pipeline_17.0.yaml
-		..\.github\workflows\pipeline_18.0 = ..\.github\workflows\pipeline_18.0
 		..\.github\workflows\Update-AssemblyInfo.ps1 = ..\.github\workflows\Update-AssemblyInfo.ps1
+		..\.github\workflows\pipeline_18.0.yaml = ..\.github\workflows\pipeline_18.0.yaml
 		..\.github\workflows\Update-EsapiHintPaths.ps1 = ..\.github\workflows\Update-EsapiHintPaths.ps1
 	EndProjectSection
 EndProject
