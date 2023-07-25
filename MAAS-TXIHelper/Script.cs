@@ -178,7 +178,7 @@ namespace VMS.TPS
 
             if (exp < DateTime.Now && !foundNoExpire)
             {
-                MessageBox.Show("Application has expired. Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/MAAS-PlanComplexity");
+                MessageBox.Show("Application has expired. Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/MAAS-MAAS_TXIHelper");
                 return;
             }
             
@@ -202,12 +202,12 @@ namespace VMS.TPS
             string msg = $"The current MAAS_TXIHelper application is provided AS IS as a non-clinical, research only tool in evaluation only. The current " +
             $"application will only be available until {exp.Date} after which the application will be unavailable. " +
             "By Clicking 'Yes' you agree that this application will be evaluated and not utilized in providing planning decision support\n\n" +
-            "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/MAAS-PlanComplexity\n\n" +
+            "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/MAAS-MAAS_TXIHelper\n\n" +
             "See the FAQ for more information on how to remove this pop-up and expiration";
 
             string msg2 = $"Application will only be available until {exp.Date} after which the application will be unavailable. " +
             "By Clicking 'Yes' you agree that this application will be evaluated and not utilized in providing planning decision support\n\n" +
-            "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/MAAS-PlanComplexity\n\n" +
+            "Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/MAAS-MAAS_TXIHelper\n\n" +
             "See the FAQ for more information on how to remove this pop-up and expiration";
 
             

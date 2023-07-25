@@ -13,7 +13,7 @@ jobs:
     runs-on: windows-2019
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: packages\ESAPI.15.6.0\lib\net45\
-      PROJECT_NAME: PlanComplexity
+      PROJECT_NAME: MAAS_TXIHelper
       MAJOR_VERSION: 1
       MINOR_VERSION: 0
       PATCH_VERSION: 0
@@ -35,7 +35,7 @@ jobs:
       id: update_assembly_info
       run: |
         .\.github\workflows\Update-AssemblyInfo.ps1 `
-          -AssemblyInfoFilePath .\ModulationComplexity\Properties\AssemblyInfo.cs `
+          -AssemblyInfoFilePath .\MAAS_TXIHelper\Properties\AssemblyInfo.cs `
           -ExpirationDate "${{ github.event.inputs.dateInput }}" `
           -MajorVersion ${{ env.MAJOR_VERSION }} `
           -MinorVersion ${{ env.MINOR_VERSION }} `
@@ -47,7 +47,7 @@ jobs:
         nuget-version: latest
         
     - name: Download nuget packages
-      run: nuget install .\ModulationComplexity\packages.config -OutputDirectory ModulationComplexity\packages
+      run: nuget install .\MAAS_TXIHelper\packages.config -OutputDirectory MAAS_TXIHelper\packages
 
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
@@ -58,21 +58,21 @@ jobs:
         -StorePasswordInClearText
 
     - name: Download ESAPI package
-      run: nuget install ESAPI -Version 15.6.0 -OutputDirectory ModulationComplexity\packages 
+      run: nuget install ESAPI -Version 15.6.0 -OutputDirectory MAAS_TXIHelper\packages 
 
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
-        -CsprojFilePath .\ModulationComplexity\ `
-        -CsprojFileName ModulationComplexity.csproj
+        -CsprojFilePath .\MAAS_TXIHelper\ `
+        -CsprojFileName MAAS_TXIHelper.csproj
     
     - name: Build Solution
-      run: msbuild.exe .\ModulationComplexity\ModulationComplexity.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Release"
+      run: msbuild.exe .\MAAS_TXIHelper\MAAS_TXIHelper.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Release"
         
     - name: Zip
       run: |
         Compress-Archive `
-          -Path ".\ModulationComplexity\bin\Debug\*" `
+          -Path ".\MAAS_TXIHelper\bin\Debug\*" `
           -DestinationPath "${{ github.workspace }}/${{env.PROJECT_NAME}}${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV156.zip"
     
     - name: Create Release
