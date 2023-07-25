@@ -27,15 +27,12 @@ jobs:
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
-
-    - name: Navigate to Workspace
-      run: cd $GITHUB_WORKSPACE
-
+    
     - name: Update AssemblyInfo.cs
       id: update_assembly_info
       run: |
-        .\.github\workflows\Update-AssemblyInfo.ps1 `
-          -AssemblyInfoFilePath .\MAAS_TXIHelper\Properties\AssemblyInfo.cs `
+       D:\a\MAAS-TXIhelper\MAAS-TXIhelper\.github\workflows\Update-AssemblyInfo.ps1 `
+          -AssemblyInfoFilePath D:\a\MAAS-TXIhelper\MAAS-TXIhelper\MAAS-TXIHelper\Properties\AssemblyInfo.cs `
           -ExpirationDate "${{ github.event.inputs.dateInput }}" `
           -MajorVersion ${{ env.MAJOR_VERSION }} `
           -MinorVersion ${{ env.MINOR_VERSION }} `
@@ -52,7 +49,7 @@ jobs:
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
         -Name github `
-        -Source "https://nuget.pkg.github.com/Varian-Innovation-Center/index.json" `
+        -Source "https://nuget.pkg.github.com/Varian-MedicalAffairsAppliedSolutions/index.json" `
         -UserName craman96 `
         -Password ${{ secrets.GITHUB_TOKEN }} `
         -StorePasswordInClearText
@@ -63,16 +60,16 @@ jobs:
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
-        -CsprojFilePath .\MAAS_TXIHelper\ `
+        -CsprojFilePath .\MAAS-TXIHelper\ `
         -CsprojFileName MAAS_TXIHelper.csproj
     
     - name: Build Solution
-      run: msbuild.exe .\MAAS_TXIHelper\MAAS_TXIHelper.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Release"
+      run: msbuild.exe .\MAAS-TXIHelper\MAAS_TXIHelper.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Debug"
         
     - name: Zip
       run: |
         Compress-Archive `
-          -Path ".\MAAS_TXIHelper\bin\Debug\*" `
+          -Path ".\MAAS-TXIHelper\bin\Debug\*" `
           -DestinationPath "${{ github.workspace }}/${{env.PROJECT_NAME}}${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV156.zip"
     
     - name: Create Release
