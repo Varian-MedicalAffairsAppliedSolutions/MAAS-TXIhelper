@@ -68,7 +68,6 @@ jobs:
 
         # Expand the contents of the zip file using native PowerShell commands
         Expand-Archive -Path $zipFile -DestinationPath $extractedPath
-      if: matrix.os == 'windows-2019'
 
     - name: Include DLL in the Project
       run: |
@@ -89,7 +88,6 @@ jobs:
         $projectXml.Project.ItemGroup.AppendChild($referenceElement)
         $projectXml.Save($projectFilePath)
       shell: powershell
-      if: matrix.os == 'windows-2019'
 
     - name: Set Properties for the Reference
       run: |
@@ -105,7 +103,6 @@ jobs:
 
         $projectXml.Save($projectFilePath)
       shell: powershell
-      if: matrix.os == 'windows-2019'   
     
     - name: Download nuget packages
       run: nuget install .\MAAS-TXIHelper\packages.config -OutputDirectory packages
