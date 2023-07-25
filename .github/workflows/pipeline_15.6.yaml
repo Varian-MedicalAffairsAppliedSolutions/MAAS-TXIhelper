@@ -29,15 +29,15 @@ jobs:
       uses: microsoft/setup-msbuild@v1
       
     - name: Print dir contents
-      working-directory: D:\a\MAAS-TXIhelper\MAAS-TXIhelper
+      working-directory: D:\a\MAAS-TXIhelper\MAAS-TXIhelper\
       run: dir
 
     - name: Update AssemblyInfo.cs
       id: update_assembly_info
       working-directory: D:\a\MAAS-TXIhelper\MAAS-TXIhelper
       run: |
-       .\.github\workflows\Update-AssemblyInfo.ps1 `
-          -AssemblyInfoFilePath .\MAAS_TXIHelper\Properties\AssemblyInfo.cs `
+       D:\a\MAAS-TXIhelper\MAAS-TXIhelper\.github\workflows\Update-AssemblyInfo.ps1 `
+          -AssemblyInfoFilePath D:\a\MAAS-TXIhelper\MAAS-TXIhelper\MAAS_TXIHelper\Properties\AssemblyInfo.cs `
           -ExpirationDate "${{ github.event.inputs.dateInput }}" `
           -MajorVersion ${{ env.MAJOR_VERSION }} `
           -MinorVersion ${{ env.MINOR_VERSION }} `
