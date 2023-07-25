@@ -43,7 +43,7 @@ jobs:
       id: update_assembly_info
       run: |
         .\.github\workflows\Update-AssemblyInfo.ps1 `
-          -AssemblyInfoFilePath .\MAAS_TXIHelper\Properties\AssemblyInfo.cs `
+          -AssemblyInfoFilePath .\MAAS-TXIHelper\Properties\AssemblyInfo.cs `
           -ExpirationDate "${{ github.event.inputs.dateInput }}" `
           -MajorVersion ${{ env.MAJOR_VERSION }} `
           -MinorVersion ${{ env.MINOR_VERSION }} `
@@ -56,7 +56,7 @@ jobs:
         nuget-version: latest
     
     - name: Download nuget packages
-      run: nuget install .\packages.config -OutputDirectory packages
+      run: nuget install .\MAAS-TXIHelper\packages.config -OutputDirectory packages
    
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
@@ -72,11 +72,11 @@ jobs:
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
-        -CsprojFilePath .\ `
+        -CsprojFilePath .\MAAS-TXIHelper `
         -CsprojFileName MAAS_TXIHelper.csproj
           
     - name: Build Solution
-      run: msbuild.exe .\MAAS_TXIHelper.csproj /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Debug"
+      run: msbuild.exe .\MAAS-TXIHelper\MAAS_TXIHelper.csproj /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Debug"
         
     - name: Zip
       run: |
