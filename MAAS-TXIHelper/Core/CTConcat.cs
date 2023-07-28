@@ -7,7 +7,7 @@ using SimpleProgressWindow;
 using System.Windows.Forms;
 using System.Threading;
 using System.IO;
-
+using System.Linq;
 
 namespace MAAS_TXIHelper.Core
 {
@@ -30,7 +30,7 @@ namespace MAAS_TXIHelper.Core
         public override bool Run()
         {
             // ---- PRIMARY ---
-            ProvideUIUpdate("Starting run methond");
+            ProvideUIUpdate("Starting run method");
             int[,] voxelPlane = new int[_imagePrimary.XSize, _imagePrimary.YSize];
             int[,,] voxelVolume = new int[_imagePrimary.XSize, _imagePrimary.YSize, _imagePrimary.ZSize];
             double[,,] huValues = new double[_imagePrimary.XSize, _imagePrimary.YSize, _imagePrimary.ZSize];
@@ -39,31 +39,8 @@ namespace MAAS_TXIHelper.Core
             itk.simple.Image itkImagePrimary = new itk.simple.Image(image3DSize, pixelType);
             VectorDouble spacing3D = new VectorDouble(new double[] { _imagePrimary.XRes, _imagePrimary.YRes, _imagePrimary.ZRes });
             itkImagePrimary.SetSpacing(spacing3D);
-            VectorDouble origin = new VectorDouble(new double[] { _imagePrimary.Origin.x, _imagePrimary.Origin.y, _imagePrimary.Origin.z });
-            itkImagePrimary.SetOrigin(origin);
-            int nPlanes = _imagePrimary.ZSize;
-            ProvideUIUpdate("Entering loop");
+            ProvideUIUpdate($"Set z spacing to: {spacing3D.ToList().Last()} mm");
 
-
-            for (int z = 0; z < nPlanes; z++)
-            {
-                double progDec = (double) z / nPlanes;
-                int progInt = (int)(progDec * 50);
-                ProvideUIUpdate(progInt);
-                var point = itkImagePrimary.TransformIndexToPhysicalPoint(new VectorInt64(new Int64[] { 0, 0, z }));
-                ProvideUIUpdate($"\rReading primary image plane at index: {z}/{nPlanes}");
-                _imagePrimary.GetVoxels(z, voxelPlane);
-                for (int x = 0; x < _imagePrimary.XSize; x++)
-                {
-                    for (int y = 0; y < _imagePrimary.YSize; y++)
-                    {
-                        voxelVolume[x, y, z] = voxelPlane[x, y];
-                        huValues[x, y, z] = _imagePrimary.VoxelToDisplayValue(voxelPlane[x, y]);
-                        itkImagePrimary.SetPixelAsFloat(new VectorUInt32(new uint[] { (uint)x, (uint)y, (uint)z }), (float)(huValues[x, y, z]));
-                    }
-                }
-            }
-            ProvideUIUpdate($"\nData processing for primary image \"{_imagePrimary.Id}\" complete.");
 
             // --- SECONDARY ---
             int[,] voxelPlane2 = new int[_imageSecondary.XSize, _imageSecondary.YSize];
@@ -77,13 +54,66 @@ namespace MAAS_TXIHelper.Core
             VectorDouble origin2 = new VectorDouble(new double[] { _imageSecondary.Origin.x, _imageSecondary.Origin.y, _imageSecondary.Origin.z });
             itkImageSecondary.SetOrigin(origin2);
             int nPlanes2 = _imageSecondary.ZSize;
+
+
+            VectorDouble origin = new VectorDouble(new double[] { _imagePrimary.Origin.x, _imagePrimary.Origin.y, _imagePrimary.Origin.z });
+            itkImagePrimary.SetOrigin(origin);
+            int nPlanes = _imagePrimary.ZSize;            
+
+
+            for (int z = 0; z < nPlanes; z++)
+            {
+                double progDec = (double) z / nPlanes;
+                int progInt = (int)(progDec * 50);
+                var point = itkImagePrimary.TransformIndexToPhysicalPoint(new VectorInt64(new Int64[] { 0, 0, z }));
+                var msg = $"\rReading primary image plane at index: {z}\tZ coordinate: {point[2]}";
+
+                if (z % 10 == 0)
+                {
+                    // Slice is a multiple of 10, show message update
+                    ProvideUIUpdate(progInt, msg);
+                }
+                else
+                {
+                    ProvideUIUpdate(progInt);
+                }
+                UpdateUILabel(msg);
+                //ProvideUIUpdate(progInt, message: $"\rReading primary image plane at index: {z}/{nPlanes}");
+                
+                //ProvideUIUpdate($"\rReading primary image plane at index: {z}/{nPlanes}");
+                _imagePrimary.GetVoxels(z, voxelPlane);
+                for (int x = 0; x < _imagePrimary.XSize; x++)
+                {
+                    for (int y = 0; y < _imagePrimary.YSize; y++)
+                    {
+                        voxelVolume[x, y, z] = voxelPlane[x, y];
+                        huValues[x, y, z] = _imagePrimary.VoxelToDisplayValue(voxelPlane[x, y]);
+                        itkImagePrimary.SetPixelAsFloat(new VectorUInt32(new uint[] { (uint)x, (uint)y, (uint)z }), (float)(huValues[x, y, z]));
+                    }
+                }
+            }
+            ProvideUIUpdate($"\nData processing for primary image \"{_imagePrimary.Id}\" complete.");
+
+
             for (int z = 0; z < nPlanes2; z++)
             {
                 double progDec = (double)z / nPlanes2;
                 int progInt = 50 + (int)(progDec * 50);
-                ProvideUIUpdate(progInt);
                 var point = itkImagePrimary.TransformIndexToPhysicalPoint(new VectorInt64(new Int64[] { 0, 0, z }));
-                ProvideUIUpdate($"\rReading secondary image plane at index: {z}\tZ coordinate: {point[2]}                   \t");
+                var msg = $"\rReading secondary image plane at index: {z}\tZ coordinate: {point[2]}";
+
+                if(z % 10 == 0)
+                {
+                    // Slice is a multiple of 10, show message update
+                    ProvideUIUpdate(progInt, msg);
+                }
+                else
+                {
+                    ProvideUIUpdate(progInt);
+                }
+                UpdateUILabel(msg);
+                
+
                 _imageSecondary.GetVoxels(z, voxelPlane);
                 for (int x = 0; x < _imageSecondary.XSize; x++)
                 {
@@ -108,6 +138,7 @@ namespace MAAS_TXIHelper.Core
             itk.simple.Image itkImageMerged = MergeImages(itkImagePrimary, itkImageSecondaryTransformed);
             //ProvideUIUpdate("About to save dicom");
             SaveImagesDICOM(itkImageMerged, _imagePrimary);
+            ProvideUIUpdate(100, "Complete");
             return true;
         }
 
@@ -178,7 +209,7 @@ namespace MAAS_TXIHelper.Core
                 itkImageDCM.SetMetaData("0020|1041", $"{z * imagePrimary.ZRes}");  // slice location
                 Console.Write($"\rSaving DICOM file for slice index: {z}   ");
                 
-                writer.SetFileName(Path.Combine(_saveDir, $"merged_{z}.DCM"));
+                writer.SetFileName(Path.Combine(_saveDir, $"{_patient.Id}_merged_{z}.DCM"));
                 writer.Execute(itkImageDCM);
             }
             Console.WriteLine($"All DICOM files were saved.");
@@ -189,13 +220,14 @@ namespace MAAS_TXIHelper.Core
         {
             // first define the merged image
             int newSlices = (int)((itkImagePrimary.GetOrigin()[2] - itkImageSecondaryTransformed.GetOrigin()[2]) / itkImagePrimary.GetSpacing()[2]) + (int)itkImagePrimary.GetSize()[2];
+            MessageBox.Show($"Num new slices {newSlices}");
             PixelIDValueEnum pixelType = PixelIDValueEnum.sitkFloat32;
             VectorUInt32 image3DSize = new VectorUInt32(new uint[] { (uint)itkImagePrimary.GetSize()[0], (uint)itkImagePrimary.GetSize()[1], (uint)newSlices });
             itk.simple.Image itkImageMerged = new itk.simple.Image(image3DSize, pixelType);
             itkImageMerged.SetSpacing(itkImagePrimary.GetSpacing());
             double newOriginZ = itkImagePrimary.GetOrigin()[2] - (newSlices - itkImagePrimary.GetSize()[2]) * itkImagePrimary.GetSpacing()[2];
             itkImageMerged.SetOrigin(new VectorDouble(new double[] { itkImagePrimary.GetOrigin()[0], itkImagePrimary.GetOrigin()[1], newOriginZ }));
-            Console.WriteLine($"Size for merged: {itkImageMerged.GetSize()[0]} {itkImageMerged.GetSize()[1]} {itkImageMerged.GetSize()[2]}");
+            //Console.WriteLine($"Size for merged: {itkImageMerged.GetSize()[0]} {itkImageMerged.GetSize()[1]} {itkImageMerged.GetSize()[2]}");
             // here we first construct a SimpleITK 3D image from the image data
             // 1. Based on ESAPI manual, the DICOM origin is the DICOM coordinate for the point at the upper left corner of the first imaging plane.
             //    Note that this DICOM origin does not have [0, 0, 0] as coordinates.
@@ -312,38 +344,7 @@ namespace MAAS_TXIHelper.Core
             return itkImage3D;
         }
 
-        private void throwaway(V.Image imageEclipse)
-        {
-            int[,] voxelPlane = new int[imageEclipse.XSize, imageEclipse.YSize];
-            int[,,] voxelVolume = new int[imageEclipse.XSize, imageEclipse.YSize, imageEclipse.ZSize];
-            double[,,] huValues = new double[imageEclipse.XSize, imageEclipse.YSize, imageEclipse.ZSize];
-            PixelIDValueEnum pixelType = PixelIDValueEnum.sitkFloat32;
-            itk.simple.VectorUInt32 image3DSize = new itk.simple.VectorUInt32(new uint[] { (uint)imageEclipse.XSize, (uint)imageEclipse.YSize, (uint)imageEclipse.ZSize });
-            itk.simple.Image itkImage3D = new itk.simple.Image(image3DSize, pixelType);
-            VectorDouble spacing3D = new VectorDouble(new double[] { imageEclipse.XRes, imageEclipse.YRes, imageEclipse.ZRes });
-            itkImage3D.SetSpacing(spacing3D);
-            VectorDouble origin = new VectorDouble(new double[] { imageEclipse.Origin.x, imageEclipse.Origin.y, imageEclipse.Origin.z });
-            itkImage3D.SetOrigin(origin);
-            int nPlanes = imageEclipse.ZSize;
-            for (int z = 0; z < nPlanes; z++)
-            {
-                ProvideUIUpdate(((int)z / nPlanes));
-                var point = itkImage3D.TransformIndexToPhysicalPoint(new VectorInt64(new Int64[] { 0, 0, z }));
-                ProvideUIUpdate($"\rReading image plane at index: {z}\tZ coordinate: {point[2]}                   \t");
-                imageEclipse.GetVoxels(z, voxelPlane);
-                for (int x = 0; x < imageEclipse.XSize; x++)
-                {
-                    for (int y = 0; y < imageEclipse.YSize; y++)
-                    {
-                        voxelVolume[x, y, z] = voxelPlane[x, y];
-                        huValues[x, y, z] = imageEclipse.VoxelToDisplayValue(voxelPlane[x, y]);
-                        itkImage3D.SetPixelAsFloat(new VectorUInt32(new uint[] { (uint)x, (uint)y, (uint)z }), (float)(huValues[x, y, z]));
-                    }
-                }
-            }
-            ProvideUIUpdate($"\nData processing for image \"{imageEclipse.Id}\" complete.");
-            
-        }
+        
     }
     
 }

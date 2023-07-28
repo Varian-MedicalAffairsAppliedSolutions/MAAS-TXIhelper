@@ -6,6 +6,7 @@ using Prism.Mvvm;
 using Prism.Commands;
 using System.Reflection;
 using System;
+using System.Collections.ObjectModel;
 
 // TODO
 // Button that shows formula
@@ -30,6 +31,9 @@ namespace ViewModels
             set { SetProperty(ref _Course, value); }
         }
 
+        
+
+        
         private ExternalPlanSetup _Plan;
         public ExternalPlanSetup Plan
         {

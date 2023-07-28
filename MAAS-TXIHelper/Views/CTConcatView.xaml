@@ -23,23 +23,27 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300" MinWidth="47"/>
             <ColumnDefinition Width="300" MinWidth="47"/>
+            
         </Grid.ColumnDefinitions>
+        
+        
 
-        <ComboBox ItemsSource="{Binding PrimaryImages}" SelectedItem="{Binding PrimaryImage}" DisplayMemberPath="Id" Grid.Row="0" Grid.Column="0" Margin="10,10,10,10" Padding="5">
-            
-        </ComboBox>
+        <Label Grid.Row="0" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select Primary Image" HorizontalAlignment="Right"/>
+        <ComboBox ItemsSource="{Binding PrimaryImages}" SelectedItem="{Binding PrimaryImage}" DisplayMemberPath="Series.Id" Grid.Row="0" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
 
-        <ComboBox ItemsSource="{Binding SecondaryImages}" SelectedItem="{Binding SecondaryImage}" DisplayMemberPath="Id"  Grid.Row="1" Grid.Column="0" Margin="10,10,10,10" Padding="5">
-            
-        </ComboBox>
+        <Label Grid.Row="1" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select Secondary Image" HorizontalAlignment="Right"/>
+        <ComboBox ItemsSource="{Binding SecondaryImages}" SelectedItem="{Binding SecondaryImage}" DisplayMemberPath="Series.Id"  Grid.Row="1" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
 
-        <ComboBox ItemsSource="{Binding Registrations}" SelectedItem="{Binding Registration}" DisplayMemberPath="Id"  Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" Padding="5">
-            
-        </ComboBox>
+        <Label Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select Registration" HorizontalAlignment="Right"/>
+        <ComboBox ItemsSource="{Binding Registrations}" SelectedItem="{Binding Registration}" DisplayMemberPath="Id"  Grid.Row="2" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
 
-        <TextBox Grid.Row="3" Margin="10,10,10,10" Padding="5" Text="{Binding SaveDir}"></TextBox>
+        <Label Grid.Row="3" HorizontalAlignment="Right" Content="Output Directory" Margin="10,10,10,10" Padding="5"></Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="10,10,10,10" Padding="5" Text="{Binding SaveDir}"></TextBox>
 
-        <Button Command="{Binding ConcatenateCmd}" Grid.Row="4" Content="Concatenate" Margin="10,10,10,10" Padding="5">
+        <Label Grid.Row="4" HorizontalAlignment="Right" Content="Select CT resample spacing" Margin="10,10,10,10" Padding="5"></Label>
+        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding ResampleSpacings}" SelectedItem="{Binding SelectedSpacing}" Margin="10,10,10,10" Padding="5"></ComboBox>
+
+        <Button Command="{Binding ConcatenateCmd}" Grid.Row="5" Grid.ColumnSpan="2" Content="Concatenate" Margin="10,10,10,10" Padding="5">
             
         </Button>
     </Grid>

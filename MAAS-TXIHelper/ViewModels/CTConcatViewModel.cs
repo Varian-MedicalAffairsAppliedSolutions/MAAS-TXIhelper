@@ -14,6 +14,14 @@ using VMS.TPS;
 using VMS.TPS.Common.Model.API;
 using V = VMS.TPS.Common.Model.API;
 
+// TODO 7.25
+// Add "work in progress" to the two empty tabs
+// Change sampling slice thickness to something different
+// Create dropdown for spacing (original, 1,2,2.5,3,4,5,6,8,10 mm)
+// Add series.ID (Image.ID) to the xaml
+// Write save directory to config file
+// Add selected registration checks (determine if the primary is HFS, and the secondary is FFS)
+
 
 namespace MAAS_TXIHelper.ViewModels
 {
@@ -24,6 +32,16 @@ namespace MAAS_TXIHelper.ViewModels
         public ObservableCollection<Image> PrimaryImages { get; set; }
         public ObservableCollection<Image> SecondaryImages { get; set; }
         public ObservableCollection<Registration> Registrations { get; set; }
+
+        private double _SelectedSpacing;
+
+        public double SelectedSpacing
+        {
+            get { return _SelectedSpacing; }
+            set { SetProperty(ref _SelectedSpacing, value); }
+        }
+
+        public ObservableCollection<double> ResampleSpacings { get; set; }
 
         private Patient _patient;
 
@@ -45,6 +63,7 @@ namespace MAAS_TXIHelper.ViewModels
                 SetProperty(ref _PrimaryImage, value);
                 //ConcatenateCmd.RaiseCanExecuteChanged();
                 PopulateSecondaryImages();
+                PopulateSelectedSpacings();
             }
         }
 
@@ -54,6 +73,7 @@ namespace MAAS_TXIHelper.ViewModels
             get { return _SecondaryImage; }
             set { 
                 SetProperty(ref _SecondaryImage, value);
+
                 //ConcatenateCmd.RaiseCanExecuteChanged();
             }
         }
@@ -67,6 +87,20 @@ namespace MAAS_TXIHelper.ViewModels
                 //ConcatenateCmd.RaiseCanExecuteChanged();
             }
         }
+
+        private void PopulateSelectedSpacings()
+        {
+            if (PrimaryImage != null)
+            {
+                ResampleSpacings = new ObservableCollection<double>
+                {
+                    PrimaryImage.ZRes, 2.5, 5, 7.5, 10
+                };
+
+                SelectedSpacing = ResampleSpacings.First();
+            }
+        }
+
 
         private void PopulateSecondaryImages()
         {
@@ -113,6 +147,7 @@ namespace MAAS_TXIHelper.ViewModels
                 AssertDirectoryExists(SaveDir);
                 var core = new CTConcat(_patient, PrimaryImage, SecondaryImage, Registration, SaveDir);
                 core.Execute();
+                MessageBox.Show("Concatenation finished. Please close window and import new concatenated series.");
             }
             else
             {
@@ -133,6 +168,11 @@ namespace MAAS_TXIHelper.ViewModels
             SecondaryImages = new ObservableCollection<Image>();
             Registrations = new ObservableCollection<Registration>();
             ConcatenateCmd = new DelegateCommand(OnConcatenate, CanConcatenate);
+
+            ResampleSpacings = new ObservableCollection<double>
+            {
+                2.5, 5, 7.5, 10
+            };
 
             _patient = context.Patient;
 
