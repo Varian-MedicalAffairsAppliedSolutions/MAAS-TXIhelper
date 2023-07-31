@@ -44,7 +44,7 @@ jobs:
         nuget-version: latest
         
     - name: Download nuget packages
-      run: nuget install .\MAAS_TXIHelper\packages.config -OutputDirectory MAAS_TXIHelper\packages
+      run: nuget install .\MAAS-TXIHelper\packages.config -OutputDirectory MAAS-TXIHelper\packages
 
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
@@ -55,7 +55,7 @@ jobs:
         -StorePasswordInClearText
 
     - name: Download ESAPI package
-      run: nuget install ESAPI -Version 15.6.0 -OutputDirectory MAAS_TXIHelper\packages 
+      run: nuget install ESAPI -Version 15.6.0 -OutputDirectory MAAS-TXIHelper\packages 
 
     - name: Update hint paths in the csproj file
       run: |

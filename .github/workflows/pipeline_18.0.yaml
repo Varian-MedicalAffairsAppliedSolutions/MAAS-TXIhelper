@@ -31,7 +31,6 @@ jobs:
     - name: Navigate to Workspace
       run: cd $GITHUB_WORKSPACE
       
-
     - name: Update Target Framework Version to 4.8
       uses: Nambers/ReplaceStringInFile@v1.1
       with:
@@ -43,7 +42,7 @@ jobs:
       id: update_assembly_info
       run: |
         .\.github\workflows\Update-AssemblyInfo.ps1 `
-          -AssemblyInfoFilePath .\MAAS_TXIHelper\Properties\AssemblyInfo.cs `
+          -AssemblyInfoFilePath .\MAAS-TXIHelper\Properties\AssemblyInfo.cs `
           -ExpirationDate "${{ github.event.inputs.dateInput }}" `
           -MajorVersion ${{ env.MAJOR_VERSION }} `
           -MinorVersion ${{ env.MINOR_VERSION }} `
@@ -55,8 +54,59 @@ jobs:
       with:
         nuget-version: latest
     
+    - name: Download and Extract
+      shell: powershell
+      run: |
+        $url = 'https://sourceforge.net/projects/simpleitk/files/SimpleITK/1.2.2/CSharp/SimpleITK-1.2.2-CSharp-win64-x64.zip' # Replace with the actual URL of the zip file on SourceForge
+        $zipFile = "$env:TEMP\downloaded_itk.zip"
+        $extractedPath = "$env:TEMP\extracted_files\"
+
+        # Download the zip file
+        Invoke-WebRequest -Uri $url -OutFile $zipFile
+
+        # Create the directory for extraction
+        New-Item -ItemType Directory -Force -Path $extractedPath
+
+        # Expand the contents of the zip file using native PowerShell commands
+        Expand-Archive -Path $zipFile -DestinationPath $extractedPath
+
+    - name: Include DLL in the Project
+      run: |
+        $dllPath = "$env:TEMP\extracted_files\path\to\your.dll" # Replace with the actual path to your .dll file
+        $projectFilePath = "path\to\your\project.csproj" # Replace with the actual path to your .csproj file
+
+        # Add the .dll file as a link to the project with the specified properties
+        [xml]$projectXml = Get-Content $projectFilePath
+        $referenceElement = $projectXml.CreateElement('Reference')
+        $referenceElement.SetAttribute('Include', 'your.dll') # Replace 'your.dll' with the desired reference name
+        $hintPathElement = $projectXml.CreateElement('HintPath')
+        $hintPathElement.InnerText = $dllPath
+        $referenceElement.AppendChild($hintPathElement)
+        $privateElement = $projectXml.CreateElement('Private')
+        $privateElement.InnerText = 'True'
+        $referenceElement.AppendChild($privateElement)
+
+        $projectXml.Project.ItemGroup.AppendChild($referenceElement)
+        $projectXml.Save($projectFilePath)
+      shell: powershell
+
+    - name: Set Properties for the Reference
+      run: |
+        $projectFilePath = "path\to\your\project.csproj" # Replace with the actual path to your .csproj file
+
+        # Set the reference properties to "Content" and "Copy" always
+        [xml]$projectXml = Get-Content $projectFilePath
+        $referenceElement = $projectXml.Project.ItemGroup.Reference | Where-Object { $_.Include -eq 'your.dll' } # Replace 'your.dll' with the actual reference name
+        $referenceElement.Private.InnerText = 'False'
+        $referenceElement.CopyToOutputDirectory.InnerText = 'Always'
+        $referenceElement.SetAttribute('Update', 'your.dll') # Replace 'your.dll' with the actual reference name
+        $referenceElement.CopyToOutputDirectory.SetAttribute('Include', 'your.dll') # Replace 'your.dll' with the actual reference name
+
+        $projectXml.Save($projectFilePath)
+      shell: powershell
+    
     - name: Download nuget packages
-      run: nuget install .\packages.config -OutputDirectory packages
+      run: nuget install .\MAAS-TXIHelper\packages.config -OutputDirectory packages
    
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
@@ -72,11 +122,11 @@ jobs:
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
-        -CsprojFilePath .\ `
+        -CsprojFilePath .\MAAS-TXIHelper `
         -CsprojFileName MAAS_TXIHelper.csproj
           
     - name: Build Solution
-      run: msbuild.exe .\MAAS_TXIHelper.csproj /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Debug"
+      run: msbuild.exe .\MAAS-TXIHelper\MAAS_TXIHelper.csproj /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Debug"
         
     - name: Zip
       run: |
