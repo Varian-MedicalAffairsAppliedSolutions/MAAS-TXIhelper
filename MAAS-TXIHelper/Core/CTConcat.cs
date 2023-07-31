@@ -26,6 +26,19 @@ namespace MAAS_TXIHelper.Core
             _registration = registration;
             _saveDir = saveDir;
         }
+
+        private void createImg(V.Image primary)
+        {
+            // TODO replace primary with image for var name
+            int[,] voxelPlane = new int[primary.XSize, primary.YSize];
+            int[,,] voxelVolume = new int[primary.XSize, primary.YSize, primary.ZSize];
+            double[,,] huValues = new double[primary.XSize, primary.YSize, primary.ZSize];
+            PixelIDValueEnum pixelType = PixelIDValueEnum.sitkFloat32;
+            itk.simple.VectorUInt32 image3DSize = new itk.simple.VectorUInt32(new uint[] { (uint)primary.XSize, (uint)primary.YSize, (uint)primary.ZSize });
+            itk.simple.Image itkImagePrimary = new itk.simple.Image(image3DSize, pixelType);
+            VectorDouble spacing3D = new VectorDouble(new double[] { primary.XRes, primary.YRes, primary.ZRes });
+            itkImagePrimary.SetSpacing(spacing3D);
+        }
         
         public override bool Run()
         {
@@ -125,18 +138,13 @@ namespace MAAS_TXIHelper.Core
                     }
                 }
             }
+
             ProvideUIUpdate($"\nData processing for primary image \"{_imageSecondary.Id}\" complete.");
-
-
             ProvideUIUpdate("loaded secondary, starting load registration");
             itk.simple.Image itkImageSecondaryTransformed = TransformImage(itkImageSecondary, _registration);
             ProvideUIUpdate("loaded registration");
-
-            //Console.WriteLine($"Primary image origin: {itkImagePrimary.GetOrigin()[0]}\t{itkImagePrimary.GetOrigin()[1]}\t{itkImagePrimary.GetOrigin()[2]}");
-            //Console.WriteLine($"Transformed 2ndary image origin: {itkImageSecondaryTransformed.GetOrigin()[0]}\t{itkImageSecondaryTransformed.GetOrigin()[1]}\t{itkImageSecondaryTransformed.GetOrigin()[2]}");
-            ProvideUIUpdate("About to merge images");
+            ProvideUIUpdate("About to merge images. This step can take several minutes, patience please.");
             itk.simple.Image itkImageMerged = MergeImages(itkImagePrimary, itkImageSecondaryTransformed);
-            //ProvideUIUpdate("About to save dicom");
             SaveImagesDICOM(itkImageMerged, _imagePrimary);
             ProvideUIUpdate(100, "Complete");
             return true;

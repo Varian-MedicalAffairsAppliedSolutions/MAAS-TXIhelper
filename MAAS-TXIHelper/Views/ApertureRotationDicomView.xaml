@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="MAAS_TXIHelper.Views.ApertureRotationDicomView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MAAS_TXIHelper.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.ColumnSpan="2" Content="Select isocenters to be treated Foot First Supine" VerticalAlignment="Center" FontWeight="Bold" Margin="5"></Label>
+
+        <ListBox Grid.Row="1" Height="300" Grid.RowSpan="4" Grid.ColumnSpan="2" ItemsSource="{Binding IsoGroups}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Button Grid.Row="5" Grid.ColumnSpan="2"  Margin="5" Content="Create new plan with isocenters to be treated foot first" Command="{Binding CreatePlanCmd}"></Button>
+        <TextBox Grid.Row="6" Grid.ColumnSpan="2" Margin="5" Text="{Binding TempDicomDir}"></TextBox>
+        <Button Grid.Row="7" Grid.ColumnSpan="2" Margin="5" Content="Select dicom RT plan to flip MLC control points"></Button>
+        
+
+
+        <!--GridButton Content="Rotate Aperture" Margin="10" Command="{Binding OnRotateCmd}"/-->
+
+    </Grid>
+</UserControl>

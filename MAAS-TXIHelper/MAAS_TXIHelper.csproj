@@ -203,9 +203,15 @@
     <Compile Include="Models\SettingsClass.cs" />
     <Compile Include="Properties\AssemblyExpirationDate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\ApertureRotationDicomViewModel.cs" />
+    <Compile Include="ViewModels\FinalPlanPrepViewModel.cs" />
+    <Compile Include="ViewModels\IsoPlacementViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Script.cs" />
     <Compile Include="ViewModels\CTConcatViewModel.cs" />
+    <Compile Include="Views\ApertureRotationDicomView.xaml.cs">
+      <DependentUpon>ApertureRotationDicomView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CTConcatView.xaml.cs">
       <DependentUpon>CTConcatView.xaml</DependentUpon>
     </Compile>
@@ -224,6 +230,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\ApertureRotationDicomView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CTConcatView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

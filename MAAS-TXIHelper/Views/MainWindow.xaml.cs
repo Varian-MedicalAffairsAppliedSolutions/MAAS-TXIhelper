@@ -31,6 +31,7 @@ namespace Views
         private CTConcatView v2;
         private PlaceIsocentersView v3;
         private FinalPlanPrepView v4;
+        private ApertureRotationDicomView v5;
 
         public MainWindow(ScriptContext context, MainViewModel vm)
         {
@@ -39,13 +40,17 @@ namespace Views
             this.v2 = new CTConcatView(context);
             this.v3 = new PlaceIsocentersView(context);
             this.v4 = new FinalPlanPrepView(context);
+            this.v5 = new ApertureRotationDicomView(context);
             // Access individual TabItems by their names
             // Access the TabControl by its name
+            
+            
 
             Tab1.Content = v2;
             Tab2.Content = v3;
-            Tab3.Content = v1;
+            Tab3.Content = v5;
             Tab4.Content = v4;
+            
             DataContext = vm;
         }
 

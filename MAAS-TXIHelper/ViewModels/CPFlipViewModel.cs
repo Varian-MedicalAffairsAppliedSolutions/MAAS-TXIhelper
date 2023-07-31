@@ -29,9 +29,7 @@ namespace ViewModels
         {
             get { return _Course; }
             set { SetProperty(ref _Course, value); }
-        }
-
-        
+        }    
 
         
         private ExternalPlanSetup _Plan;

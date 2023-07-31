@@ -8,6 +8,8 @@ using FellowOakDicom;
 
 namespace MAAS_TXIHelper.Core
 {
+    // Could write this file myself from eclipse input
+
     public class CPFlipper
     {
         public static void PlanFlipVMAT(string filename)

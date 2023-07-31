@@ -13,17 +13,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VMS.TPS.Common.Model.API;
 
 namespace MAAS_TXIHelper.Views
 {
     /// <summary>
-    /// Interaction logic for FinalPlanPrepView.xaml
+    /// Interaction logic for ApertureRotationDicomView.xaml
     /// </summary>
-    public partial class FinalPlanPrepView : UserControl
+    public partial class ApertureRotationDicomView : UserControl
     {
-        public FinalPlanPrepView(VMS.TPS.Common.Model.API.ScriptContext context)
+        public ApertureRotationDicomView(ScriptContext context)
         {
-            DataContext = new FinalPlanPrepViewModel(context);
+            this.DataContext = new ApertureRotationDicomViewModel(context);
             InitializeComponent();
         }
     }

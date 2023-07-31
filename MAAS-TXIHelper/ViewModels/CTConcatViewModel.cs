@@ -21,6 +21,7 @@ using V = VMS.TPS.Common.Model.API;
 // Add series.ID (Image.ID) to the xaml
 // Write save directory to config file
 // Add selected registration checks (determine if the primary is HFS, and the secondary is FFS)
+// Write the patient ids when we write the dicom file (look at COH code)
 
 
 namespace MAAS_TXIHelper.ViewModels
