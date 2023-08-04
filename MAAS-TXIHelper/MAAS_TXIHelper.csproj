@@ -199,6 +199,7 @@
     <Compile Include="Core\CTConcat.cs" />
     <Compile Include="FlexibleMessageBox.cs" />
     <Compile Include="CustomWidgets\BindableRichTextBox.cs" />
+    <Compile Include="Models\ImageModel.cs" />
     <Compile Include="Models\ListItem.cs" />
     <Compile Include="Models\SettingsClass.cs" />
     <Compile Include="Properties\AssemblyExpirationDate.cs" />

@@ -21,6 +21,13 @@ namespace MAAS_TXIHelper.ViewModels
 
     public class ApertureRotationDicomViewModel :BindableBase
     {
+        private bool _CPFlipEnabled;
+
+        public bool CPFlipEnabled
+        {
+            get { return _CPFlipEnabled; }
+            set { SetProperty(ref _CPFlipEnabled, value); }
+        }
         public string TempDicomDir { get; set; }    
         public DelegateCommand OnRotateCmd { get; set; }
 
@@ -31,25 +38,42 @@ namespace MAAS_TXIHelper.ViewModels
         public ObservableCollection<IsoGroup> IsoGroups { get; set; }
         public ApertureRotationDicomViewModel(ScriptContext context) {
 
-            Plan = context.ExternalPlanSetup;
-            OnRotateCmd = new DelegateCommand(onRotate);
-            CreatePlanCmd = new DelegateCommand(onCreatePlan);
-            TempDicomDir = @"C:\Temp";
-
-            // Populate iso groups
-            
-            // TEST
-            IsoGroups = new ObservableCollection<IsoGroup>();
-            for (int i = 0; i < 10; i++)
+            if (context.PlanSetup == null)
             {
-                var ig = new IsoGroup();
-                ig.Name = $"Group {i}";
-                ig.IsChecked = true;
-                IsoGroups.Add(ig); 
+                MessageBox.Show("Warning: no plan loaded, plan related tabs are not active.");
+                CPFlipEnabled = false;
             }
+            else
+            {
 
-            // TODO: populate with actual iso groups and by default check the lower half
+                Plan = context.ExternalPlanSetup;
+                OnRotateCmd = new DelegateCommand(onRotate);
+                CreatePlanCmd = new DelegateCommand(onCreatePlan);
+                TempDicomDir = @"C:\Temp";
 
+                // Populate iso groups
+
+                // TEST
+                /*
+                IsoGroups = new ObservableCollection<IsoGroup>();
+                for (int i = 0; i < 10; i++)
+                {
+                    var ig = new IsoGroup();
+                    ig.Name = $"Group {i}";
+                    ig.IsChecked = true;
+                    IsoGroups.Add(ig); 
+                }*/
+
+
+
+                foreach (var bm in Plan.Beams)
+                {
+                    // Create IsoGroup objects ordered by z position and ascending
+
+                }
+
+                // TODO: populate with actual iso groups and by default check the lower half
+            }
             
         }
 

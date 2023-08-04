@@ -16,6 +16,14 @@ namespace ViewModels
 
     public class CPFlipViewModel : BindableBase
     {
+        private bool _CPFlipEnabled;
+
+        public bool CPFlipEnabled
+        {
+            get { return _CPFlipEnabled; }
+            set { SetProperty(ref _CPFlipEnabled, value); }
+        }
+
 
         private Patient _Patient;
         public Patient Patient
@@ -98,59 +106,71 @@ namespace ViewModels
 
             _Patient = currentContext.Patient;
             _Course = currentContext.Course;
-            _Plan = currentContext.PlanSetup as ExternalPlanSetup;
+            CPFlipEnabled = true;
 
-            /*
-            var dirInfo = new DirectoryInfo(Assembly.GetExecutingAssembly().Location);
-            logPath = Path.Combine(dirInfo.Parent.Name, "TXILog.log");
-            MessageBox.Show($"Logpath debug is: {logPath}");*/
-
-            // Get the directory path of the current DLL
-            string dllDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-            // Build the log file path
-            LogPath = Path.Combine(dllDirectory, "TXILog.log");
-            MessageBox.Show($"logfile {LogPath}");
-
-            FlipCmd = new DelegateCommand(OnFlip);
-            SelectLogPathCmd = new DelegateCommand(OnSelectLogPath);
-
-            // Determine what type of mlc and technique we are using
-            _IsStaticBeamPlan = false;
-            _IsDynamicBeamPlan = false;
-            _IsArcBeamPlan = false;
-            _IsSX2MLC = false;
-            _IsHalcyon = false;
-            foreach (var beam in _Plan.Beams)
+            if (currentContext.PlanSetup == null)
             {
-                if (beam.IsSetupField == false && beam.IsImagingTreatmentField == false)
+                MessageBox.Show("Warning: no plan loaded, plan related tabs are not active.");
+                CPFlipEnabled = false;
+            }
+            else
+            {
+                _Plan = currentContext.PlanSetup as ExternalPlanSetup;
+
+                /*
+                var dirInfo = new DirectoryInfo(Assembly.GetExecutingAssembly().Location);
+                logPath = Path.Combine(dirInfo.Parent.Name, "TXILog.log");
+                MessageBox.Show($"Logpath debug is: {logPath}");*/
+
+                // Get the directory path of the current DLL
+                string dllDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                // Build the log file path
+                LogPath = Path.Combine(dllDirectory, "TXILog.log");
+                MessageBox.Show($"logfile {LogPath}");
+
+                FlipCmd = new DelegateCommand(OnFlip);
+                SelectLogPathCmd = new DelegateCommand(OnSelectLogPath);
+
+                // Determine what type of mlc and technique we are using
+                _IsStaticBeamPlan = false;
+                _IsDynamicBeamPlan = false;
+                _IsArcBeamPlan = false;
+                _IsSX2MLC = false;
+                _IsHalcyon = false;
+
+
+
+                foreach (var beam in _Plan.Beams)
                 {
-                    if (beam.Technique.ToString() == "STATIC")
+                    if (beam.IsSetupField == false && beam.IsImagingTreatmentField == false)
                     {
-                        // Here we assume that if one treatment beam is a static beam, then all the beams
-                        // in this treatment plan must be static beams.
-                        _IsStaticBeamPlan = true;
-                    }
-                    if (beam.Technique.ToString().ToLower().Contains("arc"))
-                    {
-                        // Here we assume that if one treatment beam is a VMAT or arc beam, then all the beams
-                        // in this treatment plan must be VMAT or arc beams.
-                        _IsArcBeamPlan = true;
-                    }
-                    if (beam.MLC.Model == "SX2")
-                    {
-                        // Here we assume that it is a Halcyon or Ethos linac, because the "SX2" MLC only
-                        // appears on such linacs.
-                        _IsSX2MLC = true;
-                    }
-                    if (beam.TreatmentUnit.MachineModel == "RDS")
-                    {
-                        // Here we assume that it is a Halcyon or Ethos linac
-                        _IsHalcyon = true;
+                        if (beam.Technique.ToString() == "STATIC")
+                        {
+                            // Here we assume that if one treatment beam is a static beam, then all the beams
+                            // in this treatment plan must be static beams.
+                            _IsStaticBeamPlan = true;
+                        }
+                        if (beam.Technique.ToString().ToLower().Contains("arc"))
+                        {
+                            // Here we assume that if one treatment beam is a VMAT or arc beam, then all the beams
+                            // in this treatment plan must be VMAT or arc beams.
+                            _IsArcBeamPlan = true;
+                        }
+                        if (beam.MLC.Model == "SX2")
+                        {
+                            // Here we assume that it is a Halcyon or Ethos linac, because the "SX2" MLC only
+                            // appears on such linacs.
+                            _IsSX2MLC = true;
+                        }
+                        if (beam.TreatmentUnit.MachineModel == "RDS")
+                        {
+                            // Here we assume that it is a Halcyon or Ethos linac
+                            _IsHalcyon = true;
+                        }
                     }
                 }
             }
-
         }
 
         private void OnSelectLogPath()

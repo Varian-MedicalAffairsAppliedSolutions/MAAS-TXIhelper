@@ -13,6 +13,7 @@ using System.Windows;
 using VMS.TPS;
 using VMS.TPS.Common.Model.API;
 using V = VMS.TPS.Common.Model.API;
+using MAAS_TXIHelper.Models;
 
 // TODO 7.25
 // Add "work in progress" to the two empty tabs
@@ -30,8 +31,8 @@ namespace MAAS_TXIHelper.ViewModels
     public class CTConcatViewModel: BindableBase
     {
         public DelegateCommand ConcatenateCmd { get; set; } 
-        public ObservableCollection<Image> PrimaryImages { get; set; }
-        public ObservableCollection<Image> SecondaryImages { get; set; }
+        public ObservableCollection<ImageModel> PrimaryImages { get; set; }
+        public ObservableCollection<ImageModel> SecondaryImages { get; set; }
         public ObservableCollection<Registration> Registrations { get; set; }
 
         private double _SelectedSpacing;
@@ -56,8 +57,8 @@ namespace MAAS_TXIHelper.ViewModels
             }
         }
 
-        private Image _PrimaryImage;
-        public Image PrimaryImage
+        private ImageModel _PrimaryImage;
+        public ImageModel PrimaryImage
         {
             get { return _PrimaryImage; }
             set { 
@@ -68,8 +69,8 @@ namespace MAAS_TXIHelper.ViewModels
             }
         }
 
-        private Image _SecondaryImage;
-        public Image SecondaryImage
+        private ImageModel _SecondaryImage;
+        public ImageModel SecondaryImage
         {
             get { return _SecondaryImage; }
             set { 
@@ -95,7 +96,7 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 ResampleSpacings = new ObservableCollection<double>
                 {
-                    PrimaryImage.ZRes, 2.5, 5, 7.5, 10
+                    PrimaryImage.VImage.ZRes, 2.5, 5, 7.5, 10
                 };
 
                 SelectedSpacing = ResampleSpacings.First();
@@ -114,15 +115,15 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 foreach (Registration registration in _patient.Registrations)
                 {
-                    if (registration.SourceFOR == PrimaryImage.FOR)
+                    if (registration.SourceFOR == PrimaryImage.VImage.FOR)
                     {
-                        var secondaryImage = PrimaryImages.FirstOrDefault(image => image.FOR == registration.RegisteredFOR);
+                        var secondaryImage = PrimaryImages.FirstOrDefault(image => image.VImage.FOR == registration.RegisteredFOR);
                         if (secondaryImage != null && !SecondaryImages.Contains(secondaryImage))
                             SecondaryImages.Add(secondaryImage);
                     }
-                    else if (registration.RegisteredFOR == PrimaryImage.FOR)
+                    else if (registration.RegisteredFOR == PrimaryImage.VImage.FOR)
                     {
-                        var secondaryImage = PrimaryImages.FirstOrDefault(image => image.FOR == registration.SourceFOR);
+                        var secondaryImage = PrimaryImages.FirstOrDefault(image => image.VImage.FOR == registration.SourceFOR);
                         if (secondaryImage != null && !SecondaryImages.Contains(secondaryImage))
                             SecondaryImages.Add(secondaryImage);
                     }
@@ -146,7 +147,7 @@ namespace MAAS_TXIHelper.ViewModels
             {
 
                 AssertDirectoryExists(SaveDir);
-                var core = new CTConcat(_patient, PrimaryImage, SecondaryImage, Registration, SaveDir);
+                var core = new CTConcat(_patient, PrimaryImage, SecondaryImage, Registration, SaveDir, SelectedSpacing);
                 core.Execute();
                 MessageBox.Show("Concatenation finished. Please close window and import new concatenated series.");
             }
@@ -165,8 +166,8 @@ namespace MAAS_TXIHelper.ViewModels
 
             SaveDir = @"C:\Temp";
 
-            PrimaryImages = new ObservableCollection<Image>();
-            SecondaryImages = new ObservableCollection<Image>();
+            PrimaryImages = new ObservableCollection<ImageModel>();
+            SecondaryImages = new ObservableCollection<ImageModel>();
             Registrations = new ObservableCollection<Registration>();
             ConcatenateCmd = new DelegateCommand(OnConcatenate, CanConcatenate);
 
@@ -180,7 +181,7 @@ namespace MAAS_TXIHelper.ViewModels
             // Populate primary images
             foreach (var pi in context.Patient.Studies.SelectMany(study => study.Images3D).ToList())
             {
-                PrimaryImages.Add(pi);
+                PrimaryImages.Add(new ImageModel(pi));
             }
             
         }

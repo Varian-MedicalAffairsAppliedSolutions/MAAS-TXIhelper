@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Views.CPFlipView"
+﻿<UserControl x:Class="Views.CPFlipView" 
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="clr-namespace:MAAS_TXIHelper.CustomWidgets"
@@ -60,11 +60,11 @@
         <Label Grid.Row="9" Grid.Column="0" Content="Log File Path:" VerticalAlignment="Center" Margin="5"/>
         <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
             <TextBlock x:Name="lblLogFilePath" Text="{Binding LogPath}" VerticalAlignment="Center"/>
-            <Button Style="{StaticResource MyButtonStyle}" Content="Select File" Command="{Binding SelectLogPathCmd}" Margin="5"/>
+            <Button IsEnabled="{Binding CPFlipEnabled}"  Style="{StaticResource MyButtonStyle}" Content="Select File" Command="{Binding SelectLogPathCmd}" Margin="5"/>
         </StackPanel>
 
         <StackPanel Grid.Row="10" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
-            <Button Style="{StaticResource MyButtonStyle}" Content="Flip Control Points" Command="{Binding FlipCmd}"></Button>
+            <Button IsEnabled = "{Binding CPFlipEnabled}" Style="{StaticResource MyButtonStyle}" Content="Flip Control Points" Command="{Binding FlipCmd}"></Button>
         </StackPanel>
     </Grid>
 

@@ -39,9 +39,9 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Button Grid.Row="5" Grid.ColumnSpan="2"  Margin="5" Content="Create new plan with isocenters to be treated foot first" Command="{Binding CreatePlanCmd}"></Button>
+        <Button Grid.Row="5" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="2"  Margin="5" Content="Create new plan with isocenters to be treated foot first" Command="{Binding CreatePlanCmd}"></Button>
         <TextBox Grid.Row="6" Grid.ColumnSpan="2" Margin="5" Text="{Binding TempDicomDir}"></TextBox>
-        <Button Grid.Row="7" Grid.ColumnSpan="2" Margin="5" Content="Select dicom RT plan to flip MLC control points"></Button>
+        <Button Grid.Row="7" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="2" Margin="5" Content="Select dicom RT plan to flip MLC control points"></Button>
         
 
 

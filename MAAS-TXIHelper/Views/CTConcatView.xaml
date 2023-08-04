@@ -27,13 +27,13 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="0" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select Primary Image" HorizontalAlignment="Right"/>
-        <ComboBox ItemsSource="{Binding PrimaryImages}" SelectedItem="{Binding PrimaryImage}" DisplayMemberPath="Id" Grid.Row="0" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
+        <ComboBox ItemsSource="{Binding PrimaryImages}" SelectedItem="{Binding PrimaryImage}" DisplayMemberPath="DisplayName" Grid.Row="0" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
 
         <Label Grid.Row="1" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select Secondary Image" HorizontalAlignment="Right"/>
-        <ComboBox ItemsSource="{Binding SecondaryImages}" SelectedItem="{Binding SecondaryImage}" DisplayMemberPath="Id"  Grid.Row="1" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
+        <ComboBox ItemsSource="{Binding SecondaryImages}" SelectedItem="{Binding SecondaryImage}" DisplayMemberPath="DisplayName"  Grid.Row="1" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
 
         <Label Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select Registration" HorizontalAlignment="Right"/>
-        <ComboBox ItemsSource="{Binding Registrations}" SelectedItem="{Binding Registration}" DisplayMemberPath="Id"  Grid.Row="2" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
+        <ComboBox ItemsSource="{Binding Registrations}" SelectedItem="{Binding Registration}" DisplayMemberPath="Id" Grid.Row="2" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
 
         <Label Grid.Row="3" HorizontalAlignment="Right" Content="Output Directory" Margin="10,10,10,10" Padding="5"></Label>
         <TextBox Grid.Row="3" Grid.Column="1" Margin="10,10,10,10" Padding="5" Text="{Binding SaveDir}"></TextBox>
