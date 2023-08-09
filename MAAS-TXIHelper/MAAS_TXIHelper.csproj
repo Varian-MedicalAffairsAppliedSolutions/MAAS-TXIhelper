@@ -287,7 +287,7 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\..\Documents\SimpleITK-2.2.1-CSharp-win64-x64\SimpleITK-2.2.1-CSharp-win64-x64\SimpleITKCSharpNative.dll">
+    <Content Include="..\..\SimpleITK-2.2.1-CSharp-win64-x64\SimpleITKCSharpNative.dll">
       <Link>SimpleITKCSharpNative.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -134,7 +134,7 @@ namespace MAAS_TXIHelper.Core
             return false;
         }
         
-        private void SaveImagesDICOM(itk.simple.Image itkImageMerged, VMS.TPS.Common.Model.API.Image imagePrimary)
+        private void SaveImagesDICOM(itk.simple.Image itkImageMerged, VMS.TPS.Common.Model.API.Image imagePrimary, Patient patient)
         {
 
             PixelIDValueEnum pixelType = PixelIDValueEnum.sitkFloat32;
@@ -149,12 +149,11 @@ namespace MAAS_TXIHelper.Core
             ImageFileWriter writer = new ImageFileWriter();
             writer.KeepOriginalImageUIDOn();
             // DICOM metadata that are common to each slice
-            itkImageDCM.SetMetaData("0010|0010", "demo^pt");
-            itkImageDCM.SetMetaData("0010|0010", "demo^pt");
-            itkImageDCM.SetMetaData("0010|0020", "demopatient");
+            itkImageDCM.SetMetaData("0010|0010", $"{patient.LastName}^{patient.FirstName}^{patient.MiddleName}");
+            itkImageDCM.SetMetaData("0010|0020", patient.Id);
             itkImageDCM.SetMetaData("0008|0008", "ORIGINAL\\PRIMARY\\AXIAL");
             itkImageDCM.SetMetaData("0008|0070", imagePrimary.Series.ImagingDeviceManufacturer);
-            itkImageDCM.SetMetaData("0008|0020", "20230519");  // study date  -- to be updated to be the app running date
+            itkImageDCM.SetMetaData("0008|0020", DateTime.Now.ToString("yyyyMMdd"));  // study date  -- to be updated to be the app running date
             itkImageDCM.SetMetaData("0008|0030", "084002.187034"); // study time -- to be updated to be the app running time
             itkImageDCM.SetMetaData("0018|0050", imagePrimary.ZRes.ToString()); // slice thickness
                                                                                 // itkImageDCM.SetMetaData("0020|0012", ?); // acquisition number
@@ -167,13 +166,11 @@ namespace MAAS_TXIHelper.Core
             for (int z = 0; z < itkImageMerged.GetSize()[2]; z++)
             {
                 ProvideUIUpdate($"Processing Slice {z}");
-                
-                
+
                 for (int x = 0; x < itkImageMerged.GetSize()[0]; x++)
                 {
                     for (int y = 0; y < itkImageMerged.GetSize()[1]; y++)
                     {
-                        //                        itkImage.SetPixelAsFloat(new VectorUInt32(new uint[] { (uint)x, (uint)y }), (float)(huValues[x, y, z] / 200.0));
                         itkImageDCM.SetPixelAsInt16(new VectorUInt32(new uint[] { (uint)x, (uint)y }), (Int16)itkImageMerged.GetPixelAsFloat(new VectorUInt32(new uint[] { (uint)x, (uint)y, (uint)z })));
                     }
                 }
@@ -205,7 +202,6 @@ namespace MAAS_TXIHelper.Core
             itkImageMerged.SetSpacing(itkImagePrimary.GetSpacing());
             double newOriginZ = itkImagePrimary.GetOrigin()[2] - (newSlices - itkImagePrimary.GetSize()[2]) * itkImagePrimary.GetSpacing()[2];
             itkImageMerged.SetOrigin(new VectorDouble(new double[] { itkImagePrimary.GetOrigin()[0], itkImagePrimary.GetOrigin()[1], newOriginZ }));
-            //Console.WriteLine($"Size for merged: {itkImageMerged.GetSize()[0]} {itkImageMerged.GetSize()[1]} {itkImageMerged.GetSize()[2]}");
             // here we first construct a SimpleITK 3D image from the image data
             // 1. Based on ESAPI manual, the DICOM origin is the DICOM coordinate for the point at the upper left corner of the first imaging plane.
             //    Note that this DICOM origin does not have [0, 0, 0] as coordinates.
