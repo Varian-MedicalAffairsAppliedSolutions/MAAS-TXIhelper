@@ -123,9 +123,8 @@
     <Reference Include="Prism.Wpf, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>packages\Prism.Wpf.8.1.97\lib\net47\Prism.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleITKCSharpManaged, Version=2.2.0.256, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Downloads\SimpleITK-2.2.1-CSharp-win64-x64\SimpleITK-2.2.1-CSharp-win64-x64\SimpleITKCSharpManaged.dll</HintPath>
+    <Reference Include="SimpleITKCSharpManaged">
+      <HintPath>W:\Projects\SimpleITK-2.2.1-CSharp-win64-x64\SimpleITKCSharpManaged.dll</HintPath>
     </Reference>
     <Reference Include="SimpleProgressWindow, Version=1.2.8594.18064, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>packages\SimpleProgressWindow.1.2.8594.18064\lib\net472\SimpleProgressWindow.dll</HintPath>
@@ -181,17 +180,15 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="VMS.TPS.Common.Model.API">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Varian\RTM\16.1\esapi\API\VMS.TPS.Common.Model.API.dll</HintPath>
+    </Reference>
+    <Reference Include="VMS.TPS.Common.Model.Types">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Varian\RTM\16.1\esapi\API\VMS.TPS.Common.Model.Types.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="VMS.TPS.Common.Model.API">
-      <HintPath>D:\TPS\va\Main\Bin\Release64\VMS.TPS.Common.Model.API.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="VMS.TPS.Common.Model.Types">
-      <HintPath>D:\TPS\va\Main\Bin\Release64\VMS.TPS.Common.Model.Types.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Core.cs" />
@@ -287,7 +284,7 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\SimpleITK-2.2.1-CSharp-win64-x64\SimpleITKCSharpNative.dll">
+    <Content Include="W:\Projects\SimpleITK-2.2.1-CSharp-win64-x64\SimpleITKCSharpNative.dll">
       <Link>SimpleITKCSharpNative.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

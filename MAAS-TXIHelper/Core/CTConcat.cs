@@ -115,7 +115,7 @@ namespace MAAS_TXIHelper.Core
             ProvideUIUpdate("loaded registration");
             ProvideUIUpdate("About to merge images. This step can take several minutes, patience please.");
             itk.simple.Image itkImageMerged = MergeImages(itkImagePrimary, itkImageSecondaryTransformed);
-            SaveImagesDICOM(itkImageMerged, _imagePrimary.VImage);
+            SaveImagesDICOM(itkImageMerged, _imagePrimary.VImage, _patient);
             ProvideUIUpdate(100, "Complete");
             return true;
         }

@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\MAAS-TXIHelper",
+    "\\MAAS-TXIHelper\\Core"
   ],
-  "SelectedNode": "\\ModulationComplexity.sln",
+  "SelectedNode": "\\MAAS-TXIHelper\\Core\\CTConcat.cs",
   "PreviewInSolutionExplorer": false
 }
