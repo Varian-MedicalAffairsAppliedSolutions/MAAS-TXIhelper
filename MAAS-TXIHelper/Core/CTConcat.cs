@@ -259,15 +259,30 @@ namespace MAAS_TXIHelper.Core
                 }
                 Console.WriteLine();
             }
-            var tf = new TranslationTransform(3);
-            tf.SetOffset(new VectorDouble(new double[] { rMatrix[0, 3], rMatrix[1, 3], rMatrix[2, 3] }));
-            var transformed = SimpleITK.Resample(itkImageSecondary, tf);
-            VectorDouble originOld = itkImageSecondary.GetOrigin();
+
+            // first rotate the image
+            // According to SimpleITK documentation, Euler3DTransform is a rigid 3D transform with rotation in radians around the fixed center with translation.
+            I.Euler3DTransform eulerTransform = new I.Euler3DTransform();
+            // First set the center of rotations.
+            I.VectorDouble imageCenter = new I.VectorDouble(new double[] { 0, 0, 0 });
+            eulerTransform.SetCenter(imageCenter);  // This is the center for rotation transformations.
+            // Then define the rotation angles
+            // calcualate the rotation angles from the rotation matrix
+            // 8/18/2023: reserse the sign for y_theta. I think that it is due to the orientation of the y-axis in the SimpleItk coordinate system.
+            // In it, y-axis points upwards in an imaging plane, while in Eclipse, y-axis points downwards.
+            double x_theta, y_theta, z_theta;
+            y_theta = -Math.Asin(-rMatrix[2, 0]);
+            x_theta = -Math.Asin(rMatrix[2, 1] / Math.Cos(y_theta));
+            z_theta = -Math.Asin(rMatrix[1, 0] / Math.Cos(y_theta));
+            eulerTransform.SetRotation(x_theta, y_theta, z_theta);
+            var rotated = I.SimpleITK.Resample(itkImageSecondary, eulerTransform, I.InterpolatorEnum.sitkLinear, -1000);
+
+            I.VectorDouble originOld = itkImageSecondary.GetOrigin();
             originOld[0] = originOld[0] + rMatrix[0, 3];
             originOld[1] = originOld[1] + rMatrix[1, 3];
             originOld[2] = originOld[2] + rMatrix[2, 3];
-            itkImageSecondary.SetOrigin(originOld);
-            return itkImageSecondary;
+            rotated.SetOrigin(originOld);
+            return rotated;
         }
 
         private itk.simple.Image ReadImage(VMS.TPS.Common.Model.API.Image imageEclipse)
