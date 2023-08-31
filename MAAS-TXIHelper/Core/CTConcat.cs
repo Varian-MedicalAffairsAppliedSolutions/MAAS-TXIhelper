@@ -154,11 +154,12 @@ namespace MAAS_TXIHelper.Core
             itkImageDCM.SetMetaData("0008|0008", "ORIGINAL\\PRIMARY\\AXIAL");
             itkImageDCM.SetMetaData("0008|0070", imagePrimary.Series.ImagingDeviceManufacturer);
             itkImageDCM.SetMetaData("0008|0020", DateTime.Now.ToString("yyyyMMdd"));  // study date  -- to be updated to be the app running date
-            itkImageDCM.SetMetaData("0008|0030", "084002.187034"); // study time -- to be updated to be the app running time
+            itkImageDCM.SetMetaData("0008|0030", DateTime.Now.ToString("HHmmss.ffffff")); // study time
             itkImageDCM.SetMetaData("0018|0050", imagePrimary.ZRes.ToString()); // slice thickness
                                                                                 // itkImageDCM.SetMetaData("0020|0012", ?); // acquisition number
-            itkImageDCM.SetMetaData("0020|000D", imagePrimary.Series.Study.UID.Substring(0, imagePrimary.Series.Study.UID.Length - 1));  // study UID.
-            string newSeriesUID = imagePrimary.Series.UID.Substring(0, imagePrimary.Series.UID.Length - 1);
+            string newStudyUID = MakeNewUID(imagePrimary.Series.Study.UID);
+            itkImageDCM.SetMetaData("0020|000D", newStudyUID);  // study UID.
+            string newSeriesUID = MakeNewUID(imagePrimary.Series.UID);
             itkImageDCM.SetMetaData("0020|000E", newSeriesUID);  // series UID.
             itkImageDCM.SetMetaData("0020|0052", imagePrimary.Series.FOR);  // use the same frame of reference UID as the original image series.
             itkImageDCM.SetMetaData("0020|1040", "BB"); // position reference indicator
@@ -332,8 +333,71 @@ namespace MAAS_TXIHelper.Core
             ProvideUIUpdate($"\nData processing for image \"{imageEclipse.Id}\" complete.");
             return itkImage3D;
         }
+        private string MakeNewUID(string uid)
+        {
+            string newUID = "";
+            string timeTag = DateTime.Now.ToString("yyMMddHHmmssff");
+            string[] segments = uid.Split('.');
+            if (segments.Length > 5)
+            {
+                segments[segments.Length - 2] = timeTag;
+            }
+            else
+            {
+                segments[segments.Length - 1] = timeTag;
+            }
+            foreach (string segment in segments)
+            {
+                newUID += segment + '.';
+            }
+            newUID = newUID.Substring(0, newUID.Length - 1);
+            if (segments.Length <= 5)
+            {
+                return newUID;
+            }
+            if (segments.Length == 6 && newUID.Length > 64)
+            {
+                int deltaLength = newUID.Length - 64;
+                segments[5] = segments[deltaLength];
+                foreach (string segment in segments)
+                {
+                    newUID += segment + '.';
+                }
+                newUID = newUID.Substring(0, newUID.Length - 1);
+                return newUID;
+            }
+            if (segments.Length > 6 && newUID.Length > 64)  // truncate some digits since the UID length needs to be no more than 64.
+            {
+                segments = newUID.Split('.');
+                int deltaLength = 64 - newUID.Length;
+                string root = "";
+                for (int i = 0; i < 4; i++)
+                {
+                    root += segments[i] + ".";
+                }
+                string mid = "";
+                for (int i = 4; i < segments.Length - 2; i++)
+                {
+                    mid += segments[i] + '.';
+                }
+                string tail = "";
+                for (int i = segments.Length - 2; i < segments.Length; i++)
+                {
+                    tail += segments[i] + '.';
+                }
+                tail = tail.Substring(0, tail.Length - 1);
+                mid = mid.Substring(0, mid.Length - 1);
+                if (mid.Length > deltaLength)
+                {
+                    mid = mid.Substring(0, mid.Length - deltaLength);
+                }
+                mid += '.';
+                mid = mid.Replace("..", ".");
+                newUID = root + mid + tail;
+            }
+            return newUID;
+        }
 
-        
     }
-    
+
 }
