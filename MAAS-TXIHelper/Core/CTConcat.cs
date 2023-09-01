@@ -1,5 +1,4 @@
 ﻿using System;
-using itk.simple;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 using V = VMS.TPS.Common.Model.API;
@@ -10,247 +9,108 @@ using System.IO;
 using System.Linq;
 using MAAS_TXIHelper.Models;
 using I = itk.simple;
+using FellowOakDicom.Imaging;
+using System.Windows.Interop;
+using itk.simple;
 
 namespace MAAS_TXIHelper.Core
 {
     public class CTConcat : SimpleMTbase
     {
-        private Patient _patient;
-        private ImageModel _imagePrimary;
-        private ImageModel _imageSecondary;
-        private Registration _registration;
-        private string _saveDir;
-        private double _spacingMM;
+        private readonly Patient _patient;
+        private readonly ImageModel _imagePrimary;
+        private readonly ImageModel _imageSecondary;
+        private readonly Registration _registration;
+        private readonly string _saveDir;
+        private readonly double _spacingMM;
 
-        public CTConcat(V.Patient patient, ImageModel imagePrimary, ImageModel imageSecondary, V.Registration registration, string saveDir, double spacingMM) {
+        public CTConcat(V.Patient patient, ImageModel imagePrimary, ImageModel imageSecondary, V.Registration registration, string saveDir, double spacingMM)
+        {
             _patient = patient;
             _imagePrimary = imagePrimary;
             _imageSecondary = imageSecondary;
             _registration = registration;
             _saveDir = saveDir;
-            _spacingMM = spacingMM; 
+            _spacingMM = spacingMM;
         }
 
-        
-        
         public override bool Run()
         {
+            ProvideUIUpdate($"Starting CT Concatenation.");
+            double workloadPercent1 = ((double)_imagePrimary.ZSize) / (_imagePrimary.ZSize + _imageSecondary.ZSize) * 50;
+            ProvideUIUpdate($"Converting the primary image.");
+            var itkImagePrimary = ConvertToItkImage(_imagePrimary.VImage, 0, workloadPercent1);
+            ProvideUIUpdate($"Processing of the primary image is complete.");
 
-            ProvideUIUpdate("Starting CT Concat");
-            var itkImagePrimary = _imagePrimary.BuildITKImage(_spacingMM);
-            var itkImageSecondary = _imageSecondary.BuildITKImage(_spacingMM);
-            
+            double workloadPercent2 = workloadPercent1 + ((double)_imageSecondary.ZSize) / (_imagePrimary.ZSize + _imageSecondary.ZSize) * 50;
+            ProvideUIUpdate($"Converting the secondary image.");
+            var itkImageSecondary = ConvertToItkImage(_imageSecondary.VImage, workloadPercent1, workloadPercent2);
+            ProvideUIUpdate($"Processing of the secondary image is complete.");
 
-            for (int z = 0; z < _imagePrimary.ZSize; z++)
-            {
-                double progDec = (double) z / _imagePrimary.ZSize;
-                int progInt = (int)(progDec * 50);
-                var point = itkImagePrimary.TransformIndexToPhysicalPoint(new VectorInt64(new Int64[] { 0, 0, z }));
-                var msg = $"\rReading primary image plane at index: {z}\tZ coordinate: {point[2]}";
+            ProvideUIUpdate("Transforming images.");
+            I.Image itkImageSecondaryTransformed = TransformImage(itkImageSecondary);
+            ProvideUIUpdate("Image transformation is completes.");
 
-                if (z % 10 == 0)
-                {
-                    // Slice is a multiple of 10, show message update
-                    ProvideUIUpdate(progInt, msg);
-                }
-                else
-                {
-                    ProvideUIUpdate(progInt);
-                }
-                UpdateUILabel(msg);
-                //ProvideUIUpdate(progInt, message: $"\rReading primary image plane at index: {z}/{nPlanes}");
-                
-                //ProvideUIUpdate($"\rReading primary image plane at index: {z}/{nPlanes}");
-                _imagePrimary.VImage.GetVoxels(z, _imagePrimary.VoxelPlane);
-                for (int x = 0; x < _imagePrimary.VImage.XSize; x++)
-                {
-                    for (int y = 0; y < _imagePrimary.VImage.YSize; y++)
-                    {
-                        _imagePrimary.VoxelVolume[x, y, z] = _imagePrimary.VoxelPlane[x, y];
-                        _imagePrimary.HuValues[x, y, z] = _imagePrimary.VImage.VoxelToDisplayValue(_imagePrimary.VoxelPlane[x, y]);
-                        itkImagePrimary.SetPixelAsFloat(
-                            new VectorUInt32(new uint[] { (uint)x, (uint)y, (uint)z }), (float)(_imagePrimary.HuValues[x, y, z]));
-                    }
-                }
-            }
-            ProvideUIUpdate($"\nData processing for primary image complete.");
+            double workloadPercent3 = workloadPercent2 + 25;
+            ProvideUIUpdate("Concatenating images.");
+            I.Image itkImageMerged = MergeImages(itkImagePrimary, itkImageSecondaryTransformed, workloadPercent2, workloadPercent3);
+            ProvideUIUpdate("Images are concatenated.");
 
-
-            for (int z = 0; z < _imageSecondary.ZSize; z++)
-            {
-                double progDec = (double)z / _imageSecondary.ZSize;
-                int progInt = 50 + (int)(progDec * 50);
-                var point = itkImagePrimary.TransformIndexToPhysicalPoint(new VectorInt64(new Int64[] { 0, 0, z }));
-                var msg = $"\rReading secondary image plane at index: {z}\tZ coordinate: {point[2]}";
-
-                if(z % 10 == 0)
-                {
-                    // Slice is a multiple of 10, show message update
-                    ProvideUIUpdate(progInt, msg);
-                }
-                else
-                {
-                    ProvideUIUpdate(progInt);
-                }
-                UpdateUILabel(msg);
-                
-
-                _imageSecondary.VImage.GetVoxels(z, _imageSecondary.VoxelPlane);
-                for (int x = 0; x < _imageSecondary.VImage.XSize; x++)
-                {
-                    for (int y = 0; y < _imageSecondary.VImage.YSize; y++)
-                    {
-                        _imageSecondary.VoxelVolume[x, y, z] = _imageSecondary.VoxelPlane[x, y];
-                        _imageSecondary.HuValues[x, y, z] = _imageSecondary.VImage.VoxelToDisplayValue(_imageSecondary.VoxelPlane[x, y]);
-                        itkImageSecondary.SetPixelAsFloat(
-                            new VectorUInt32(
-                                new uint[] { (uint)x, (uint)y, (uint)z }), (float)(_imageSecondary.HuValues[x, y, z]));
-                    }
-                }
-            }
-
-            ProvideUIUpdate($"\nData processing for primary image/secondary image complete.");
-            ProvideUIUpdate("loaded secondary, starting load registration");
-            itk.simple.Image itkImageSecondaryTransformed = TransformImage(itkImageSecondary, _registration);
-            ProvideUIUpdate("loaded registration");
-            ProvideUIUpdate("About to merge images. This step can take several minutes, patience please.");
-            itk.simple.Image itkImageMerged = MergeImages(itkImagePrimary, itkImageSecondaryTransformed);
-            SaveImagesDICOM(itkImageMerged, _imagePrimary.VImage, _patient);
+            ProvideUIUpdate("Creating concatenated image files in the specified file location.");
+            SaveImagesDICOM(itkImageMerged, _imagePrimary.VImage, _patient, workloadPercent3, 100);
             ProvideUIUpdate(100, "Complete");
             return true;
         }
 
-        private bool PixelIndexOutofBound(VectorInt64 indexPrimary, itk.simple.Image itkImageSecondaryTransformed)
+        private I.Image ConvertToItkImage(V.Image vImage, double workCompleted, double workToDo)
         {
-            int x = (int)indexPrimary[0];
-            int y = (int)indexPrimary[1];
-            int z = (int)indexPrimary[2];
-            if (x < 0 || x >= itkImageSecondaryTransformed.GetSize()[0])
-                return true;
-            if (y < 0 || y >= itkImageSecondaryTransformed.GetSize()[1])
-                return true;
-            if (z < 0 || z >= itkImageSecondaryTransformed.GetSize()[2])
-                return true;
-            return false;
-        }
-        
-        private void SaveImagesDICOM(itk.simple.Image itkImageMerged, VMS.TPS.Common.Model.API.Image imagePrimary, Patient patient)
-        {
+            I.PixelIDValueEnum pixelType = I.PixelIDValueEnum.sitkFloat32;
+            I.VectorUInt32 image3DSize = new I.VectorUInt32(new uint[] { (uint)vImage.XSize, (uint)vImage.YSize, (uint)vImage.ZSize });
+            I.Image itkImage = new I.Image(image3DSize, pixelType);
+            I.VectorDouble spacing3D = new I.VectorDouble(new double[] { vImage.XRes, vImage.YRes, vImage.ZRes });
+            itkImage.SetSpacing(spacing3D);
+            I.VectorDouble origin = new I.VectorDouble(new double[] { vImage.Origin.x, vImage.Origin.y, vImage.Origin.z });
+            itkImage.SetOrigin(origin);
 
-            PixelIDValueEnum pixelType = PixelIDValueEnum.sitkFloat32;
-            PixelIDValueEnum pixelTypeDCM = PixelIDValueEnum.sitkInt16;
-            VectorUInt32 imageSize = new VectorUInt32(new uint[] { (uint)imagePrimary.XSize, (uint)imagePrimary.YSize });
-            itk.simple.Image itkImage = new itk.simple.Image(imageSize, pixelType);
-            itk.simple.Image itkImageDCM = new itk.simple.Image(imageSize, pixelTypeDCM);
-            VectorDouble spacing = new VectorDouble(new double[] { imagePrimary.XRes, imagePrimary.YRes * 2 });
-            VectorDouble spacingDCM = new VectorDouble(new double[] { imagePrimary.XRes, imagePrimary.YRes });
-            itkImage.SetSpacing(spacing);
-            itkImageDCM.SetSpacing(spacingDCM);
-            ImageFileWriter writer = new ImageFileWriter();
-            writer.KeepOriginalImageUIDOn();
-            // DICOM metadata that are common to each slice
-            itkImageDCM.SetMetaData("0010|0010", $"{patient.LastName}^{patient.FirstName}^{patient.MiddleName}");
-            itkImageDCM.SetMetaData("0010|0020", patient.Id);
-            itkImageDCM.SetMetaData("0008|0008", "ORIGINAL\\PRIMARY\\AXIAL");
-            itkImageDCM.SetMetaData("0008|0070", imagePrimary.Series.ImagingDeviceManufacturer);
-            itkImageDCM.SetMetaData("0008|0020", DateTime.Now.ToString("yyyyMMdd"));  // study date  -- to be updated to be the app running date
-            itkImageDCM.SetMetaData("0008|0030", DateTime.Now.ToString("HHmmss.ffffff")); // study time
-            itkImageDCM.SetMetaData("0018|0050", imagePrimary.ZRes.ToString()); // slice thickness
-                                                                                // itkImageDCM.SetMetaData("0020|0012", ?); // acquisition number
-            string newStudyUID = MakeNewUID(imagePrimary.Series.Study.UID);
-            itkImageDCM.SetMetaData("0020|000D", newStudyUID);  // study UID.
-            string newSeriesUID = MakeNewUID(imagePrimary.Series.UID);
-            itkImageDCM.SetMetaData("0020|000E", newSeriesUID);  // series UID.
-            itkImageDCM.SetMetaData("0020|0052", imagePrimary.Series.FOR);  // use the same frame of reference UID as the original image series.
-            itkImageDCM.SetMetaData("0020|1040", "BB"); // position reference indicator
-            itkImageDCM.SetMetaData("0020|0012", "1"); // acquisition number
-            for (int z = 0; z < itkImageMerged.GetSize()[2]; z++)
+            int[,] voxelPlane = new int[vImage.XSize, vImage.YSize];
+            ProvideUIUpdate((int)workCompleted, $"Total {vImage.ZSize} image slices to process.");
+            I.VectorUInt32 index = new I.VectorUInt32(new uint[] { 0, 0, 0 });
+            for (int z = 0; z < vImage.ZSize; z++)
             {
-                ProvideUIUpdate($"Processing Slice {z}");
-
-                for (int x = 0; x < itkImageMerged.GetSize()[0]; x++)
+                //                var point = itkImage.TransformIndexToPhysicalPoint(new VectorInt64(new Int64[] { 0, 0, z }));
+                double progDec = (double)z / vImage.ZSize;
+                int progInt = (int)(workCompleted + progDec * (workToDo - workCompleted));
+                var msg = $"Processing image slice #{z + 1}";
+                if ((z + 1) % 10 == 0)
                 {
-                    for (int y = 0; y < itkImageMerged.GetSize()[1]; y++)
-                    {
-                        itkImageDCM.SetPixelAsInt16(new VectorUInt32(new uint[] { (uint)x, (uint)y }), (Int16)itkImageMerged.GetPixelAsFloat(new VectorUInt32(new uint[] { (uint)x, (uint)y, (uint)z })));
-                    }
+                    // Slice is a multiple of 10, show message update
+                    ProvideUIUpdate(progInt, msg);
                 }
-                if (imagePrimary.Series.Modality == SeriesModality.CT)
+                else
                 {
-                    itkImageDCM.SetMetaData("0008|0060", "CT");
-                    itkImageDCM.SetMetaData("0018|0060", "120");
+                    ProvideUIUpdate(progInt);
                 }
-                string imagePositionPatient = $"250\\250\\{z * imagePrimary.ZRes}";
-                itkImageDCM.SetMetaData("0020|0032", imagePositionPatient);  // image position patient.
-                itkImageDCM.SetMetaData("0020|1041", $"{z * imagePrimary.ZRes}");  // slice location
-                Console.Write($"\rSaving DICOM file for slice index: {z}   ");
-                
-                writer.SetFileName(Path.Combine(_saveDir, $"{_patient.Id}_merged_{z}.DCM"));
-                writer.Execute(itkImageDCM);
-            }
-            Console.WriteLine($"All DICOM files were saved.");
+                UpdateUILabel(msg);
 
-        }
-
-        private itk.simple.Image MergeImages(itk.simple.Image itkImagePrimary, itk.simple.Image itkImageSecondaryTransformed)
-        {
-            // first define the merged image
-            int newSlices = (int)((itkImagePrimary.GetOrigin()[2] - itkImageSecondaryTransformed.GetOrigin()[2]) / itkImagePrimary.GetSpacing()[2]) + (int)itkImagePrimary.GetSize()[2];
-            MessageBox.Show($"Num new slices {newSlices}");
-            PixelIDValueEnum pixelType = PixelIDValueEnum.sitkFloat32;
-            VectorUInt32 image3DSize = new VectorUInt32(new uint[] { (uint)itkImagePrimary.GetSize()[0], (uint)itkImagePrimary.GetSize()[1], (uint)newSlices });
-            itk.simple.Image itkImageMerged = new itk.simple.Image(image3DSize, pixelType);
-            itkImageMerged.SetSpacing(itkImagePrimary.GetSpacing());
-            double newOriginZ = itkImagePrimary.GetOrigin()[2] - (newSlices - itkImagePrimary.GetSize()[2]) * itkImagePrimary.GetSpacing()[2];
-            itkImageMerged.SetOrigin(new VectorDouble(new double[] { itkImagePrimary.GetOrigin()[0], itkImagePrimary.GetOrigin()[1], newOriginZ }));
-            // here we first construct a SimpleITK 3D image from the image data
-            // 1. Based on ESAPI manual, the DICOM origin is the DICOM coordinate for the point at the upper left corner of the first imaging plane.
-            //    Note that this DICOM origin does not have [0, 0, 0] as coordinates.
-            //    The [0, 0, 0] point in the DICOM coordinate is a different point that was set during imaging scan, usually denoted by the BBs.
-            //    In Eclipse, the displayed coordinates are relative to the user origin.
-            // 2. The user origin (image.UserOrigin) is the user origin offset from DICOM origin. You can find the coordinates in Eclipse by looking at the property
-            //    of the User Origin in the External Beam Planning workspace.
-            for (int z = 0; z < itkImageMerged.GetSize()[2]; z++)
-            {
-                Console.Write($"\rCreating merged image for slice #{z}   ");
-                for (int x = 0; x < itkImageMerged.GetSize()[0]; x++)
+                vImage.GetVoxels(z, voxelPlane);
+                for (int x = 0; x < vImage.XSize; x++)
                 {
-                    for (int y = 0; y < itkImageMerged.GetSize()[1]; y++)
+                    for (int y = 0; y < vImage.YSize; y++)
                     {
-                        VectorInt64 pixelIndex = new VectorInt64(new long[] { x, y, z });
-                        var physicalCoordinate = itkImageMerged.TransformIndexToPhysicalPoint(pixelIndex);
-                        if (physicalCoordinate[2] >= itkImagePrimary.GetOrigin()[2])
-                        {
-                            var indexPrimary = itkImagePrimary.TransformPhysicalPointToIndex(physicalCoordinate);
-                            var iPrimary32 = new VectorUInt32(new uint[] { (uint)indexPrimary[0], (uint)indexPrimary[1], (uint)indexPrimary[2] });
-                            var pixelValue = itkImagePrimary.GetPixelAsFloat(iPrimary32);
-                            itkImageMerged.SetPixelAsFloat(new VectorUInt32(new uint[] { (uint)x, (uint)y, (uint)z }), pixelValue);
-                        }
-                        else
-                        {
-                            var index = itkImageSecondaryTransformed.TransformPhysicalPointToIndex(physicalCoordinate);
-                            if (PixelIndexOutofBound(index, itkImageSecondaryTransformed))
-                            {
-                                itkImageMerged.SetPixelAsFloat(new VectorUInt32(new uint[] { (uint)x, (uint)y, (uint)z }), -1000);
-                            }
-                            else
-                            {
-                                var iPrimary32 = new VectorUInt32(new uint[] { (uint)index[0], (uint)index[1], (uint)index[2] });
-                                var pixelValue = itkImageSecondaryTransformed.GetPixelAsFloat(iPrimary32);
-                                itkImageMerged.SetPixelAsFloat(new VectorUInt32(new uint[] { (uint)x, (uint)y, (uint)z }), pixelValue);
-                            }
-                        }
+                        index[0] = (uint)x;
+                        index[1] = (uint)y;
+                        index[2] = (uint)z;
+                        itkImage.SetPixelAsFloat(index, (float)(vImage.VoxelToDisplayValue(voxelPlane[x, y])));
                     }
                 }
             }
-            Console.WriteLine($"\nMerged image was created with {itkImageMerged.GetSize()[2]} slices.");
-            return itkImageMerged;
+            return itkImage;
         }
 
-        private itk.simple.Image TransformImage(itk.simple.Image itkImageSecondary, Registration registration)
+        private I.Image TransformImage(I.Image itkImageSecondary)
         {
             // Read image registration data. It is a 4 x 4 matrix.
-            double[,] rMatrix = registration.TransformationMatrix;
+            double[,] rMatrix = _registration.TransformationMatrix;
             Console.WriteLine($"Registration matrix (rank: {rMatrix.Rank} length: {rMatrix.Length})");
             for (int i = 0; i < rMatrix.GetLength(0); i++)
             {
@@ -260,7 +120,6 @@ namespace MAAS_TXIHelper.Core
                 }
                 Console.WriteLine();
             }
-
             // first rotate the image
             // According to SimpleITK documentation, Euler3DTransform is a rigid 3D transform with rotation in radians around the fixed center with translation.
             I.Euler3DTransform eulerTransform = new I.Euler3DTransform();
@@ -286,52 +145,203 @@ namespace MAAS_TXIHelper.Core
             return rotated;
         }
 
-        private itk.simple.Image ReadImage(VMS.TPS.Common.Model.API.Image imageEclipse)
+        private I.Image MergeImages(I.Image itkImagePrimary, I.Image itkImageSecondaryTransformed, double workCompleted, double workToDo)
         {
-            int[,] voxelPlane = new int[imageEclipse.XSize, imageEclipse.YSize];
-            int[,,] voxelVolume = new int[imageEclipse.XSize, imageEclipse.YSize, imageEclipse.ZSize];
-            double[,,] huValues = new double[imageEclipse.XSize, imageEclipse.YSize, imageEclipse.ZSize];
+            // first define the merged image
+            int newSlices = (int)((itkImagePrimary.GetOrigin()[2] + itkImagePrimary.GetSize()[2] * itkImagePrimary.GetSpacing()[2]
+                - itkImageSecondaryTransformed.GetOrigin()[2]) / _spacingMM);
+            I.PixelIDValueEnum pixelType = I.PixelIDValueEnum.sitkFloat32;
+            I.VectorUInt32 image3DSize = new I.VectorUInt32(new uint[] { (uint)itkImagePrimary.GetSize()[0], (uint)itkImagePrimary.GetSize()[1], (uint)newSlices });
+            I.Image itkImageMerged = new I.Image(image3DSize, pixelType);
+            itkImageMerged.SetSpacing(new I.VectorDouble(new double[] { itkImagePrimary.GetSpacing()[0], itkImagePrimary.GetSpacing()[1], _spacingMM }));
+            double newOriginZ = itkImagePrimary.GetOrigin()[2] + itkImagePrimary.GetSize()[2] * itkImagePrimary.GetSpacing()[2] - newSlices * _spacingMM;
+            itkImageMerged.SetOrigin(new I.VectorDouble(new double[] { itkImagePrimary.GetOrigin()[0], itkImagePrimary.GetOrigin()[1], newOriginZ }));
             // here we first construct a SimpleITK 3D image from the image data
             // 1. Based on ESAPI manual, the DICOM origin is the DICOM coordinate for the point at the upper left corner of the first imaging plane.
             //    Note that this DICOM origin does not have [0, 0, 0] as coordinates.
-            //    The [0, 0, 0] point in the DICOM coordinate is another point that was set during imaging scan.
+            //    The [0, 0, 0] point in the DICOM coordinate is a different point that was set during imaging scan, usually denoted by the BBs.
             //    In Eclipse, the displayed coordinates are relative to the user origin.
             // 2. The user origin (image.UserOrigin) is the user origin offset from DICOM origin. You can find the coordinates in Eclipse by looking at the property
             //    of the User Origin in the External Beam Planning workspace.
-            PixelIDValueEnum pixelType = PixelIDValueEnum.sitkFloat32;
+            ProvideUIUpdate((int)workCompleted, $"Total {itkImageMerged.GetSize()[2]} image slices to process.");
+            I.VectorInt64 pixelIndex64 = new I.VectorInt64(new long[] { 0, 0, 0 });
+            I.VectorUInt32 pixelIndex32 = new I.VectorUInt32(new uint[] { 0, 0, 0 });
+            I.VectorInt64 indexOriginal64;
+            I.VectorUInt32 indexOriginal32 = new I.VectorUInt32(new uint[] { 0, 0, 0 });
 
-            //VectorUInt32 mouthSize = new VectorUInt32(new uint[] { 64, 18 });
-
-            itk.simple.VectorUInt32 image3DSize = new itk.simple.VectorUInt32(new uint[] { (uint)imageEclipse.XSize, (uint)imageEclipse.YSize, (uint)imageEclipse.ZSize });
-            
-            
-            itk.simple.Image itkImage3D = new itk.simple.Image(image3DSize, pixelType);
-          
-            VectorDouble spacing3D = new VectorDouble(new double[] { imageEclipse.XRes, imageEclipse.YRes, imageEclipse.ZRes });
-            itkImage3D.SetSpacing(spacing3D);
-            VectorDouble origin = new VectorDouble(new double[] { imageEclipse.Origin.x, imageEclipse.Origin.y, imageEclipse.Origin.z });
-            itkImage3D.SetOrigin(origin);
-            int nPlanes = imageEclipse.ZSize;
-            for (int z = 0; z < nPlanes; z++)
+            for (int z = 0; z < itkImageMerged.GetSize()[2]; z++)
             {
-                ProvideUIUpdate(((int)z/nPlanes));
-                var point = itkImage3D.TransformIndexToPhysicalPoint(new VectorInt64(new Int64[] { 0, 0, z }));
-                ProvideUIUpdate($"\rReading image plane at index: {z}\tZ coordinate: {point[2]}                   \t");
-                
-                
-                imageEclipse.GetVoxels(z, voxelPlane);
-                for (int x = 0; x < imageEclipse.XSize; x++)
+                double progDec = (double)z / itkImageMerged.GetSize()[2];
+                int progInt = (int)(workCompleted + progDec * (workToDo - workCompleted));
+                var msg = $"Creating concatenated image slice #{z + 1}";
+                if ((z + 1) % 10 == 0)
                 {
-                    for (int y = 0; y < imageEclipse.YSize; y++)
+                    // Slice is a multiple of 10, show message update
+                    ProvideUIUpdate(progInt, msg);
+                }
+                else
+                {
+                    ProvideUIUpdate(progInt);
+                }
+                UpdateUILabel(msg);
+                Console.Write($"\rCreating merged image for slice #{z + 1}");
+                for (int x = 0; x < itkImageMerged.GetSize()[0]; x++)
+                {
+                    for (int y = 0; y < itkImageMerged.GetSize()[1]; y++)
                     {
-                        voxelVolume[x, y, z] = voxelPlane[x, y];
-                        huValues[x, y, z] = imageEclipse.VoxelToDisplayValue(voxelPlane[x, y]);
-                        itkImage3D.SetPixelAsFloat(new VectorUInt32(new uint[] { (uint)x, (uint)y, (uint)z }), (float)(huValues[x, y, z]));
+                        pixelIndex64[0] = x;
+                        pixelIndex64[1] = y;
+                        pixelIndex64[2] = z;
+                        pixelIndex32[0] = (uint)x;
+                        pixelIndex32[1] = (uint)y;
+                        pixelIndex32[2] = (uint)z;
+                        using (var physicalCoordinate = itkImageMerged.TransformIndexToPhysicalPoint(pixelIndex64))
+                        {
+                            if (physicalCoordinate[2] >= itkImagePrimary.GetOrigin()[2])
+                            {
+                                indexOriginal64 = itkImagePrimary.TransformPhysicalPointToIndex(physicalCoordinate);
+                                indexOriginal32[0] = (uint)indexOriginal64[0];
+                                indexOriginal32[1] = (uint)indexOriginal64[1];
+                                indexOriginal32[2] = (uint)indexOriginal64[2];
+                                var pixelValue = itkImagePrimary.GetPixelAsFloat(indexOriginal32);
+                                itkImageMerged.SetPixelAsFloat(pixelIndex32, pixelValue);
+                            }
+                            else
+                            {
+                                using (var index = itkImageSecondaryTransformed.TransformPhysicalPointToIndex(physicalCoordinate))
+                                {
+                                    if (PixelIndexOutofBound(index, itkImageSecondaryTransformed))
+                                    {
+                                        itkImageMerged.SetPixelAsFloat(pixelIndex32, -1000);
+                                    }
+                                    else
+                                    {
+                                        indexOriginal32[0] = (uint)index[0];
+                                        indexOriginal32[1] = (uint)index[1];
+                                        indexOriginal32[2] = (uint)index[2];
+                                        var pixelValue = itkImageSecondaryTransformed.GetPixelAsFloat(indexOriginal32);
+                                        itkImageMerged.SetPixelAsFloat(pixelIndex32, pixelValue);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-            ProvideUIUpdate($"\nData processing for image \"{imageEclipse.Id}\" complete.");
-            return itkImage3D;
+            Console.WriteLine($"\nMerged image was created with {itkImageMerged.GetSize()[2]} slices.");
+            return itkImageMerged;
+        }
+        private void SaveImagesDICOM(I.Image itkImageMerged, V.Image imagePrimary,
+            Patient patient, double workCompleted, double workToDo)
+        {
+            I.PixelIDValueEnum pixelTypeDCM = I.PixelIDValueEnum.sitkInt16;
+            I.VectorUInt32 imageSize = new I.VectorUInt32(new uint[] { itkImageMerged.GetSize()[0], itkImageMerged.GetSize()[1] });
+            I.Image itkImageDCM = new I.Image(imageSize, pixelTypeDCM);
+            I.VectorDouble spacingDCM = new I.VectorDouble(new double[] { itkImageMerged.GetSpacing()[0], itkImageMerged.GetSpacing()[1] });
+            itkImageDCM.SetSpacing(spacingDCM);
+            I.ImageFileWriter writer = new I.ImageFileWriter();
+            writer.KeepOriginalImageUIDOn();
+            // DICOM metadata that are common to each slice
+            itkImageDCM.SetMetaData("0010|0010", $"{patient.LastName}^{patient.FirstName}^{patient.MiddleName}");
+            itkImageDCM.SetMetaData("0010|0020", patient.Id);
+            itkImageDCM.SetMetaData("0008|0008", "ORIGINAL\\PRIMARY\\AXIAL");
+            itkImageDCM.SetMetaData("0008|0070", imagePrimary.Series.ImagingDeviceManufacturer);
+            itkImageDCM.SetMetaData("0008|0020", DateTime.Now.ToString("yyyyMMdd"));  // study date
+            itkImageDCM.SetMetaData("0008|0030", DateTime.Now.ToString("HHmmss.ffffff")); // study time
+            itkImageDCM.SetMetaData("0018|0050", imagePrimary.ZRes.ToString()); // slice thickness
+                                                                                // itkImageDCM.SetMetaData("0020|0012", ?); // acquisition number
+            string newStudyUID = MakeNewUID(imagePrimary.Series.Study.UID);
+            itkImageDCM.SetMetaData("0020|000D", newStudyUID);   // study UID.
+            string newSeriesUID = MakeNewUID(imagePrimary.Series.UID);
+            itkImageDCM.SetMetaData("0020|000E", newSeriesUID);  // series UID.
+            itkImageDCM.SetMetaData("0020|0052", imagePrimary.Series.FOR);  // use the same frame of reference UID as the original image series.
+            itkImageDCM.SetMetaData("0020|1040", "BB"); // position reference indicator
+            itkImageDCM.SetMetaData("0020|0012", "1"); // acquisition number
+            ProvideUIUpdate($"Total {itkImageMerged.GetSize()[2]} image slices to process.");
+            I.VectorUInt32 index = new I.VectorUInt32(new uint[] { 0, 0, 0 });
+            I.VectorUInt32 indexPlane = new I.VectorUInt32(new uint[] { 0, 0 });
+            for (int z = 0; z < itkImageMerged.GetSize()[2]; z++)
+            {
+                double progDec = (double)z / itkImageMerged.GetSize()[2];
+                int progInt = (int)(workCompleted + progDec * (workToDo - workCompleted));
+                var msg = $"Saving image slice #{z + 1}";
+                if ((z + 1) % 10 == 0)
+                {
+                    // Slice is a multiple of 10, show message update
+                    ProvideUIUpdate(progInt, msg);
+                }
+                else
+                {
+                    ProvideUIUpdate(progInt);
+                }
+                UpdateUILabel(msg);
+
+                for (int x = 0; x < itkImageMerged.GetSize()[0]; x++)
+                {
+                    for (int y = 0; y < itkImageMerged.GetSize()[1]; y++)
+                    {
+                        indexPlane[0] = (uint)x;
+                        indexPlane[1] = (uint)y;
+                        index[0] = (uint)x;
+                        index[1] = (uint)y;
+                        index[2] = (uint)z;
+                        itkImageDCM.SetPixelAsInt16(indexPlane, (Int16)itkImageMerged.GetPixelAsFloat(index));
+                    }
+                }
+                if (imagePrimary.Series.Modality == SeriesModality.CT)
+                {
+                    itkImageDCM.SetMetaData("0008|0060", "CT");
+                    itkImageDCM.SetMetaData("0018|0060", "120");
+                }
+                string positionPatient, sliceLocation;
+                if (itkImageMerged.GetOrigin()[0] % 1 == 0)
+                {
+                    positionPatient = $"{(int)itkImageMerged.GetOrigin()[0]}";
+                }
+                else
+                {
+                    positionPatient = string.Format("{0:0.00}", itkImageMerged.GetOrigin()[0]);
+                }
+                if (itkImageMerged.GetOrigin()[1] % 1 == 0)
+                {
+                    positionPatient += $"\\{(int)itkImageMerged.GetOrigin()[0]}";
+                }
+                else
+                {
+                    positionPatient += "\\" + string.Format("{0:0.00}", itkImageMerged.GetOrigin()[0]);
+                }
+                double zPosition = itkImageMerged.GetOrigin()[2] + z * itkImageMerged.GetSpacing()[2];
+                if (zPosition % 1 == 0)
+                {
+                    positionPatient += $"\\{(int)zPosition}";
+                    sliceLocation = $"{(int)zPosition}";
+                }
+                else
+                {
+                    positionPatient += "\\" + string.Format("{0:0.00}", zPosition);
+                    sliceLocation = string.Format("{0:0.00}", zPosition);
+                }
+                itkImageDCM.SetMetaData("0020|0032", positionPatient);  // image position patient
+                itkImageDCM.SetMetaData("0020|1041", sliceLocation);  // slice location
+                Console.Write($"\rSaving DICOM file for slice index: {z}   ");
+
+                writer.SetFileName(Path.Combine(_saveDir, $"{_patient.Id}_merged_{z}.DCM"));
+                writer.Execute(itkImageDCM);
+            }
+            Console.WriteLine($"All DICOM files were saved.");
+        }
+        private bool PixelIndexOutofBound(I.VectorInt64 indexPrimary, itk.simple.Image itkImageSecondaryTransformed)
+        {
+            int x = (int)indexPrimary[0];
+            int y = (int)indexPrimary[1];
+            int z = (int)indexPrimary[2];
+            if (x < 0 || x >= itkImageSecondaryTransformed.GetSize()[0])
+                return true;
+            if (y < 0 || y >= itkImageSecondaryTransformed.GetSize()[1])
+                return true;
+            if (z < 0 || z >= itkImageSecondaryTransformed.GetSize()[2])
+                return true;
+            return false;
         }
         private string MakeNewUID(string uid)
         {
@@ -351,7 +361,7 @@ namespace MAAS_TXIHelper.Core
                 newUID += segment + '.';
             }
             newUID = newUID.Substring(0, newUID.Length - 1);
-            if (segments.Length <= 5)
+            if (segments.Length == 5)
             {
                 return newUID;
             }
@@ -399,5 +409,4 @@ namespace MAAS_TXIHelper.Core
         }
 
     }
-
 }

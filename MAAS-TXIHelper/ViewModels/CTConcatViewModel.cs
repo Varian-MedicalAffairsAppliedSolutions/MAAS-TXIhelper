@@ -57,6 +57,26 @@ namespace MAAS_TXIHelper.ViewModels
             }
         }
 
+        private string _SecondaryLabelColor;
+        public string SecondaryLabelColor
+        {
+            get { return _SecondaryLabelColor; }
+            set
+            {
+                SetProperty(ref _SecondaryLabelColor, value);
+            }
+        }
+
+        private string _RegistrationLabelColor;
+        public string RegistrationLabelColor
+        {
+            get { return _RegistrationLabelColor; }
+            set
+            {
+                SetProperty(ref _RegistrationLabelColor, value);
+            }
+        }
+
         private ImageModel _PrimaryImage;
         public ImageModel PrimaryImage
         {
@@ -75,7 +95,7 @@ namespace MAAS_TXIHelper.ViewModels
             get { return _SecondaryImage; }
             set { 
                 SetProperty(ref _SecondaryImage, value);
-
+                PopulateRegistrations();
                 //ConcatenateCmd.RaiseCanExecuteChanged();
             }
         }
@@ -110,26 +130,56 @@ namespace MAAS_TXIHelper.ViewModels
             SecondaryImage = null;
             Registrations.Clear();
             Registration = null;
+            RegistrationLabelColor = "Gray";
 
             if (PrimaryImage != null)
             {
                 foreach (Registration registration in _patient.Registrations)
                 {
-                    if (registration.SourceFOR == PrimaryImage.VImage.FOR)
+                    if (registration.RegisteredFOR == PrimaryImage.VImage.FOR)
                     {
-                        var secondaryImage = PrimaryImages.FirstOrDefault(image => image.VImage.FOR == registration.RegisteredFOR);
-                        if (secondaryImage != null && !SecondaryImages.Contains(secondaryImage))
-                            SecondaryImages.Add(secondaryImage);
+                        foreach (var image3D in PrimaryImages)
+                        {
+                            if (image3D.VImage.FOR == registration.SourceFOR && !SecondaryImages.Contains(image3D))
+                            {
+                                SecondaryImages.Add(image3D);
+                            }
+                        }
                     }
-                    else if (registration.RegisteredFOR == PrimaryImage.VImage.FOR)
-                    {
-                        var secondaryImage = PrimaryImages.FirstOrDefault(image => image.VImage.FOR == registration.SourceFOR);
-                        if (secondaryImage != null && !SecondaryImages.Contains(secondaryImage))
-                            SecondaryImages.Add(secondaryImage);
-                    }
-
-                    Registrations.Add(registration);
                 }
+            }
+            if (SecondaryImages.Count > 0)
+            {
+                SecondaryLabelColor = "Black";
+            }
+            else
+            {
+                SecondaryLabelColor = "Gray";
+            }
+        }
+
+        private void PopulateRegistrations()
+        {
+            Registrations.Clear();
+            Registration = null;
+
+            if (PrimaryImage != null && SecondaryImage != null)
+            {
+                foreach (Registration registration in _patient.Registrations)
+                {
+                    if (registration.RegisteredFOR == PrimaryImage.VImage.FOR && registration.SourceFOR == SecondaryImage.VImage.FOR)
+                    {
+                        Registrations.Add(registration);
+                    }
+                }
+            }
+            if (Registrations.Count > 0)
+            {
+                RegistrationLabelColor = "Black";
+            }
+            else
+            {
+                RegistrationLabelColor = "Gray";
             }
         }
 
@@ -183,7 +233,8 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 PrimaryImages.Add(new ImageModel(pi));
             }
-            
+            SecondaryLabelColor = "Gray";
+            RegistrationLabelColor = "Gray";
         }
     }
 }
