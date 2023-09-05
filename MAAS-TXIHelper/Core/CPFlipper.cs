@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FellowOakDicom;
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FellowOakDicom;
 
 namespace MAAS_TXIHelper.Core
 {
     // Could write this file myself from eclipse input
 
-    public class CPFlipper
+    public static class CPFlipper
     {
         public static void PlanFlipVMAT(string filename)
         {

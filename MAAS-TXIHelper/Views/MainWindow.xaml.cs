@@ -1,24 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MAAS_TXIHelper.Views;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
-using VMS.TPS.Common.Model.API;
 using ViewModels;
-using MAAS_TXIHelper.Views;
-
-using System.Windows.Forms;
-using System.CodeDom;
+using VMS.TPS.Common.Model.API;
 
 namespace Views
 {
@@ -43,14 +28,14 @@ namespace Views
             this.v5 = new ApertureRotationDicomView(context);
             // Access individual TabItems by their names
             // Access the TabControl by its name
-            
-            
+
+
 
             Tab1.Content = v2;
             Tab2.Content = v3;
             Tab3.Content = v5;
             Tab4.Content = v4;
-            
+
             DataContext = vm;
         }
 

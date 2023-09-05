@@ -1,22 +1,18 @@
+using JR.Utils.GUI.Forms;
+using MAAS_TXIHelper.Models;
+using Newtonsoft.Json;
 using System;
+using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using VMS.TPS.Common.Model.API;
-using VMS.TPS.Common.Model.Types;
-using Views;
-using System.Net.NetworkInformation;
-using System.IO;
-using JR.Utils.GUI.Forms;
+using System.Windows;
 using System.Windows.Forms;
-using MessageBox = System.Windows.MessageBox;
 using ViewModels;
-using MAAS_TXIHelper.Models;
-using System.Globalization;
-using Newtonsoft.Json;
+using Views;
+using VMS.TPS.Common.Model.API;
+using MessageBox = System.Windows.MessageBox;
 
 // TODO: Replace the following version attributes by creating AssemblyInfo.cs. You can do this in the properties of the Visual Studio project.
 // TODO: Uncomment the following line if the script requires write access.
@@ -25,8 +21,8 @@ using Newtonsoft.Json;
 
 namespace VMS.TPS
 {
-  public class Script
-  {
+    public class Script
+    {
         string EULA_TEXT = @"""
             VARIAN LIMITED USE SOFTWARE LICENSE AGREEMENT
 
@@ -174,14 +170,14 @@ namespace VMS.TPS
 
             // Check exp date
             //DateTime exp = settings.ExpirationDate;
-            
+
 
             if (exp < DateTime.Now && !foundNoExpire)
             {
                 MessageBox.Show("Application has expired. Newer builds with future expiration dates can be found here: https://github.com/Varian-Innovation-Center/MAAS-MAAS_TXIHelper");
                 return;
             }
-            
+
 
             // Initial EULA agreement
             if (!settings.EULAAgreed)
@@ -212,7 +208,7 @@ namespace VMS.TPS
             $"Newer builds with future expiration dates can be found here: {url}\n\n" +
             "See the FAQ for more information on how to remove this pop-up and expiration";
 
-            
+
             // Test
             //MessageBox.Show($"Noexpire found: {foundNoExpire} looked in : {noexp_path}");
 
@@ -239,6 +235,6 @@ namespace VMS.TPS
             var mainWindow = new MainWindow(context, new MainViewModel(context, settings.Validated));
             mainWindow.ShowDialog();
         }
-    
-  }
+
+    }
 }
