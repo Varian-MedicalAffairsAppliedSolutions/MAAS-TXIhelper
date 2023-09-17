@@ -123,8 +123,8 @@
     <Reference Include="Prism.Wpf, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>packages\Prism.Wpf.8.1.97\lib\net47\Prism.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleITKCSharpManaged">
-      <HintPath>W:\Projects\SimpleITK-2.2.1-CSharp-win64-x64\SimpleITKCSharpManaged.dll</HintPath>
+    <Reference Include="SimpleITKCSharpManaged, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\SimpleITK-win64-CSharp-x64.1.0.0.1\lib\SimpleITKCSharpManaged.dll</HintPath>
     </Reference>
     <Reference Include="SimpleProgressWindow, Version=1.2.8594.18064, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>packages\SimpleProgressWindow.1.2.8594.18064\lib\net472\SimpleProgressWindow.dll</HintPath>

@@ -38,14 +38,7 @@ namespace MAAS_TXIHelper.ViewModels
         public ObservableCollection<IsoGroup> IsoGroups { get; set; }
         public ApertureRotationDicomViewModel(ScriptContext context) {
 
-            if (context.PlanSetup == null)
-            {
-                MessageBox.Show("Warning: no plan loaded, plan related tabs are not active.");
-                CPFlipEnabled = false;
-            }
-            else
-            {
-
+                CPFlipEnabled = true;
                 Plan = context.ExternalPlanSetup;
                 OnRotateCmd = new DelegateCommand(onRotate);
                 CreatePlanCmd = new DelegateCommand(onCreatePlan);
@@ -63,18 +56,7 @@ namespace MAAS_TXIHelper.ViewModels
                     ig.IsChecked = true;
                     IsoGroups.Add(ig); 
                 }*/
-
-
-
-                foreach (var bm in Plan.Beams)
-                {
-                    // Create IsoGroup objects ordered by z position and ascending
-
-                }
-
                 // TODO: populate with actual iso groups and by default check the lower half
-            }
-            
         }
 
         private void onCreatePlan()
@@ -92,6 +74,8 @@ namespace MAAS_TXIHelper.ViewModels
             // 
             MessageBox.Show("ON rotate clicked");
             // DO roatation
+            string filename = "C:\\Temp\\RP.dcm";
+            MAAS_TXIHelper.Core.CPFlipper.PlanFlipVMAT(filename);
             MessageBox.Show("Rotation complete. New plan saved to <newfile_rotated_plan>. Import plan and create plan sum to verify.");
         }
     }
