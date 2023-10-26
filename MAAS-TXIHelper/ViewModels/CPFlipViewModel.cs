@@ -1,12 +1,11 @@
-﻿using System.Windows;
-using VMS.TPS.Common.Model.API;
-using System.IO;
-using MAAS_TXIHelper.Core;
-using Prism.Mvvm;
+﻿using MAAS_TXIHelper.Core;
 using Prism.Commands;
-using System.Reflection;
+using Prism.Mvvm;
 using System;
-using System.Collections.ObjectModel;
+using System.IO;
+using System.Reflection;
+using System.Windows;
+using VMS.TPS.Common.Model.API;
 
 // TODO
 // Button that shows formula
@@ -37,9 +36,9 @@ namespace ViewModels
         {
             get { return _Course; }
             set { SetProperty(ref _Course, value); }
-        }    
+        }
 
-        
+
         private ExternalPlanSetup _Plan;
         public ExternalPlanSetup Plan
         {
@@ -47,8 +46,8 @@ namespace ViewModels
             set { SetProperty(ref _Plan, value); }
         }
 
-        public DelegateCommand FlipCmd { get; set;} 
-        public DelegateCommand SelectLogPathCmd { get; set;}
+        public DelegateCommand FlipCmd { get; set; }
+        public DelegateCommand SelectLogPathCmd { get; set; }
 
         private bool _IsStaticBeamPlan;
 
@@ -206,13 +205,15 @@ namespace ViewModels
                 flipComplete = true;
             }
 
-            if (_IsSX2MLC == false && _IsStaticBeamPlan) {
+            if (_IsSX2MLC == false && _IsStaticBeamPlan)
+            {
                 MessageBox.Show("Flipping static non-halcyon plan");
                 Core.FlipStatic(_Course, _Plan, LogPath);
                 flipComplete = true;
             }
 
-            if (_IsSX2MLC == false && _IsArcBeamPlan) {
+            if (_IsSX2MLC == false && _IsArcBeamPlan)
+            {
                 MessageBox.Show("Flipping arc non-halcyon plan");
                 Core.FlipArc(_Course, _Plan, LogPath, true, true, true);
                 flipComplete = true;

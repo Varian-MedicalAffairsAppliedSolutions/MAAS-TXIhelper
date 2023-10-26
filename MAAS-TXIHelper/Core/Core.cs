@@ -1,22 +1,18 @@
 using System;
-using System.Linq;
-using System.IO;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
+using System.IO;
+using System.Linq;
+using System.Windows;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
-using System.Windows.Documents;
-using System.Windows.Controls;
-using System.Windows;
 using Application = VMS.TPS.Common.Model.API.Application;
 
 namespace MAAS_TXIHelper.Core
 {
     public static class Core
     {
-        
+
         static void Main(string[] args)
         {
             string logName = System.AppDomain.CurrentDomain.FriendlyName + ".log";
@@ -93,7 +89,7 @@ namespace MAAS_TXIHelper.Core
             }
             return newLeaves;
         }
-            
+
         public static void FlipHalcyonArc(Course course, ExternalPlanSetup ps, string logName, bool toNewPlan, bool calcDose, bool usePresetMU)
         {
             var beams = ps.Beams.Where(b => !b.IsImagingTreatmentField && !b.IsSetupField).ToList();
@@ -124,7 +120,7 @@ namespace MAAS_TXIHelper.Core
 
             foreach (Beam beam in beams)
             {
-                
+
                 using (StreamWriter w = File.AppendText(logName))  // log original beam data
                 {
                     w.AutoFlush = true;
@@ -262,7 +258,7 @@ namespace MAAS_TXIHelper.Core
                 }
                 indexTxBeams++;
             }
-            
+
             if (toNewPlan)
             {
                 ExternalPlanSetup newPlan = course.AddExternalPlanSetup(ps.StructureSet);
@@ -392,7 +388,7 @@ namespace MAAS_TXIHelper.Core
                 {
                     try  // Calculate plan dose with the new beams
                     {
-                        
+
                         if (calcDose)
                         {
                             bool presetValid = true;
@@ -405,7 +401,7 @@ namespace MAAS_TXIHelper.Core
                             }
                             if (presetValid)
                             {
-                                
+
                                 if (usePresetMU)
                                 {
                                     List<KeyValuePair<string, MetersetValue>> presetValues = new List<KeyValuePair<string, MetersetValue>>();
@@ -523,7 +519,7 @@ namespace MAAS_TXIHelper.Core
                 }
             }
         }
-        
+
         public static void FlipArc(Course course, ExternalPlanSetup ps, string logName, bool toNewPlan, bool calcDose, bool usePresetMU)
         {
             var beams = ps.Beams.Where(b => !b.IsImagingTreatmentField && !b.IsSetupField).ToList();
@@ -785,7 +781,7 @@ namespace MAAS_TXIHelper.Core
             int indexTxBeams = 0;
             foreach (Beam beam in beams)
             {
-                
+
                 using (StreamWriter w = File.AppendText(logName))  // record some log data
                 {
                     w.AutoFlush = true;
@@ -1675,13 +1671,13 @@ namespace MAAS_TXIHelper.Core
                                 Log(log, w);
                                 for (int i = 0; i < leaves.GetLength(0); i++)
                                 {
-                                log = "";
+                                    log = "";
                                     log += $"[{i}, x]: ";
                                     for (int j = 0; j < leaves.GetLength(1); j++)
                                     {
                                         log += $"{leaves[i, j]}, ";
                                     }
-                                Log(log, w);
+                                    Log(log, w);
                                 }
                             }
                         }
@@ -1900,7 +1896,7 @@ namespace MAAS_TXIHelper.Core
                         Console.WriteLine($"# Control points: {bParam.ControlPoints.Count()}");
                         for (int indCP = 0; indCP < cpList.Count; indCP++)
                         {
-//                            bParam.ControlPoints.ElementAt(indCP).JawPositions = cpList[indCP].JawPositions;
+                            //                            bParam.ControlPoints.ElementAt(indCP).JawPositions = cpList[indCP].JawPositions;
                             bParam.ControlPoints.ElementAt(indCP).LeafPositions = cpList[indCP].MLCPositions;
                             //                            for (int i = 0; i < bParam.ControlPoints.ElementAt(indCP).LeafPositions.GetLength(0); i++)
                             //                            {
@@ -1913,7 +1909,7 @@ namespace MAAS_TXIHelper.Core
                             //}
                         }
                         bParam.WeightFactor = weightFactor[idxTxBeam];
-//                        Console.WriteLine($"{newBeam.AddFlatteningSequence()}");
+                        //                        Console.WriteLine($"{newBeam.AddFlatteningSequence()}");
                         Console.WriteLine($"{bParam.ControlPoints.Count()}");
                         try
                         {
@@ -2368,7 +2364,7 @@ namespace MAAS_TXIHelper.Core
                     indexTxBeams++;
                 }
                 // create new beams with rotated geometry
-                for(int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++)
+                for (int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++)
                 {
                     using (StreamWriter w = File.AppendText(logName))
                     {
@@ -2378,7 +2374,7 @@ namespace MAAS_TXIHelper.Core
                     }
                     if (mlcType[idxTxBeam] == MLCPlanType.NotDefined)  // this beam does not have an MLC.
                     {
-                        Beam newBeam = extPlanSetup.AddStaticBeam(machineParameters[idxTxBeam], jawPositions[idxTxBeam], 
+                        Beam newBeam = extPlanSetup.AddStaticBeam(machineParameters[idxTxBeam], jawPositions[idxTxBeam],
                             collimatorAngle[idxTxBeam], gantryAngle[idxTxBeam], patientSupportAngle[idxTxBeam], isocenterPosition[idxTxBeam]);
                         BeamParameters bParam = newBeam.GetEditableParameters();
                         bParam.WeightFactor = weightFactor[idxTxBeam];
@@ -2402,7 +2398,7 @@ namespace MAAS_TXIHelper.Core
                     {
                         isDynamicBeamPlan = true;
                         // ESAPI manual shows that the number of meterset weight items define the number of created control points.
-                        List<CPModel> cpList = (List<CPModel>) cpsList[idxTxBeam];
+                        List<CPModel> cpList = (List<CPModel>)cpsList[idxTxBeam];
                         var metersetWeights = from cp in cpList select cp.MetersetWeight;
                         Beam newBeam = extPlanSetup.AddMultipleStaticSegmentBeam(machineParameters[idxTxBeam], metersetWeights, collimatorAngle[idxTxBeam],
                             gantryAngle[idxTxBeam], patientSupportAngle[idxTxBeam], isocenterPosition[idxTxBeam]);
@@ -2450,13 +2446,13 @@ namespace MAAS_TXIHelper.Core
                         // create new beams with rotated geometry
                         for (int idxTxBeam = 0; idxTxBeam < numTxBeams; idxTxBeam++)
                         {
-                            presetValues.Add(new KeyValuePair<string, MetersetValue>(newBeamId[idxTxBeam], 
+                            presetValues.Add(new KeyValuePair<string, MetersetValue>(newBeamId[idxTxBeam],
                                 extPlanSetup.Beams.FirstOrDefault(b => b.Id == beamId[idxTxBeam]).Meterset));
                         }
-                            extPlanSetup.CalculateDoseWithPresetValues(presetValues);
+                        extPlanSetup.CalculateDoseWithPresetValues(presetValues);
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     string log = e.ToString();
                     using (StreamWriter w = File.AppendText(logName))
@@ -2467,18 +2463,18 @@ namespace MAAS_TXIHelper.Core
                     Console.Error.WriteLine("Failed to calculate plan dose. Please do it manually.");
                 }
             }
-            
-            
-            
+
+
+
             app.SaveModifications();
             app.ClosePatient();
         }
     }
 
-    
+
 
     public class CPModel
-    { 
+    {
         public double MetersetWeight { get; set; }
         public VRect<double> JawPositions { get; set; }
         public double GantryAngle { get; set; }

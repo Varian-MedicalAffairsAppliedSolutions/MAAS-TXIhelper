@@ -1,19 +1,13 @@
-﻿
-using MAAS_TXIHelper.Core;
+﻿using MAAS_TXIHelper.Core;
+using MAAS_TXIHelper.Models;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using VMS.TPS;
 using VMS.TPS.Common.Model.API;
-using V = VMS.TPS.Common.Model.API;
-using MAAS_TXIHelper.Models;
 
 // TODO 7.25
 // Add "work in progress" to the two empty tabs
@@ -27,10 +21,10 @@ using MAAS_TXIHelper.Models;
 
 namespace MAAS_TXIHelper.ViewModels
 {
-    
-    public class CTConcatViewModel: BindableBase
+
+    public class CTConcatViewModel : BindableBase
     {
-        public DelegateCommand ConcatenateCmd { get; set; } 
+        public DelegateCommand ConcatenateCmd { get; set; }
         public ObservableCollection<ImageModel> PrimaryImages { get; set; }
         public ObservableCollection<ImageModel> SecondaryImages { get; set; }
         public ObservableCollection<Registration> Registrations { get; set; }
@@ -81,7 +75,8 @@ namespace MAAS_TXIHelper.ViewModels
         public ImageModel PrimaryImage
         {
             get { return _PrimaryImage; }
-            set { 
+            set
+            {
                 SetProperty(ref _PrimaryImage, value);
                 //ConcatenateCmd.RaiseCanExecuteChanged();
                 PopulateSecondaryImages();
@@ -93,7 +88,8 @@ namespace MAAS_TXIHelper.ViewModels
         public ImageModel SecondaryImage
         {
             get { return _SecondaryImage; }
-            set { 
+            set
+            {
                 SetProperty(ref _SecondaryImage, value);
                 PopulateRegistrations();
                 //ConcatenateCmd.RaiseCanExecuteChanged();
@@ -104,7 +100,8 @@ namespace MAAS_TXIHelper.ViewModels
         public Registration Registration
         {
             get { return _Registration; }
-            set { 
+            set
+            {
                 SetProperty(ref _Registration, value);
                 //ConcatenateCmd.RaiseCanExecuteChanged();
             }
@@ -190,7 +187,7 @@ namespace MAAS_TXIHelper.ViewModels
                 throw new Exception($"Directory {directoryPath} not found!");
             }
         }
-       
+
         private void OnConcatenate()
         {
             if (_Registration != null && _PrimaryImage != null && _SecondaryImage != null)
@@ -212,7 +209,8 @@ namespace MAAS_TXIHelper.ViewModels
             return true;
         }
 
-        public CTConcatViewModel(ScriptContext context) {
+        public CTConcatViewModel(ScriptContext context)
+        {
 
             SaveDir = @"C:\Temp";
 

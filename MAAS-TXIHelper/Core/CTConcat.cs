@@ -1,17 +1,11 @@
-﻿using System;
+﻿using MAAS_TXIHelper.Models;
+using SimpleProgressWindow;
+using System;
+using System.IO;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
-using V = VMS.TPS.Common.Model.API;
-using SimpleProgressWindow;
-using System.Windows.Forms;
-using System.Threading;
-using System.IO;
-using System.Linq;
-using MAAS_TXIHelper.Models;
 using I = itk.simple;
-using FellowOakDicom.Imaging;
-using System.Windows.Interop;
-using itk.simple;
+using V = VMS.TPS.Common.Model.API;
 
 namespace MAAS_TXIHelper.Core
 {

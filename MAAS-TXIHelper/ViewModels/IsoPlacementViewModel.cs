@@ -1,11 +1,5 @@
-﻿using FellowOakDicom;
-using Prism.Commands;
+﻿using Prism.Commands;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace MAAS_TXIHelper.ViewModels
 {
@@ -15,11 +9,12 @@ namespace MAAS_TXIHelper.ViewModels
     // Button - Create beams
     // Okay/Cancel message box before save ("About to create X number of arcs and X number of isocenters, (x,y,z) distance appart, do you want to continue?)
 
-    
+
     public class IsoPlacementViewModel
     {
         public DelegateCommand CreateBeamsCmd { get; set; }
-        public IsoPlacementViewModel() {
+        public IsoPlacementViewModel()
+        {
             CreateBeamsCmd = new DelegateCommand(OnCreateBeams);
         }
 

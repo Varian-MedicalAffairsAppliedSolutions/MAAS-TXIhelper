@@ -1,20 +1,9 @@
 ﻿using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Documents;
 using VMS.TPS.Common.Model.API;
 
 namespace ViewModels
 {
-	public class MainViewModel: BindableBase
+    public class MainViewModel : BindableBase
     {
 
         private string postText;
@@ -37,9 +26,9 @@ namespace ViewModels
         public MainViewModel(ScriptContext context, bool isValidated)
         {
             //MyHeader = $"PLAN: {context.ExternalPlanSetup.Id}";
-           
+
             PostText = "";
-            if ( !isValidated ) { PostText += " *** Not Validated For Clinical Use ***"; }
+            if (!isValidated) { PostText += " *** Not Validated For Clinical Use ***"; }
 
         }
 
