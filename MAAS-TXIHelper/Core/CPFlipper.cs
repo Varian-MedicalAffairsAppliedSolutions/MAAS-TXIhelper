@@ -1,32 +1,49 @@
 ﻿using FellowOakDicom;
 using System;
+using System.Windows;
 using System.IO;
+using System.Reflection;
+using System.Linq;
+using System.Security.Cryptography;
 
 namespace MAAS_TXIHelper.Core
 {
-    // Could write this file myself from eclipse input
-
     public static class CPFlipper
     {
-        public static void PlanFlipVMAT(string filename)
+        private static object obj = new object();
+        public static int PlanFlipVMAT(string filename)
         {
+            if(File.Exists(filename) == false)
+            {
+                MessageBox.Show("Input file does not exist.");
+                return -1;
+            }
             DicomFile file = DicomFile.Open(filename);
             DicomDataset dataset = file.Dataset;
 
+            string dllDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string logfilePath = Path.Combine(dllDirectory, "TXIlog.log");
             string outputDir = Path.Combine(Path.GetDirectoryName(filename), "CP_FLIP_OUTPUT");
             if (!Directory.Exists(outputDir))
             {
                 Directory.CreateDirectory(outputDir);
             }
-
             // Loop through beams
             foreach (DicomDataset beam in dataset.GetSequence(DicomTag.BeamSequence))
             {
-
-                if (beam.GetString(DicomTag.BeamTaskType) == "TREATMENT")
+                if (beam.GetString(DicomTag.TreatmentDeliveryType) == "TREATMENT")
                 {
+                    lock (obj)
+                    {
+                        File.AppendAllText(logfilePath, $"Field type: {beam.GetString(DicomTag.TreatmentDeliveryType)}\n");
+                        File.AppendAllText(logfilePath, $"# of CP: {beam.GetSequence(DicomTag.ControlPointSequence).Count()}\n");
+                    }
                     foreach (DicomDataset cp in beam.GetSequence(DicomTag.ControlPointSequence))
                     {
+                        lock (obj)
+                        {
+                            File.AppendAllText(logfilePath, $"Direction: {cp.GetString(DicomTag.GantryRotationDirection)}\n");
+                        }
                         if (cp.GetString(DicomTag.GantryRotationDirection) == "CC")
                         {
                             cp.AddOrUpdate(DicomTag.GantryRotationDirection, "CW");
@@ -35,7 +52,6 @@ namespace MAAS_TXIHelper.Core
                         {
                             cp.AddOrUpdate(DicomTag.GantryRotationDirection, "CC");
                         }
-
                         cp.AddOrUpdate(DicomTag.GantryAngle, 360 - cp.GetSingleValueOrDefault<double>(DicomTag.GantryAngle, 0.0));
 
                         foreach (DicomDataset pos in cp.GetSequence(DicomTag.BeamLimitingDevicePositionSequence))
@@ -51,30 +67,62 @@ namespace MAAS_TXIHelper.Core
                             }
                             else if (deviceType == "MLCX")
                             {
-                                double[] leafPositions = pos.GetValues<double>(DicomTag.LeafPositionBoundaries);
+                                double[] leafPositions = pos.GetValues<double>(DicomTag.LeafJawPositions);
                                 for (int i = 0; i < leafPositions.Length / 2; i++)
                                 {
                                     double temp = leafPositions[i];
                                     leafPositions[i] = -leafPositions[leafPositions.Length - i - 1];
                                     leafPositions[leafPositions.Length - i - 1] = -temp;
                                 }
-                                pos.AddOrUpdate(DicomTag.LeafPositionBoundaries, leafPositions);
+                                pos.AddOrUpdate(DicomTag.LeafJawPositions, leafPositions);
                             }
                         }
                     }
                 }
             }
-
-
-            string newFilename = Path.Combine(outputDir, Path.GetFileName("FLIPPED" + filename));
+            // next, change patient setup orientation
+            foreach (DicomDataset beam in dataset.GetSequence(DicomTag.PatientSetupSequence))
+            {
+                if (beam.GetString(DicomTag.PatientPosition) == "HFS")
+                {
+                    beam.AddOrUpdate(DicomTag.PatientPosition, "FFS");
+                }
+            }
+            // next, assign a new SOP instance UID to the new plan
+            string oldUID = dataset.GetString(DicomTag.SOPInstanceUID);
+            string[] segments = oldUID.Split('.');
+            string timeTag = DateTime.Now.ToString("yyyyMMddHHmmssff");
+            segments[segments.Length - 1] = timeTag;
+            string newUID = "";
+            foreach (string segment in segments)
+            {
+                newUID += segment + '.';
+            }
+            newUID = newUID.Substring(0, newUID.Length - 1);
+            dataset.AddOrUpdate(DicomTag.SOPInstanceUID, newUID);
+            // update instance creation date and time
+            dataset.AddOrUpdate(DicomTag.InstanceCreationDate, DateTime.Now.ToString("yyyyMMdd"));
+            dataset.AddOrUpdate(DicomTag.InstanceCreationTime, DateTime.Now.ToString("HHmmss"));
+            // assign a new plan ID
+            string oldPlanLabel = dataset.GetString(DicomTag.RTPlanLabel);
+            dataset.AddOrUpdate(DicomTag.RTPlanLabel, oldPlanLabel + '1');
+            string newFilename = Path.Combine(outputDir, Path.GetFileName(filename));
             file.Save(newFilename);
+            return 0;
         }
 
-        public static void PlanFlipHalcyon(string filename)
+        public static int PlanFlipHalcyon(string filename)
         {
+            if (File.Exists(filename) == false)
+            {
+                MessageBox.Show("Input file does not exist.");
+                return -1;
+            }
             DicomFile file = DicomFile.Open(filename);
             DicomDataset dataset = file.Dataset;
 
+            string dllDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string logfilePath = Path.Combine(dllDirectory, "TXIlog.log");
             string outputDir = Path.Combine(Path.GetDirectoryName(filename), "CP_FLIP_OUTPUT");
             if (!Directory.Exists(outputDir))
             {
@@ -83,11 +131,19 @@ namespace MAAS_TXIHelper.Core
 
             foreach (DicomDataset beam in dataset.GetSequence(DicomTag.BeamSequence))
             {
-                if (beam.GetString(DicomTag.BeamTaskType) == "TREATMENT")
+                if (beam.GetString(DicomTag.TreatmentDeliveryType) == "TREATMENT")
                 {
+                    lock (obj)
+                    {
+                        File.AppendAllText(logfilePath, $"Field type: {beam.GetString(DicomTag.TreatmentDeliveryType)}\n");
+                        File.AppendAllText(logfilePath, $"# of CP: {beam.GetSequence(DicomTag.ControlPointSequence).Count()}\n");
+                    }
                     foreach (DicomDataset cp in beam.GetSequence(DicomTag.ControlPointSequence))
                     {
-
+                        lock (obj)
+                        {
+                            File.AppendAllText(logfilePath, $"Direction: {cp.GetString(DicomTag.GantryRotationDirection)}\n");
+                        }
                         if (cp.GetString(DicomTag.GantryRotationDirection) == "CC")
                         {
                             cp.AddOrUpdate(DicomTag.GantryRotationDirection, "CW");
@@ -96,15 +152,13 @@ namespace MAAS_TXIHelper.Core
                         {
                             cp.AddOrUpdate(DicomTag.GantryRotationDirection, "CC");
                         }
-
                         cp.AddOrUpdate(DicomTag.GantryAngle, 360 - cp.GetSingleValueOrDefault<double>(DicomTag.GantryAngle, 0.0));
-
                         foreach (DicomDataset pos in cp.GetSequence(DicomTag.BeamLimitingDevicePositionSequence))
                         {
                             string deviceType = pos.GetString(DicomTag.RTBeamLimitingDeviceType);
                             if (deviceType == "MLCX1" || deviceType == "MLCX2")
                             {
-                                double[] leafPositions = pos.GetValues<double>(DicomTag.LeafPositionBoundaries);
+                                double[] leafPositions = pos.GetValues<double>(DicomTag.LeafJawPositions);
                                 double[] temp = new double[leafPositions.Length];
                                 Array.Copy(leafPositions, temp, leafPositions.Length);
                                 for (int i = 0; i < leafPositions.Length / 2; i++)
@@ -120,15 +174,41 @@ namespace MAAS_TXIHelper.Core
                                         leafPositions[leafPositions.Length / 2 + i] = -temp[i];
                                     }
                                 }
-                                pos.AddOrUpdate(DicomTag.LeafPositionBoundaries, leafPositions);
+                                pos.AddOrUpdate(DicomTag.LeafJawPositions, leafPositions);
                             }
                         }
                     }
                 }
             }
-
-            string newFilename = Path.Combine(outputDir, Path.GetFileName("FLIPPED2" + filename));
+            // next, change patient setup orientation
+            foreach (DicomDataset beam in dataset.GetSequence(DicomTag.PatientSetupSequence))
+            {
+                if (beam.GetString(DicomTag.PatientPosition) == "HFS")
+                {
+                    beam.AddOrUpdate(DicomTag.PatientPosition, "FFS");
+                }
+            }
+            // next, assign a new SOP instance UID to the new plan
+            string oldUID = dataset.GetString(DicomTag.SOPInstanceUID);
+            string[] segments = oldUID.Split('.');
+            string timeTag = DateTime.Now.ToString("yyyyMMddHHmmssff");
+            segments[segments.Length - 1] = timeTag;
+            string newUID = "";
+            foreach (string segment in segments)
+            {
+                newUID += segment + '.';
+            }
+            newUID = newUID.Substring(0, newUID.Length - 1);
+            dataset.AddOrUpdate(DicomTag.SOPInstanceUID, newUID);
+            // update instance creation date and time
+            dataset.AddOrUpdate(DicomTag.InstanceCreationDate, DateTime.Now.ToString("yyyyMMdd"));
+            dataset.AddOrUpdate(DicomTag.InstanceCreationTime, DateTime.Now.ToString("HHmmss"));
+            // assign a new plan ID
+            string oldPlanLabel = dataset.GetString(DicomTag.RTPlanLabel);
+            dataset.AddOrUpdate(DicomTag.RTPlanLabel, oldPlanLabel + '1');
+            string newFilename = Path.Combine(outputDir, Path.GetFileName(filename));
             file.Save(newFilename);
+            return 0;
         }
     }
 }

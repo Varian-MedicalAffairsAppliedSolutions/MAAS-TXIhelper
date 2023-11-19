@@ -66,8 +66,6 @@ namespace MAAS_TXIHelper.ViewModels
 
         private void onRotate()
         {
-            // 
-            MessageBox.Show("ON rotate clicked");
             // DO roatation
             string filename = "C:\\Temp\\RP.dcm";
             MAAS_TXIHelper.Core.CPFlipper.PlanFlipVMAT(filename);

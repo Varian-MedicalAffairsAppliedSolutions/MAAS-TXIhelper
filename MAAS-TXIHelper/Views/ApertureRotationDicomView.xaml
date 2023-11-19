@@ -27,7 +27,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Label Grid.ColumnSpan="2" Content="Select isocenters to be treated Foot First Supine" VerticalAlignment="Center" FontWeight="Bold" Margin="5"></Label>
+        <!--<Label Grid.ColumnSpan="2" Content="Select isocenters to be treated Foot First Supine" VerticalAlignment="Center" FontWeight="Bold" Margin="5"></Label>
 
         <ListBox Grid.Row="1" Height="300" Grid.RowSpan="4" Grid.ColumnSpan="2" ItemsSource="{Binding IsoGroups}">
             <ListBox.ItemTemplate>
@@ -37,15 +37,13 @@
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
-
-        <Button Grid.Row="5" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="2"  Margin="5" Content="Create new plan with isocenters to be treated foot first" Command="{Binding CreatePlanCmd}"></Button>
-        <TextBox Grid.Row="6" Grid.ColumnSpan="2" Margin="5" Text="{Binding TempDicomDir}"></TextBox>
-        <Button Grid.Row="7" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="2" Margin="5" Content="Flip MLC control points" Command="{Binding OnRotateCmd}"></Button>
-        
-
-
+        </ListBox>-->
+        <!--<Button Grid.Row="5" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="2"  Margin="5" Content="Create new plan with isocenters to be treated foot first" Command="{Binding CreatePlanCmd}"></Button>-->
+        <TextBox Grid.Row="2" Grid.ColumnSpan="4" Margin="5" Text="{Binding TempDicomDir}"></TextBox>
+        <Button Grid.Row="3" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="4" Margin="5" Content="Flip MLC control points" Command="{Binding OnRotateCmd}"></Button>
+        <TextBlock Grid.Row="4">Tips:</TextBlock>
+        <TextBlock Grid.Row="5">1. The original plan is expected to be in a HFS position. </TextBlock>
+        <TextBlock Grid.Row="6">2. After importing the new plan, add missing for dose calculation algorithms to the plan.</TextBlock>
         <!--GridButton Content="Rotate Aperture" Margin="10" Command="{Binding OnRotateCmd}"/-->
-
     </Grid>
 </UserControl>

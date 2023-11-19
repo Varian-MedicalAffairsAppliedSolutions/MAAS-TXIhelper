@@ -126,7 +126,6 @@ namespace ViewModels
 
                 // Build the log file path
                 LogPath = Path.Combine(dllDirectory, "TXILog.log");
-                MessageBox.Show($"logfile {LogPath}");
 
                 FlipCmd = new DelegateCommand(OnFlip);
                 SelectLogPathCmd = new DelegateCommand(OnSelectLogPath);
