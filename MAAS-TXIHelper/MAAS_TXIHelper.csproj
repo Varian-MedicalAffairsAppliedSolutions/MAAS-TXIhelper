@@ -105,8 +105,9 @@
     <Reference Include="Prism.Wpf, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>packages\Prism.Wpf.8.1.97\lib\net47\Prism.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleITKCSharpManaged">
-      <HintPath>\\fs2\fs2home\chan\Projects\SimpleITK-2.2.1-CSharp-win64-x64\SimpleITKCSharpManaged.dll</HintPath>
+    <Reference Include="SimpleITKCSharpManaged, Version=2.2.0.256, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\SimpleITK-win64-CSharp-x64.1.0.0.1\lib\SimpleITKCSharpManaged.dll</HintPath>
     </Reference>
     <Reference Include="SimpleProgressWindow, Version=1.2.8594.18064, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>packages\SimpleProgressWindow.1.2.8594.18064\lib\net472\SimpleProgressWindow.dll</HintPath>
@@ -264,11 +265,11 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\..\..\..\..\SimpleITK-2.3.0-CSharp-win64-x64\SimpleITKCSharpNative.dll">
-      <Link>SimpleITKCSharpNative.dll</Link>
+    <Content Include="packages\SimpleITK-win64-CSharp-x64.1.0.0.1\lib\SimpleITKCSharpNative.dll" Link="SimpleITKCSharpNative.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="packages\SimpleITK-win64-CSharp-x64.1.0.0.1\lib\SimpleITKCSharpNative.dll" Link="SimpleITKCSharpNative.dll">
+    <Content Include="packages\SimpleITK-win64-CSharp-x64.1.0.0.1\lib\SimpleITKCSharpNative.dll" />
+    <Content Include="SimpleITKCSharpNative.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
