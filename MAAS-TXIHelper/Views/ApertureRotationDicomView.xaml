@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MAAS_TXIHelper.Views"
+              xmlns:local="clr-namespace:MAAS_TXIHelper.Views" xmlns:viewmodels="clr-namespace:MAAS_TXIHelper.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ApertureRotationDicomViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -39,11 +39,14 @@
             </ListBox.ItemTemplate>
         </ListBox>-->
         <!--<Button Grid.Row="5" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="2"  Margin="5" Content="Create new plan with isocenters to be treated foot first" Command="{Binding CreatePlanCmd}"></Button>-->
-        <TextBox Grid.Row="2" Grid.ColumnSpan="4" Margin="5" Text="{Binding TempDicomDir}"></TextBox>
-        <Button Grid.Row="3" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="4" Margin="5" Content="Flip MLC control points" Command="{Binding OnRotateCmd}"></Button>
-        <TextBlock Grid.Row="4">Tips:</TextBlock>
-        <TextBlock Grid.Row="5">1. The original plan is expected to be in a HFS position. </TextBlock>
-        <TextBlock Grid.Row="6">2. After importing the new plan, add missing for dose calculation algorithms to the plan.</TextBlock>
+        <Image Grid.RowSpan="3" Grid.ColumnSpan="4" HorizontalAlignment="Center" Name="imgRotate" Loaded="RotateImageLoaded" />
+        <TextBox Grid.Row="3" Grid.ColumnSpan="4" Margin="5" Text="{Binding TempDicomDir}"></TextBox>
+        <Button x:Name="RotateButton" Grid.Row="4" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="4" Margin="5" Content="{Binding RotateButtonText}" Command="{Binding OnRotateCmd}">
+        </Button>
+        <TextBlock Grid.Row="5" Grid.ColumnSpan="4">Tips:</TextBlock>
+        <TextBlock Grid.Row="6" Grid.ColumnSpan="4">1. The original plan is expected to be in a HFS position. </TextBlock>
+        <TextBlock Grid.Row="7" Grid.ColumnSpan="4">2. After importing the new plan, add missing dose calculation algorithms to the plan.</TextBlock>
+        <TextBlock Grid.Row="8" Grid.ColumnSpan="4">3. If the new plan does not show proper field MUs, use "Calculate with Preset Values".</TextBlock>
         <!--GridButton Content="Rotate Aperture" Margin="10" Command="{Binding OnRotateCmd}"/-->
     </Grid>
 </UserControl>

@@ -1,7 +1,9 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using VMS.TPS.Common.Model.API;
 
 namespace MAAS_TXIHelper.ViewModels
@@ -12,10 +14,24 @@ namespace MAAS_TXIHelper.ViewModels
         public string Name { get; set; }
     }
 
-
-    public class ApertureRotationDicomViewModel : BindableBase
+    public class ApertureRotationDicomViewModel : BindableBase, INotifyPropertyChanged
     {
         private bool _CPFlipEnabled;
+
+        private string _RotateButtonText = "Rotate the plan";
+
+        public string RotateButtonText
+        {
+            get => _RotateButtonText;
+
+            set
+            {
+                if(_RotateButtonText != value)
+                {
+                    _RotateButtonText = value;
+                }
+            }
+        }
 
         public bool CPFlipEnabled
         {
@@ -32,15 +48,14 @@ namespace MAAS_TXIHelper.ViewModels
         public ObservableCollection<IsoGroup> IsoGroups { get; set; }
         public ApertureRotationDicomViewModel(ScriptContext context)
         {
-
             CPFlipEnabled = true;
             Plan = context.ExternalPlanSetup;
-            OnRotateCmd = new DelegateCommand(onRotate);
-            CreatePlanCmd = new DelegateCommand(onCreatePlan);
+            OnRotateCmd = new DelegateCommand(OnRotate);
+            CreatePlanCmd = new DelegateCommand(OnCreatePlan);
             TempDicomDir = @"C:\Temp";
+            RotateButtonText = "Create a new DICOM plan file with rotated fields.";
 
             // Populate iso groups
-
             // TEST
             /*
             IsoGroups = new ObservableCollection<IsoGroup>();
@@ -54,7 +69,7 @@ namespace MAAS_TXIHelper.ViewModels
             // TODO: populate with actual iso groups and by default check the lower half
         }
 
-        private void onCreatePlan()
+        private void OnCreatePlan()
         {
             // Copy current plan
             // Paste plan and delete all fields not in a selected iso group
@@ -64,12 +79,17 @@ namespace MAAS_TXIHelper.ViewModels
 
         }
 
-        private void onRotate()
+        private void OnRotate()
         {
-            // DO roatation
             string filename = "C:\\Temp\\RP.dcm";
-            MAAS_TXIHelper.Core.CPFlipper.PlanFlipVMAT(filename);
-            MessageBox.Show("Rotation complete. New plan saved to <newfile_rotated_plan>. Import plan and create plan sum to verify.");
+
+            RotateButtonText = "Creating a rotated plan. Please wait...";
+            int result = MAAS_TXIHelper.Core.CPFlipper.PlanFlipVMAT(filename);
+            if(result >= 0)
+            {
+                MessageBox.Show("Rotation is complete. New plan saved under folder \"CP_FLIP_OUTPUT\". Please import the new plan and calculate plan dose to verify.");
+            }
+//            RotateButtonText = "Create a new DICOM plan file with rotated fields.";
         }
     }
 }

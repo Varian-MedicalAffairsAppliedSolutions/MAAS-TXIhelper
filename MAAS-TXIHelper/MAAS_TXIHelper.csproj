@@ -243,9 +243,9 @@
     <None Include="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Resource Include="Resources\About.rtf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    <None Include="Resources\About.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="SimpleITK_LICENSE" />
     <None Include="VarianLUSLA.pdf" />
@@ -269,6 +269,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="packages\SimpleITK-win64-CSharp-x64.1.0.0.1\lib\SimpleITKCSharpNative.dll" />
+    <None Include="Resources\rotate.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="SimpleITKCSharpNative.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
