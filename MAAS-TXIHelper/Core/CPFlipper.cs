@@ -11,6 +11,53 @@ namespace MAAS_TXIHelper.Core
     public static class CPFlipper
     {
         private static object obj = new object();
+
+        public static int PlanFlip(string filename)
+        {
+            // This method checks if it is a TrueBeam or Halcyon/Ethos plan.
+            if (File.Exists(filename) == false)
+            {
+                MessageBox.Show("Input file does not exist.");
+                return -1;
+            }
+            bool isTrueBeam = false;
+            bool isHalcyon = false;
+            DicomDataset dataset = DicomFile.Open(filename).Dataset;
+            // Loop through beams
+            foreach (DicomDataset beam in dataset.GetSequence(DicomTag.BeamSequence))
+            {
+                if (beam.GetString(DicomTag.TreatmentDeliveryType) == "TREATMENT")
+                {
+                    foreach (DicomDataset cp in beam.GetSequence(DicomTag.ControlPointSequence))
+                    {
+                        foreach (DicomDataset pos in cp.GetSequence(DicomTag.BeamLimitingDevicePositionSequence))
+                        {
+                            string deviceType = pos.GetString(DicomTag.RTBeamLimitingDeviceType);
+                            if (deviceType == "MLCX")
+                            {
+                                isTrueBeam = true; break;
+                            }
+                            if (deviceType == "MLCX1" || deviceType == "MLCX2")
+                            {
+                                isHalcyon = true; break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (isTrueBeam)
+            {
+                return PlanFlipVMAT(filename);
+            }
+            else if (isHalcyon)
+            {
+                return PlanFlipHalcyon(filename);
+            }
+            else
+            {
+                return -1;
+            }
+        }
         public static int PlanFlipVMAT(string filename)
         {
             if(File.Exists(filename) == false)
