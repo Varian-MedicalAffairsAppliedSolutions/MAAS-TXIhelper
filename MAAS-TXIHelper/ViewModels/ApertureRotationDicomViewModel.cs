@@ -84,7 +84,7 @@ namespace MAAS_TXIHelper.ViewModels
             string filename = "C:\\Temp\\RP.dcm";
 
             RotateButtonText = "Creating a rotated plan. Please wait...";
-            int result = MAAS_TXIHelper.Core.CPFlipper.PlanFlipVMAT(filename);
+            int result = MAAS_TXIHelper.Core.CPFlipper.PlanFlip(filename);
             if(result >= 0)
             {
                 MessageBox.Show("Rotation is complete. New plan saved under folder \"CP_FLIP_OUTPUT\". Please import the new plan and calculate plan dose to verify.");

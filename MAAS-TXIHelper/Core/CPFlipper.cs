@@ -14,6 +14,8 @@ namespace MAAS_TXIHelper.Core
 
         public static int PlanFlip(string filename)
         {
+            string dllDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string logfilePath = Path.Combine(dllDirectory, "TXIlog.log");
             // This method checks if it is a TrueBeam or Halcyon/Ethos plan.
             if (File.Exists(filename) == false)
             {
@@ -42,6 +44,8 @@ namespace MAAS_TXIHelper.Core
                                 isHalcyon = true; break;
                             }
                         }
+                        if (isTrueBeam || isHalcyon)
+                            break;
                     }
                 }
             }
@@ -175,7 +179,10 @@ namespace MAAS_TXIHelper.Core
             {
                 Directory.CreateDirectory(outputDir);
             }
-
+            lock (obj)
+            {
+                File.AppendAllText(logfilePath, $"Start of Halcyon plan rotation.\n");
+            }
             foreach (DicomDataset beam in dataset.GetSequence(DicomTag.BeamSequence))
             {
                 if (beam.GetString(DicomTag.TreatmentDeliveryType) == "TREATMENT")
@@ -185,12 +192,10 @@ namespace MAAS_TXIHelper.Core
                         File.AppendAllText(logfilePath, $"Field type: {beam.GetString(DicomTag.TreatmentDeliveryType)}\n");
                         File.AppendAllText(logfilePath, $"# of CP: {beam.GetSequence(DicomTag.ControlPointSequence).Count()}\n");
                     }
+                    int cpIndex = 0;
                     foreach (DicomDataset cp in beam.GetSequence(DicomTag.ControlPointSequence))
                     {
-                        lock (obj)
-                        {
-                            File.AppendAllText(logfilePath, $"Direction: {cp.GetString(DicomTag.GantryRotationDirection)}\n");
-                        }
+                        cpIndex++;
                         if (cp.GetString(DicomTag.GantryRotationDirection) == "CC")
                         {
                             cp.AddOrUpdate(DicomTag.GantryRotationDirection, "CW");
@@ -208,17 +213,19 @@ namespace MAAS_TXIHelper.Core
                                 double[] leafPositions = pos.GetValues<double>(DicomTag.LeafJawPositions);
                                 double[] temp = new double[leafPositions.Length];
                                 Array.Copy(leafPositions, temp, leafPositions.Length);
-                                for (int i = 0; i < leafPositions.Length / 2; i++)
+                                int leafPairNum = (int) leafPositions.Length / 2;
+                                for (int i = 0; i < leafPairNum; i++)
                                 {
-                                    if (Math.Abs(temp[leafPositions.Length - 1 - i]) > 139.5 && Math.Abs(temp[i]) > 139.5 && temp[leafPositions.Length - 1 - i] == temp[i])
+                                    if (Math.Abs(temp[leafPositions.Length - 1 - i]) > 139.5 && Math.Abs(temp[leafPairNum - 1 - i]) > 139.5 &&
+                                        temp[leafPositions.Length - 1 - i] == temp[leafPairNum - 1 - i])
                                     {
                                         leafPositions[i] = temp[leafPositions.Length - 1 - i];
-                                        leafPositions[leafPositions.Length / 2 + i] = temp[i];
+                                        leafPositions[leafPairNum + i] = temp[leafPairNum - 1 - i];
                                     }
                                     else
                                     {
                                         leafPositions[i] = -temp[leafPositions.Length - 1 - i];
-                                        leafPositions[leafPositions.Length / 2 + i] = -temp[i];
+                                        leafPositions[leafPairNum + i] = -temp[leafPairNum - 1 - i];
                                     }
                                 }
                                 pos.AddOrUpdate(DicomTag.LeafJawPositions, leafPositions);
