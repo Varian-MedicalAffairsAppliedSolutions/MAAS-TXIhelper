@@ -42,14 +42,15 @@
         <Border Grid.RowSpan="3" Grid.ColumnSpan="4" HorizontalAlignment="Center" BorderThickness="4">
             <Image Name="imgRotate" VerticalAlignment="Center" Height="128" Loaded="RotateImageLoaded" />
         </Border>
-        <TextBlock Grid.Row="3" Grid.ColumnSpan="4">Location of the DICOM plan file:</TextBlock>
-        <TextBox Grid.Row="4" Grid.ColumnSpan="4" Margin="5" Text="{Binding TempDicomDir}"></TextBox>
-        <Button x:Name="RotateButton" Grid.Row="5" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="4" Margin="5" Content="{Binding RotateButtonText}" Command="{Binding OnRotateCmd}">
+        <TextBlock Grid.Row="3" Grid.ColumnSpan="4">Click this button to start:</TextBlock>
+<!--        <TextBox Grid.Row="4" Grid.ColumnSpan="4" Margin="5" Text="{Binding TempDicomDir}"></TextBox> -->
+        <Button x:Name="RotateButton" Grid.Row="4" IsEnabled="{Binding CPFlipEnabled}" Grid.ColumnSpan="4" Margin="5" Content="{Binding RotateButtonText}" Command="{Binding OnRotateCmd}">
         </Button>
-        <TextBlock Grid.Row="6" Grid.ColumnSpan="4">Tips:</TextBlock>
-        <TextBlock Grid.Row="7" Grid.ColumnSpan="4">1. The original plan is expected to be in a HFS position. </TextBlock>
+        <TextBlock Grid.Row="5" Grid.ColumnSpan="4" FontWeight="Bold" FontSize="14">Tips:</TextBlock>
+        <TextBlock Grid.Row="6" Grid.ColumnSpan="4">1. The original plan is expected to be in a HFS position.</TextBlock>
+        <TextBlock Grid.Row="7" Grid.ColumnSpan="4">1. The rotated plan is saved in a subfolder in the original plan location. </TextBlock>
         <TextBlock Grid.Row="8" Grid.ColumnSpan="4">2. After importing the new plan, add missing dose calculation algorithms to the plan.</TextBlock>
-        <TextBlock Grid.Row="9" Grid.ColumnSpan="4">3. If the new plan does not show proper field MUs, use "Calculate with Preset Values".</TextBlock>
+        <TextBlock Grid.Row="9" Grid.ColumnSpan="4">3. Use "Calculate Volume with Preset Values" to calculate rotated plan dose with the original MUs.</TextBlock>
         <!--GridButton Content="Rotate Aperture" Margin="10" Command="{Binding OnRotateCmd}"/-->
     </Grid>
 </UserControl>

@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Linq;
 using System.Security.Cryptography;
+using Microsoft.Win32;
 
 namespace MAAS_TXIHelper.Core
 {
@@ -12,11 +13,20 @@ namespace MAAS_TXIHelper.Core
     {
         private static object obj = new object();
 
-        public static int PlanFlip(string filename)
+        public static int PlanFlip()
         {
             string dllDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string logfilePath = Path.Combine(dllDirectory, "TXIlog.log");
             // This method checks if it is a TrueBeam or Halcyon/Ethos plan.
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.DefaultExt = ".dcm";
+            openFileDialog.Filter = "DICOM Files (*.dcm)|*.dcm";
+            bool? result = openFileDialog.ShowDialog() ?? false;
+            string filename = "";
+            if(result == true)
+            {
+                filename = openFileDialog.FileName;
+            }
             if (File.Exists(filename) == false)
             {
                 MessageBox.Show("Input file does not exist.");

@@ -52,8 +52,7 @@ namespace MAAS_TXIHelper.ViewModels
             Plan = context.ExternalPlanSetup;
             OnRotateCmd = new DelegateCommand(OnRotate);
             CreatePlanCmd = new DelegateCommand(OnCreatePlan);
-            TempDicomDir = @"C:\Temp";
-            RotateButtonText = "Create a new DICOM plan file with rotated fields.";
+            RotateButtonText = "Click to select a plan file for field rotation.";
 
             // Populate iso groups
             // TEST
@@ -81,10 +80,8 @@ namespace MAAS_TXIHelper.ViewModels
 
         private void OnRotate()
         {
-            string filename = "C:\\Temp\\RP.dcm";
-
             RotateButtonText = "Creating a rotated plan. Please wait...";
-            int result = MAAS_TXIHelper.Core.CPFlipper.PlanFlip(filename);
+            int result = MAAS_TXIHelper.Core.CPFlipper.PlanFlip();
             if(result >= 0)
             {
                 MessageBox.Show("Rotation is complete. New plan saved under folder \"CP_FLIP_OUTPUT\". Please import the new plan and calculate plan dose to verify.");
