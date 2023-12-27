@@ -1,2 +1,6 @@
-Attention AAPM2023 Poster viewers:
-This project is under active development.  Pre compiled binaries are not yet available, as the features stabilize and last minute bugs are squashed.  Please check back later this Fall (Septemeber-October 2023). 
+# MAAS-TXIhelper
+<object data="https://medicalaffairs.varian.com/download/AAPM2023_eposter_TXIHelper.pdf" type="application/pdf" width="700px" height="700px">
+    <embed src="https://medicalaffairs.varian.com/download/AAPM2023_eposter_TXIHelper.pdf">
+        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="https://medicalaffairs.varian.com/download/AAPM2023_eposter_TXIHelper.pdf">Download PDF</a>.</p>
+    </embed>
+</object>
