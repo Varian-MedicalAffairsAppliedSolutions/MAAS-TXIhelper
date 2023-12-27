@@ -22,13 +22,13 @@ Requires Head First Supine superior series with rigid registration to inferior F
 ### Aperture Rotation: working
 - supports either: C series / TrueBeam / Halcyon / Ethos
 - copy and paste twice the complete plan created in HFS oritination with desired dose distrunution head to foot
--- in one plan delete all beams/isocenters that will be treated HFS and the the other plan FFS
--- DICOM export the plan that has only the inferior isocenters that is currently in the HFS orientation
--- launch this tool, click the Aperature rotation tab, and selected the exported plan file for aperature rotation
--- after aperature rotation script completes import new plan from subdirectory
---- recalulate dose with fixed MUs
---- create a plan sum with inferior plan
---- dose should be identical to inital completed
+    - in one plan delete all beams/isocenters that will be treated HFS and the the other plan FFS
+    - DICOM export the plan that has only the inferior isocenters that is currently in the HFS orientation
+    - launch this tool, click the Aperature rotation tab, and selected the exported plan file for aperature rotation
+    - after aperature rotation script completes import new plan from subdirectory
+    - recalulate dose with fixed MUs
+    - create a plan sum with inferior plan
+    - dose should be identical to inital completed
 
 ### Final Modifications: not yet working
 - breaks each isocenter group into seperate plan, treatment appvoes plan and adds needed setup notes
