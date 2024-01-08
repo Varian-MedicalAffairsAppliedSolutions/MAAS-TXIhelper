@@ -9,6 +9,7 @@
 
 ### CT concatenation tab: working
 ![plot](./CTconcat-screenshot.jpg)
+
 Requires Head First Supine superior series with rigid registration to inferior Feet First Supine Series in External Beam Planning
 - no plan needed
 - default CT slice thickness taken from existing scans but can be resampled
@@ -20,6 +21,7 @@ Requires Head First Supine superior series with rigid registration to inferior F
 
 ### Aperture Rotation: working
 ![plot](./aperture-rotation-screenshot.png)
+
 - supports either: C series / TrueBeam / Halcyon / Ethos
 - copy and paste twice the complete plan created in HFS orientation with desired dose distribution head to foot
     - in one plan delete all beams/isocenters that will be treated HFS and the other plan FFS
