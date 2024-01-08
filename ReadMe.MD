@@ -21,7 +21,7 @@ Requires Head First Supine superior series with rigid registration to inferior F
 - will support single isocenter shifts head to foot (X fixed,Y fixed,Z changes)
 - will also support additional lateral shifts for wider patients (X changes,Y fixed,Z changes)
 
-### Aperture Rotation: working
+### Aperture Rotation tab: working
 ![plot](./aperture-rotation-screenshot.png)
 
 - supports either: C series / TrueBeam / Halcyon / Ethos
@@ -34,6 +34,6 @@ Requires Head First Supine superior series with rigid registration to inferior F
     - create a plan sum with superior plan
     - dose should be identical to initial completed plan
 
-### Final Modifications: not yet working
+### Final Modifications tab: not yet working
 - breaks each isocenter group into separate plan, treatment approves plans and adds needed setup notes
 
