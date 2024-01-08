@@ -6,6 +6,7 @@
         <p>Please download the poster PDF to view it: <a href="https://medicalaffairs.varian.com/download/AAPM2023_eposter_TXIHelper.pdf">Download PDF</a>.</p>
     </embed>
 </object>
+
 ### CT concatenation tab: working
 ![plot](./CTconcat-screenshot.jpg)
 Requires Head First Supine superior series with rigid registration to inferior Feet First Supine Series in External Beam Planning
