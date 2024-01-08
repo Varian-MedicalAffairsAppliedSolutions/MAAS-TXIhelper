@@ -13,6 +13,8 @@
 Requires Head First Supine superior series with rigid registration to inferior Feet First Supine Series in External Beam Planning
 - no plan needed
 - default CT slice thickness taken from existing scans but can be resampled
+- progress bar is accurate, could take approximately 30 minutes to complete concatenation
+- import fully merged CT series from output directory (i.e C:\Temp) when completed
 
 ### Isocenter Placement tab: not yet working
 - will automatically place all beams on full body image set
