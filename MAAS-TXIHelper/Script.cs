@@ -1,5 +1,4 @@
 using JR.Utils.GUI.Forms;
-using MAAS_TXIHelper.Models;
 using Newtonsoft.Json;
 using System;
 using System.Globalization;
@@ -7,10 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
-using ViewModels;
-using Views;
+using System.Windows.Threading;
+using MAAS_TXIHelper.Views;
+using MAAS_TXIHelper.Models;
+using MAAS_TXIHelper.ViewModels;
 using VMS.TPS.Common.Model.API;
 using MessageBox = System.Windows.MessageBox;
 
@@ -208,10 +210,6 @@ namespace VMS.TPS
             $"Newer builds with future expiration dates can be found here: {url}\n\n" +
             "See the FAQ for more information on how to remove this pop-up and expiration";
 
-
-            // Test
-            //MessageBox.Show($"Noexpire found: {foundNoExpire} looked in : {noexp_path}");
-
             if (!foundNoExpire)
             {
                 if (!settings.Validated)
@@ -232,9 +230,48 @@ namespace VMS.TPS
                 }
             }
 
-            var mainWindow = new MainWindow(context, new MainViewModel(context, settings.Validated));
-            mainWindow.ShowDialog();
+            // this ESAPIworker class object does work in the main thread of the app.
+            var esapiWorker = new EsapiWorker(context);
+            // A DispatcherFrame forms an execution loop.
+            DispatcherFrame frame = new DispatcherFrame();
+            // this create the UI thread as a background thread.
+            RunOnNewStaThread(() =>
+            {
+                var mainWindow = new MainWindow(esapiWorker);
+                mainWindow.ShowDialog();
+                frame.Continue = false;
+            });
+            // PushFrame starts the new queue. It prevents the script from ending
+            // untill the main window is closed.
+            Dispatcher.PushFrame(frame);
+        }
+        private void RunOnNewStaThread(Action a)
+        {
+            Thread thread = new Thread(() => a());
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+    }
+}
+
+namespace MAAS_TXIHelper.Views
+{
+    public class EsapiWorker
+    {
+        private readonly ScriptContext _scriptContext;
+        private readonly Dispatcher _dispatcher;
+
+        public EsapiWorker(ScriptContext scriptContext)
+        {
+            _scriptContext = scriptContext;
+            _dispatcher = Dispatcher.CurrentDispatcher;
         }
 
+        public void Run(Action<ScriptContext> a)
+        {
+            // The BeginkInvoke method executes the delegate asynchronously
+            _dispatcher.BeginInvoke(a, _scriptContext);
+        }
     }
 }

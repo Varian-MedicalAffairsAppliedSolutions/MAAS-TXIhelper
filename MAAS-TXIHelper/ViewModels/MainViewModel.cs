@@ -1,19 +1,15 @@
-﻿using Prism.Mvvm;
-using VMS.TPS.Common.Model.API;
+﻿using VMS.TPS.Common.Model.API;
 
 namespace ViewModels
 {
-    public class MainViewModel : BindableBase
+    public class MainViewModel
     {
-
         private string postText;
         public string PostText
         {
             get { return postText; }
-            set { SetProperty(ref postText, value); }
+            set { postText = value; }
         }
-
-
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             System.Diagnostics.Process.Start(
@@ -21,16 +17,11 @@ namespace ViewModels
              );
             e.Handled = true;
         }
-
-
         public MainViewModel(ScriptContext context, bool isValidated)
         {
             //MyHeader = $"PLAN: {context.ExternalPlanSetup.Id}";
-
             PostText = "";
             if (!isValidated) { PostText += " *** Not Validated For Clinical Use ***"; }
-
         }
-
     }
 }
