@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MAAS_TXIHelper.Views"
         mc:Ignorable="d"
-        Title="MAAS_TXIHelper" Height="600" Width="600"
+        Title="MAAS_TXIHelper" Height="635" Width="635"
         >
 
     <Window.Resources>
