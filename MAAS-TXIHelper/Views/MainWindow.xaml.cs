@@ -12,14 +12,17 @@ namespace MAAS_TXIHelper.Views
     {
         private ConcatView _concatView;
         private RotateView _rotateView;
+        private OverrideView _overrideView;
         public MainWindow(EsapiWorker esapiWorker)
         {
             InitializeComponent();
             _concatView = new ConcatView(esapiWorker);
             _rotateView = new RotateView(esapiWorker);
-//            _rotateView = new CPFlipView(esapiWorker);
+            _overrideView = new OverrideView(esapiWorker);
+            //            _rotateView = new CPFlipView(esapiWorker);
             Tab1.Content = _concatView;
             Tab2.Content = _rotateView;
+            Tab3.Content = _overrideView;
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
