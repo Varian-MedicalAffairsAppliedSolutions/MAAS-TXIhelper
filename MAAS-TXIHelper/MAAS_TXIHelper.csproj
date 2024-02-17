@@ -115,12 +115,16 @@
     <Compile Include="ViewModels\ConcatViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Script.cs" />
+    <Compile Include="ViewModels\OverrideViewModel.cs" />
     <Compile Include="ViewModels\RotateViewModel.cs" />
     <Compile Include="Views\ConcatView.xaml.cs">
       <DependentUpon>ConcatView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OverrideView.xaml.cs">
+      <DependentUpon>OverrideView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RotateView.xaml.cs">
       <DependentUpon>RotateView.xaml</DependentUpon>
@@ -132,6 +136,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OverrideView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

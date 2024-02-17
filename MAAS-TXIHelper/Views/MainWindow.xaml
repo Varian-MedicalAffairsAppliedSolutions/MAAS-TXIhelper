@@ -42,6 +42,7 @@
             <TabControl>
                 <TabItem Name="Tab1" Header="CT Concatenation"/>
                 <TabItem Name="Tab2" Header="Plan Rotation"/>
+                <TabItem Name="Tab3" Header="CT number override"/>
             </TabControl>
             <TextBlock Grid.Row="1" Name="Footer" Background="PaleVioletRed">    
                 <Label Margin="0"><Hyperlink NavigateUri="http://medicalaffairs.varian.com/download/VarianLUSLA.pdf" RequestNavigate="Hyperlink_RequestNavigate">
