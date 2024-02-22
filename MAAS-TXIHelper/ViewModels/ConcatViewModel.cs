@@ -485,8 +485,12 @@ namespace MAAS_TXIHelper.ViewModels
                     itkImageDCM.SetMetaData("0008|0070", primary.Series.ImagingDeviceManufacturer);
                     itkImageDCM.SetMetaData("0008|0020", DateTime.Now.ToString("yyyyMMdd"));  // study date
                     itkImageDCM.SetMetaData("0008|0030", DateTime.Now.ToString("HHmmss.ffffff")); // study time
+                    string seriesDescription = "merged on " + DateTime.Now.ToString("MMddyyyy");
+                    itkImageDCM.SetMetaData("0008|103E", seriesDescription);  // series description
+                    itkImageDCM.SetMetaData("0008|1090", primary.Series.ImagingDeviceModel);
                     itkImageDCM.SetMetaData("0018|0050", primary.ZRes.ToString()); // slice thickness
                                                                                    // itkImageDCM.SetMetaData("0020|0012", ?); // acquisition number
+                    itkImageDCM.SetMetaData("0018|5100", "HFS");
                     string newStudyUID = MakeNewUID(primary.Series.Study.UID);
                     itkImageDCM.SetMetaData("0020|000D", newStudyUID);   // study UID.
                     string newSeriesUID = MakeNewUID(primary.Series.UID);
@@ -494,6 +498,7 @@ namespace MAAS_TXIHelper.ViewModels
                     itkImageDCM.SetMetaData("0020|0052", primary.Series.FOR);  // use the same frame of reference UID as the original image series.
                     itkImageDCM.SetMetaData("0020|1040", "BB"); // position reference indicator
                     itkImageDCM.SetMetaData("0020|0012", "1"); // acquisition number
+                    itkImageDCM.SetMetaData("0028|1054", "HU"); // rescale type (Hounsfield Units or not)
                     // ProvideUIUpdate($"Total {itkImageMerged.GetSize()[2]} image slices to process.");
                     index = new I.VectorUInt32(new uint[] { 0, 0, 0 });
                     I.VectorUInt32 indexPlane = new I.VectorUInt32(new uint[] { 0, 0 });
