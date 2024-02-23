@@ -85,6 +85,58 @@ namespace MAAS_TXIHelper.ViewModels
                 }
             }
         }
+        private bool _ImageSelectionEnabled;
+        public bool ImageSelectionEnabled
+        {
+            get => _ImageSelectionEnabled;
+            set
+            {
+                if (_ImageSelectionEnabled != value)
+                {
+                    _ImageSelectionEnabled = value;
+                }
+                OnPropertyChanged(nameof(ImageSelectionEnabled));
+            }
+        }
+        private bool _StructureSelectionEnabled;
+        public bool StructureSelectionEnabled
+        {
+            get => _StructureSelectionEnabled;
+            set
+            {
+                if (_StructureSelectionEnabled != value)
+                {
+                    _StructureSelectionEnabled = value;
+                }
+                OnPropertyChanged(nameof(StructureSelectionEnabled));
+            }
+        }
+        private bool _IsTextBoxReadOnly;
+        public bool IsTextBoxReadOnly
+        {
+            get => _IsTextBoxReadOnly;
+            set
+            {
+                if (_IsTextBoxReadOnly != value)
+                {
+                    _IsTextBoxReadOnly = value;
+                }
+                OnPropertyChanged(nameof(IsTextBoxReadOnly));
+            }
+        }
+        private string _InputText;
+        public string InputText
+        {
+            get => _InputText;
+            set
+            {
+                if (_InputText != value)
+                {
+                    _InputText = value;
+                }
+                OnPropertyChanged(nameof(InputText));
+            }
+        }
         private bool _IsOverrideBtnEnabled;
         public bool IsOverrideBtnEnabled
         {
@@ -127,8 +179,11 @@ namespace MAAS_TXIHelper.ViewModels
             ProgressBarValue = 0;
             Images = new ObservableCollection<string>();
             StructureList = new ObservableCollection<string>();
+            ImageSelectionEnabled = true;
+            StructureSelectionEnabled = true;
+            IsTextBoxReadOnly = false;
             ImageSelected = null;
-            //            StructureSelected = string.Empty;
+            InputText = "0";
             TextBox = string.Empty;
             _worker.Run(scriptContext =>
             {
@@ -155,6 +210,22 @@ namespace MAAS_TXIHelper.ViewModels
                 System.Windows.MessageBox.Show("Please first select a structure from the structure selection drop-down list.");
                 return;
             }
+            // Check if the textbox entry is valid.
+            short inputNumber = 0;
+            try
+            {
+                inputNumber = Int16.Parse(InputText);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+                return;
+            }
+            if (inputNumber > 3000 || inputNumber < -3000)
+            {
+                System.Windows.MessageBox.Show("Input out of range. Please correct the input.");
+                return;
+            }
             // here open a folder dialogue ask the user to select an output folder.
             FolderBrowserDialog dialog = new FolderBrowserDialog();
             dialog.Description = "Select the directory where new files will be saved.";
@@ -165,7 +236,10 @@ namespace MAAS_TXIHelper.ViewModels
                 var folderPath = dialog.SelectedPath;
                 _worker.Run(scriptContext =>
                 {
+                    ImageSelectionEnabled = false;
+                    StructureSelectionEnabled = false;
                     IsOverrideBtnEnabled = false;
+                    IsTextBoxReadOnly = true;
                     TextBox += "Start task.\n";
                     var seriesId = ImageSelected.Split('(')[0].Remove(ImageSelected.Split('(')[0].Length - 1);
                     var imageId = ImageSelected.Split('(')[1].Split(')')[0];
@@ -231,7 +305,7 @@ namespace MAAS_TXIHelper.ViewModels
                                 itkImageDCM.SetPixelAsInt16(indexPlane, (Int16)CurrentImage3D.VoxelToDisplayValue(voxelPlane[X, Y]));
                                 if (segmentStride[X])
                                 {
-                                    itkImageDCM.SetPixelAsInt16(indexPlane, 0);
+                                    itkImageDCM.SetPixelAsInt16(indexPlane, inputNumber);
                                 }
                             }
                         }
@@ -279,7 +353,11 @@ namespace MAAS_TXIHelper.ViewModels
                             TextBox += $"Processing slice #{Z + 1}\n";
                         }
                     }
-                    TextBox += "Task is complete.";
+                    TextBox += "Task is complete.\n";
+                    TextBox += $"New files are saved in this location: {folderPath}";
+                    ImageSelectionEnabled = true;
+                    StructureSelectionEnabled = true;
+                    IsTextBoxReadOnly = false;
                     IsOverrideBtnEnabled = true;
                 });
             }
