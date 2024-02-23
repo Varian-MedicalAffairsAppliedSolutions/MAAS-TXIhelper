@@ -23,11 +23,12 @@
             <ColumnDefinition Width="400" MinWidth="47"/>
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select 3D Image:" HorizontalAlignment="Right"/>
-        <ComboBox ItemsSource="{Binding Images}" SelectedItem="{Binding ImageSelected}" Grid.Row="0" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
+        <ComboBox IsEnabled="{Binding ImageSelectionEnabled}" ItemsSource="{Binding Images}" SelectedItem="{Binding ImageSelected}" Grid.Row="0" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
         <Label Grid.Row="1" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select Structure ID:" HorizontalAlignment="Right"/>
-        <ComboBox ItemsSource="{Binding StructureList}" SelectedItem="{Binding StructureSelected}" Grid.Row="1" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
+        <ComboBox IsEnabled="{Binding StructureSelectionEnabled}" ItemsSource="{Binding StructureList}" SelectedItem="{Binding StructureSelected}" Grid.Row="1" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
         <Label Grid.Row="2" HorizontalAlignment="Right" Content="CT number to use:" Margin="10,10,10,10" Padding="5"></Label>
-        <TextBox Grid.Row="2" Grid.Column="1" Margin="10,10,10,10" Padding="5" IsReadOnly="True" Text="0"></TextBox>
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="10,10,10,10" Padding="5" IsReadOnly="{Binding IsTextBoxReadOnly}" 
+                 PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding InputText}"></TextBox>
         <Button IsEnabled="{Binding IsOverrideBtnEnabled}" Command="{Binding ConvertCmd}" Grid.Row="3" Grid.ColumnSpan="2" Content="Convert CT images" Margin="10,10,10,10" Padding="5">
         </Button>
         <ProgressBar Name="pBar" 
