@@ -91,6 +91,45 @@ namespace MAAS_TXIHelper.ViewModels
                 IsConcatBtnEnabled = true;
             }
         }
+        private bool _isPrimaryImageSelectionEnabled;
+        public bool isPrimaryImageSelectionEnabled
+        {
+            get => _isPrimaryImageSelectionEnabled;
+            set
+            {
+                if (_isPrimaryImageSelectionEnabled != value)
+                {
+                    _isPrimaryImageSelectionEnabled = value;
+                }
+                OnPropertyChanged(nameof(isPrimaryImageSelectionEnabled));
+            }
+        }
+        private bool _isSecondaryImageSelectionEnabled;
+        public bool isSecondaryImageSelectionEnabled
+        {
+            get => _isSecondaryImageSelectionEnabled;
+            set
+            {
+                if (_isSecondaryImageSelectionEnabled != value)
+                {
+                    _isSecondaryImageSelectionEnabled = value;
+                }
+                OnPropertyChanged(nameof(isSecondaryImageSelectionEnabled));
+            }
+        }
+        private bool _isRegistrationSelectionEnabled;
+        public bool isRegistrationSelectionEnabled
+        {
+            get => _isRegistrationSelectionEnabled;
+            set
+            {
+                if (_isRegistrationSelectionEnabled != value)
+                {
+                    _isRegistrationSelectionEnabled = value;
+                }
+                OnPropertyChanged(nameof(isRegistrationSelectionEnabled));
+            }
+        }
         private string _SecondaryLabelColor;
         public string SecondaryLabelColor
         {
@@ -171,6 +210,9 @@ namespace MAAS_TXIHelper.ViewModels
             ConcatCmd = new RelayCommand(ConcatImges);
             ProgressBarValue = 0;
             TextBox = string.Empty;
+            isPrimaryImageSelectionEnabled = true;
+            isSecondaryImageSelectionEnabled = true;
+            isRegistrationSelectionEnabled = true;
             SecondaryLabelColor = "Gray";
             RegistrationLabelColor = "Gray";
             _worker.Run(scriptContext =>
@@ -272,6 +314,9 @@ namespace MAAS_TXIHelper.ViewModels
             if (result == DialogResult.OK)
             {
                 var folderPath = dialog.SelectedPath;
+                isPrimaryImageSelectionEnabled = false;
+                isSecondaryImageSelectionEnabled = false;
+                isRegistrationSelectionEnabled = false;
                 _worker.Run(scriptContext =>
                 {
                     IsConcatBtnEnabled = false;
@@ -565,6 +610,9 @@ namespace MAAS_TXIHelper.ViewModels
                     TextBox += $"All DICOM files were saved.";
                     IsConcatBtnEnabled = true;
                 });
+                isPrimaryImageSelectionEnabled = true;
+                isSecondaryImageSelectionEnabled = true;
+                isRegistrationSelectionEnabled = true;
             }
         }
         private bool PixelIndexOutofBound(I.VectorInt64 indexPrimary, itk.simple.Image itkImageSecondaryTransformed)
