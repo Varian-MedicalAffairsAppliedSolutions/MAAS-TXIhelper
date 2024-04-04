@@ -314,11 +314,11 @@ namespace MAAS_TXIHelper.ViewModels
             if (result == DialogResult.OK)
             {
                 var folderPath = dialog.SelectedPath;
-                isPrimaryImageSelectionEnabled = false;
-                isSecondaryImageSelectionEnabled = false;
-                isRegistrationSelectionEnabled = false;
                 _worker.Run(scriptContext =>
                 {
+                    isPrimaryImageSelectionEnabled = false;
+                    isSecondaryImageSelectionEnabled = false;
+                    isRegistrationSelectionEnabled = false;
                     IsConcatBtnEnabled = false;
                     var seriesID = PrimaryImageSelected.Split('(')[0].Remove(PrimaryImageSelected.Split('(')[0].Length - 1);
                     var imageID = PrimaryImageSelected.Split('(')[1].Split(')')[0];
@@ -608,11 +608,11 @@ namespace MAAS_TXIHelper.ViewModels
                         writer.Execute(itkImageDCM);
                     }
                     TextBox += $"All DICOM files were saved.";
+                    isPrimaryImageSelectionEnabled = true;
+                    isSecondaryImageSelectionEnabled = true;
+                    isRegistrationSelectionEnabled = true;
                     IsConcatBtnEnabled = true;
                 });
-                isPrimaryImageSelectionEnabled = true;
-                isSecondaryImageSelectionEnabled = true;
-                isRegistrationSelectionEnabled = true;
             }
         }
         private bool PixelIndexOutofBound(I.VectorInt64 indexPrimary, itk.simple.Image itkImageSecondaryTransformed)
