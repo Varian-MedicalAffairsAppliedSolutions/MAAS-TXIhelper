@@ -391,7 +391,8 @@ namespace MAAS_TXIHelper.ViewModels
             if (segments.Length == 6 && newUID.Length > 64)
             {
                 int deltaLength = newUID.Length - 64;
-                segments[5] = segments[deltaLength];
+                segments[5] = segments[5].Substring(0, segments[5].Length - deltaLength);
+                newUID = "";
                 foreach (string segment in segments)
                 {
                     newUID += segment + '.';
