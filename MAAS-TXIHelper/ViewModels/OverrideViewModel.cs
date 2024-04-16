@@ -81,7 +81,7 @@ namespace MAAS_TXIHelper.ViewModels
                 if (value != null)
                 {
                     IsOverrideBtnEnabled = true;
-                    TextBox = "Please click the Convert button to start image conversion.";
+                    TextBox = "Please enter the intended CT number for this structure and click the Convert button to start image conversion.";
                 }
             }
         }
@@ -184,7 +184,7 @@ namespace MAAS_TXIHelper.ViewModels
             IsTextBoxReadOnly = false;
             ImageSelected = null;
             InputText = "0";
-            TextBox = string.Empty;
+            TextBox = "Please start by selecting a 3D CT image.";
             _worker.Run(scriptContext =>
             {
                 if (scriptContext.Patient == null)
@@ -240,7 +240,7 @@ namespace MAAS_TXIHelper.ViewModels
                     StructureSelectionEnabled = false;
                     IsOverrideBtnEnabled = false;
                     IsTextBoxReadOnly = true;
-                    TextBox += "Start task.\n";
+                    TextBox += "Task is running...\n";
                     var seriesId = ImageSelected.Split('(')[0].Remove(ImageSelected.Split('(')[0].Length - 1);
                     var imageId = ImageSelected.Split('(')[1].Split(')')[0];
                     var CurrentImage3D = scriptContext.Patient.Studies.SelectMany(study => study.Images3D).ToList().Where(img =>
@@ -354,7 +354,7 @@ namespace MAAS_TXIHelper.ViewModels
                         }
                     }
                     TextBox += "Task is complete.\n";
-                    TextBox += $"New files are saved in this location: {folderPath}";
+                    TextBox += $"New files were saved in this location: {folderPath}";
                     ImageSelectionEnabled = true;
                     StructureSelectionEnabled = true;
                     IsTextBoxReadOnly = false;

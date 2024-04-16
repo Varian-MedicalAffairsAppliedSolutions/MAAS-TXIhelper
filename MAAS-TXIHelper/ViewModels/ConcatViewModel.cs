@@ -68,6 +68,7 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 _PrimaryImageSelected = value;
                 PopulateSecondaryImages();
+                TextBox = "Please select a secondary image.";
             }
         }
         private string _SecondaryImageSelected;
@@ -78,6 +79,7 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 _SecondaryImageSelected = value;
                 PopulateRegistrations();
+                TextBox = "Please select a proper image registration between the primary and secondary images.";
             }
         }
 
@@ -89,6 +91,7 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 _RegistrationSelected = value;
                 IsConcatBtnEnabled = true;
+                TextBox = "Please click on the Concatenate CT Images button to concatenate the primary and secondary images.";
             }
         }
         private bool _isPrimaryImageSelectionEnabled;
@@ -209,7 +212,7 @@ namespace MAAS_TXIHelper.ViewModels
             Registrations = new ObservableCollection<string>();
             ConcatCmd = new RelayCommand(ConcatImges);
             ProgressBarValue = 0;
-            TextBox = string.Empty;
+            TextBox = "Please start by selecting the primary 3D image.";
             isPrimaryImageSelectionEnabled = true;
             isSecondaryImageSelectionEnabled = true;
             isRegistrationSelectionEnabled = true;
@@ -333,7 +336,7 @@ namespace MAAS_TXIHelper.ViewModels
                     var PrimaryImageSlices = primary.ZSize;
                     var SecondaryImageSlices = secondary.ZSize;
 
-                    TextBox += "Start converting the primary image.\n";
+                    TextBox = "Reading the primary image.\n";
                     // first convert the primary image
                     I.PixelIDValueEnum pixelType = I.PixelIDValueEnum.sitkFloat32;
                     I.VectorUInt32 image3DSize = new I.VectorUInt32(new uint[] { (uint)primary.XSize, (uint)primary.YSize, (uint)primary.ZSize });
@@ -369,7 +372,7 @@ namespace MAAS_TXIHelper.ViewModels
                     }
 
                     // then convert the secondary image
-                    TextBox += "Start converting the secondary image.\n";
+                    TextBox += "Reading the secondary image.\n";
                     image3DSize = new I.VectorUInt32(new uint[] { (uint)secondary.XSize, (uint)secondary.YSize, (uint)secondary.ZSize });
                     I.Image itkImageSecondary = new I.Image(image3DSize, pixelType);
                     spacing3D = new I.VectorDouble(new double[] { secondary.XRes, secondary.YRes, secondary.ZRes });
@@ -607,7 +610,8 @@ namespace MAAS_TXIHelper.ViewModels
                         writer.SetFileName(Path.Combine(folderPath, $"{patient.Id}_merged_{z}.DCM"));
                         writer.Execute(itkImageDCM);
                     }
-                    TextBox += $"All DICOM files were saved.";
+                    TextBox += $"Image concatenation is complete.\n";
+                    TextBox += $"New image files were saved in this location: {folderPath}";
                     isPrimaryImageSelectionEnabled = true;
                     isSecondaryImageSelectionEnabled = true;
                     isRegistrationSelectionEnabled = true;
