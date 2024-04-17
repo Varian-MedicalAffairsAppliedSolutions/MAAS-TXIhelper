@@ -70,7 +70,7 @@ jobs:
       run: nuget install ESAPI -Version 18.0.0 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
 
     - name: Download nuget package Newtonsoft.Json
-      run: dotnet add package Newtonsoft.Json --version 13.0.3
+      run: nuget install Newtonsoft.Json -Version 13.0.3 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
 
     - name: Download nuget package CommunityToolkit.Mvvm
       run: dotnet add package CommunityToolkit.Mvvm --version 8.2.2
