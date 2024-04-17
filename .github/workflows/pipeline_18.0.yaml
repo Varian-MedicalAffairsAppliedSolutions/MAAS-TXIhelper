@@ -73,16 +73,16 @@ jobs:
       run: nuget install Newtonsoft.Json -Version 13.0.3 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
 
     - name: Download nuget package CommunityToolkit.Mvvm
-      run: dotnet add package CommunityToolkit.Mvvm --version 8.2.2
+      run: nuget install CommunityToolkit.Mvvm -Version 8.2.2 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
       
     - name: Download nuget package fo-dicom
-      run: dotnet add package fo-dicom --version 5.0.0
+      run: nuget install fo-dicom -Version 5.0.0 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
       
     - name: Download nuget package Microsoft.Bcl.AsyncInterfaces
-      run: dotnet add package Microsoft.Bcl.AsyncInterfaces --version 8.0.0
+      run: nuget install Microsoft.Bcl.AsyncInterfaces -Version 8.0.0 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
 
     - name: Download nuget package SimpleITK-win64-CSharp-x64
-      run: dotnet add package SimpleITK-win64-CSharp-x64 --version 1.0.0.1
+      run: nuget install SimpleITK-win64-CSharp-x64 -Version 1.0.0.1 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
    
     - name: Update hint paths in the csproj file
       run: |
