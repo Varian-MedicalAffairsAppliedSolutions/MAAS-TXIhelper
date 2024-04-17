@@ -58,8 +58,20 @@ jobs:
       with:
         nuget-version: latest
         
-    - name: Download nuget packages
-      run: nuget install .\MAAS-TXIHelper\packages.config -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
+    - name: Download nuget package Newtonsoft.Json
+      run: dotnet add package Newtonsoft.Json --version 13.0.3
+
+    - name: Download nuget package CommunityToolkit.Mvvm
+      run: dotnet add package CommunityToolkit.Mvvm --version 8.2.2
+      
+    - name: Download nuget package fo-dicom
+      run: dotnet add package fo-dicom --version 5.0.0
+
+    - name: Download nuget package Microsoft.Bcl.AsyncInterfaces
+      run: dotnet add package Microsoft.Bcl.AsyncInterfaces --version 8.0.0
+
+    - name: Download nuget package SimpleITK-win64-CSharp-x64
+      run: dotnet add package SimpleITK-win64-CSharp-x64 --version 1.0.0.1
    
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
