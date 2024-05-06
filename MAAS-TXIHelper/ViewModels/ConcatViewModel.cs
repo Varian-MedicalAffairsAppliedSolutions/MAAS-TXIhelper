@@ -68,6 +68,14 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 _PrimaryImageSelected = value;
                 PopulateSecondaryImages();
+                _worker.Run(scriptContext =>
+                {
+                    var seriesID = PrimaryImageSelected.Split('(')[0].Remove(PrimaryImageSelected.Split('(')[0].Length - 1);
+                    var imageID = PrimaryImageSelected.Split('(')[1].Split(')')[0];
+                    var primary = scriptContext.Patient.Studies.SelectMany(study => study.Images3D).ToList().Where(image =>
+                    (image.Series.Id == seriesID && image.Id == imageID)).FirstOrDefault();
+                    InputText = string.Format("{0:F1}", primary.ZRes);
+                });
                 TextBox = "Please select a secondary image.";
             }
         }
@@ -160,7 +168,32 @@ namespace MAAS_TXIHelper.ViewModels
                 }
             }
         }
-
+        private bool _IsTextBoxReadOnly;
+        public bool IsTextBoxReadOnly
+        {
+            get => _IsTextBoxReadOnly;
+            set
+            {
+                if (_IsTextBoxReadOnly != value)
+                {
+                    _IsTextBoxReadOnly = value;
+                }
+                OnPropertyChanged(nameof(IsTextBoxReadOnly));
+            }
+        }
+        private string _InputText;
+        public string InputText
+        {
+            get => _InputText;
+            set
+            {
+                if (_InputText != value)
+                {
+                    _InputText = value;
+                }
+                OnPropertyChanged(nameof(InputText));
+            }
+        }
         private int _pbValue;
         public int ProgressBarValue
         {
@@ -211,6 +244,8 @@ namespace MAAS_TXIHelper.ViewModels
             SecondaryImages = new ObservableCollection<string>();
             Registrations = new ObservableCollection<string>();
             ConcatCmd = new RelayCommand(ConcatImges);
+            InputText = string.Empty;
+            IsTextBoxReadOnly = false;
             ProgressBarValue = 0;
             TextBox = "Please start by selecting the primary 3D image.";
             isPrimaryImageSelectionEnabled = true;
@@ -316,12 +351,28 @@ namespace MAAS_TXIHelper.ViewModels
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
+                double inputSpacing = 0;
+                try
+                {
+                    inputSpacing = double.Parse(InputText);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show(ex.Message);
+                    return;
+                }
+                if (inputSpacing > 20 || inputSpacing < 1)
+                {
+                    System.Windows.MessageBox.Show("Input out of range of 1 to 20 mm. Please correct the input.");
+                    return;
+                }
                 var folderPath = dialog.SelectedPath;
                 _worker.Run(scriptContext =>
                 {
                     isPrimaryImageSelectionEnabled = false;
                     isSecondaryImageSelectionEnabled = false;
                     isRegistrationSelectionEnabled = false;
+                    IsTextBoxReadOnly = true;
                     IsConcatBtnEnabled = false;
                     var seriesID = PrimaryImageSelected.Split('(')[0].Remove(PrimaryImageSelected.Split('(')[0].Length - 1);
                     var imageID = PrimaryImageSelected.Split('(')[1].Split(')')[0];
@@ -442,7 +493,7 @@ namespace MAAS_TXIHelper.ViewModels
                     itkImageSecondaryTransformed.SetOrigin(originOld);
 
                     // merge the images
-                    double _spacingMM = primary.ZRes;
+                    double _spacingMM = inputSpacing;
                     int newSlices = (int)((itkImagePrimary.GetOrigin()[2] + itkImagePrimary.GetSize()[2] * itkImagePrimary.GetSpacing()[2]
                         - itkImageSecondaryTransformed.GetOrigin()[2]) / _spacingMM);
                     pixelType = I.PixelIDValueEnum.sitkFloat32;
@@ -615,6 +666,7 @@ namespace MAAS_TXIHelper.ViewModels
                     isPrimaryImageSelectionEnabled = true;
                     isSecondaryImageSelectionEnabled = true;
                     isRegistrationSelectionEnabled = true;
+                    IsTextBoxReadOnly = false;
                     IsConcatBtnEnabled = true;
                 });
             }

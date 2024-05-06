@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\MAAS-TXIHelper"
+    "\\MAAS-TXIHelper",
+    "\\MAAS-TXIHelper\\ViewModels",
+    "\\MAAS-TXIHelper\\Views"
   ],
   "SelectedNode": "\\MAAS-TXIHelper\\MAAS_TXIHelper.sln",
   "PreviewInSolutionExplorer": false

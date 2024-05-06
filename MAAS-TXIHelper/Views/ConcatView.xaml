@@ -29,13 +29,16 @@
         <ComboBox Grid.Row="1"  IsEnabled="{Binding isSecondaryImageSelectionEnabled}" Grid.Column="1" ItemsSource="{Binding SecondaryImages}" SelectedItem="{Binding SecondaryImageSelected}" Margin="10,10,10,10" Padding="5"/>
         <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="10,10,10,10" Padding="5" Foreground="{Binding RegistrationLabelColor}" Content="Select image registration:"></Label>
         <ComboBox Grid.Row="2"  IsEnabled="{Binding isRegistrationSelectionEnabled}" Grid.Column="1" Margin="10,10,10,10" Padding="5" ItemsSource="{Binding Registrations}" SelectedItem="{Binding RegistrationSelected}" ></ComboBox>
-        <Button Grid.Row="3" Grid.ColumnSpan="2" Margin="10,10,10,10" Padding="5" Command="{Binding ConcatCmd}" Content="Concatenate CT images" IsEnabled="{Binding IsConcatBtnEnabled}">
+        <Label Grid.Row="3" HorizontalAlignment="Right" Content="New CT slice spacing (mm):" Margin="10,10,10,10" Padding="5"></Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="10,10,10,10" Padding="5" IsReadOnly="{Binding IsTextBoxReadOnly}" 
+                 PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding InputText}"></TextBox>
+        <Button Grid.Row="4" Grid.ColumnSpan="2" Margin="10,10,10,10" Padding="5" Command="{Binding ConcatCmd}" Content="Concatenate CT images" IsEnabled="{Binding IsConcatBtnEnabled}">
         </Button>
-        <ProgressBar Grid.Row="4" Grid.ColumnSpan="2" Height="20" Minimum="0" Maximum="100" Margin="10,10,10,10" Padding="5"
+        <ProgressBar Grid.Row="5" Grid.ColumnSpan="2" Height="20" Minimum="0" Maximum="100" Margin="10,10,10,10" Padding="5"
                      Value="{Binding ProgressBarValue, Mode=OneWay}" Visibility="{Binding pbVisibility}" Name="pbStatus"></ProgressBar>
         <TextBox x:Name="OutputTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
                  IsReadOnly="True"
-                 Grid.Row="5" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="10,10,10,10" Padding="5" MaxHeight="80"
+                 Grid.Row="6" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="10,10,10,10" Padding="5" MaxHeight="80"
                  TextChanged="textChangedEventHandler"
                  Text="{Binding TextBox}">
         </TextBox>
