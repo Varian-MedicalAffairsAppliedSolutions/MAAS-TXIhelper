@@ -89,7 +89,8 @@ jobs:
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
         -CsprojFilePath .\MAAS-TXIHelper `
         -CsprojFileName MAAS_TXIHelper.csproj
-          
+        
+ #Implemeting modern "PackageReferene" support for NuGet in VS2019 / VS2022          
     - name: Build Solution
       run: msbuild.exe .\${{env.PROJECT_FOLDER_NAME}}\${{env.PROJECT_NAME}}.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Release" /restore
         
@@ -98,7 +99,7 @@ jobs:
         Compress-Archive `
           -Path ".\${{env.PROJECT_FOLDER_NAME}}\bin\Debug\*" `
           -DestinationPath "${{ github.workspace }}/${{env.PROJECT_NAME}}${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV180.zip"
-    #Implemeting modern "PackageReferene" support for NuGet in VS2019 / VS2022
+   
     - name: Create Release
       uses: softprops/action-gh-release@v0.1.13
       with:
