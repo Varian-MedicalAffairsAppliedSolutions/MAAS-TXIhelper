@@ -76,6 +76,7 @@ namespace MAAS_TXIHelper.ViewModels
                     (image.Series.Id == seriesID && image.Id == imageID)).FirstOrDefault();
                     InputText = string.Format("{0:F1}", primary.ZRes);
                 });
+                IsConcatBtnEnabled = false;
                 TextBox = "Please select a secondary image.";
             }
         }
@@ -87,6 +88,7 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 _SecondaryImageSelected = value;
                 PopulateRegistrations();
+                IsConcatBtnEnabled = false;
                 TextBox = "Please select a proper image registration between the primary and secondary images.";
             }
         }
@@ -168,17 +170,17 @@ namespace MAAS_TXIHelper.ViewModels
                 }
             }
         }
-        private bool _IsTextBoxReadOnly;
-        public bool IsTextBoxReadOnly
+        private bool _IsSpacingTextBoxReadOnly;
+        public bool IsSpacingTextBoxReadOnly
         {
-            get => _IsTextBoxReadOnly;
+            get => _IsSpacingTextBoxReadOnly;
             set
             {
-                if (_IsTextBoxReadOnly != value)
+                if (_IsSpacingTextBoxReadOnly != value)
                 {
-                    _IsTextBoxReadOnly = value;
+                    _IsSpacingTextBoxReadOnly = value;
                 }
-                OnPropertyChanged(nameof(IsTextBoxReadOnly));
+                OnPropertyChanged(nameof(IsSpacingTextBoxReadOnly));
             }
         }
         private string _InputText;
@@ -245,7 +247,7 @@ namespace MAAS_TXIHelper.ViewModels
             Registrations = new ObservableCollection<string>();
             ConcatCmd = new RelayCommand(ConcatImges);
             InputText = string.Empty;
-            IsTextBoxReadOnly = false;
+            IsSpacingTextBoxReadOnly = false;
             ProgressBarValue = 0;
             TextBox = "Please start by selecting the primary 3D image.";
             isPrimaryImageSelectionEnabled = true;
@@ -253,6 +255,7 @@ namespace MAAS_TXIHelper.ViewModels
             isRegistrationSelectionEnabled = true;
             SecondaryLabelColor = "Gray";
             RegistrationLabelColor = "Gray";
+            IsConcatBtnEnabled = false;
             _worker.Run(scriptContext =>
             {
                 if (scriptContext.Patient == null)
@@ -341,6 +344,7 @@ namespace MAAS_TXIHelper.ViewModels
                     }
                 });
             }
+            IsConcatBtnEnabled = false;
         }
 
         private void ConcatImges()
@@ -372,7 +376,7 @@ namespace MAAS_TXIHelper.ViewModels
                     isPrimaryImageSelectionEnabled = false;
                     isSecondaryImageSelectionEnabled = false;
                     isRegistrationSelectionEnabled = false;
-                    IsTextBoxReadOnly = true;
+                    IsSpacingTextBoxReadOnly = true;
                     IsConcatBtnEnabled = false;
                     var seriesID = PrimaryImageSelected.Split('(')[0].Remove(PrimaryImageSelected.Split('(')[0].Length - 1);
                     var imageID = PrimaryImageSelected.Split('(')[1].Split(')')[0];
@@ -666,7 +670,7 @@ namespace MAAS_TXIHelper.ViewModels
                     isPrimaryImageSelectionEnabled = true;
                     isSecondaryImageSelectionEnabled = true;
                     isRegistrationSelectionEnabled = true;
-                    IsTextBoxReadOnly = false;
+                    IsSpacingTextBoxReadOnly = false;
                     IsConcatBtnEnabled = true;
                 });
             }
