@@ -77,7 +77,7 @@ namespace MAAS_TXIHelper.ViewModels
         {
             _worker = esapiWorker;
             RotateCmd = new RelayCommand(RotatePlan);
-            TextBox = "";
+            TextBox = "Please first export the plan to rotate to a DICOM file, then use the button to select this file.";
             IsRotateBtnEnabled = true;
             RotateBtnText = "Select DICOM plan file for rotation of patient orientation.";
         }
