@@ -65,6 +65,9 @@ jobs:
         -UserName craman96 `
         -Password ${{ secrets.GITHUB_TOKEN }} `
         -StorePasswordInClearText
+
+    - name: Download nuget package
+      run: nuget install ESAPI -Version 18.0.0 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
    
     - name: Update hint paths in the csproj file
       run: |
