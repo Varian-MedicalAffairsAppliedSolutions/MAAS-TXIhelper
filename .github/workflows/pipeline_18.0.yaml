@@ -65,24 +65,6 @@ jobs:
         -UserName craman96 `
         -Password ${{ secrets.GITHUB_TOKEN }} `
         -StorePasswordInClearText
-
-    - name: Download nuget package
-      run: nuget install ESAPI -Version 18.0.0 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
-
-    - name: Download nuget package Newtonsoft.Json
-      run: nuget install Newtonsoft.Json -Version 13.0.3 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
-
-    - name: Download nuget package CommunityToolkit.Mvvm
-      run: nuget install CommunityToolkit.Mvvm -Version 8.2.2 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
-      
-    - name: Download nuget package fo-dicom
-      run: nuget install fo-dicom -Version 5.0.0 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
-      
-    - name: Download nuget package Microsoft.Bcl.AsyncInterfaces
-      run: nuget install Microsoft.Bcl.AsyncInterfaces -Version 8.0.0 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
-
-    - name: Download nuget package SimpleITK-win64-CSharp-x64
-      run: nuget install SimpleITK-win64-CSharp-x64 -Version 1.0.0.1 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
    
     - name: Update hint paths in the csproj file
       run: |
