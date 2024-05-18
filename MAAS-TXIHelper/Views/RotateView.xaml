@@ -23,8 +23,11 @@
             <ColumnDefinition Width="200" MinWidth="47"/>
             <ColumnDefinition Width="400" MinWidth="47"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="1" Grid.ColumnSpan="4">Click this button to start:</TextBlock>
-        <Button x:Name="RotateButton" Grid.Row="2" IsEnabled="{Binding IsRotateBtnEnabled}" Grid.ColumnSpan="2" Margin="5" Content="{Binding RotateBtnText}" Command="{Binding RotateCmd}">
+        <Border Grid.RowSpan="3" Grid.ColumnSpan="4" HorizontalAlignment="Center" BorderThickness="4">
+            <Image Name="imgRotate" VerticalAlignment="Center" Height="128" Loaded="RotateImageLoaded" />
+        </Border>
+        <TextBlock Grid.Row="3" Grid.ColumnSpan="4">Click this button to start:</TextBlock>
+        <Button x:Name="RotateButton" Grid.Row="4" IsEnabled="{Binding IsRotateBtnEnabled}" Grid.ColumnSpan="2" Margin="5" Content="{Binding RotateBtnText}" Command="{Binding RotateCmd}">
         </Button>
         <TextBox x:Name="OutputTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
                  IsReadOnly="True"
