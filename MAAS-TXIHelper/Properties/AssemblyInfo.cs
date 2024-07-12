@@ -15,7 +15,7 @@ using System.Windows;
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyExpirationDate("4/1/2024")]
+[assembly: AssemblyExpirationDate("1/1/2025")]
 [assembly: AssemblyVersion("1.0.0.3")]
 [assembly: AssemblyFileVersion("1.0.0.3")]
 [assembly: AssemblyInformationalVersion("1.0")]
