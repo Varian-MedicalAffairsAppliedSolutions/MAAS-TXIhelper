@@ -24,6 +24,10 @@ Requires Head First Supine superior series with rigid registration to inferior F
 ### Aperture Rotation tab: working
 ![plot](./aperture-rotation-screenshot.png)
 
+### Bonus: CT Number Override tab: working
+![plot](CT-number-override-screenshot.jpg)
+- re-process CT series with desity of a structure overridden or "burned-in"
+
 - supports either: C series / TrueBeam / Halcyon / Ethos
 - copy and paste twice the complete plan created in HFS orientation with desired dose distribution head to foot
     - in one plan delete all beams/isocenters that will be treated HFS and the other plan FFS
