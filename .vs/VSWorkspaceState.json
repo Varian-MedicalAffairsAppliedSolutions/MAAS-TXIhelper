@@ -1,10 +1,7 @@
 {
   "ExpandedNodes": [
     "",
-    "\\MAAS-TXIHelper",
-    "\\MAAS-TXIHelper\\ViewModels",
-    "\\MAAS-TXIHelper\\Views"
+    "\\MAAS-TXIHelper"
   ],
-  "SelectedNode": "\\MAAS-TXIHelper\\Script.cs",
   "PreviewInSolutionExplorer": false
 }
