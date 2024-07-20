@@ -1,7 +1,7 @@
 
 // The following code is to be added to OverrideViewModel.cs for adidtional functionality
 
-// This part goes to the "if" statement in "public string StructureSelect{}" to add a messagebox for the user to choose yes or no.
+// This part goes to the "if" statement in "public string StructureSelected{}" to add a messagebox for the user to choose yes or no.
                     DialogResult dialogResult = MessageBox.Show("Do you want to calculate imaging statistics for this structure?", "", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.Yes)
                     {

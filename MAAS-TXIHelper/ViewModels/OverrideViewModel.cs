@@ -111,17 +111,17 @@ namespace MAAS_TXIHelper.ViewModels
                 OnPropertyChanged(nameof(StructureSelectionEnabled));
             }
         }
-        private bool _IsTextBoxReadOnly;
-        public bool IsTextBoxReadOnly
+        private bool _IsHUInputTextBoxReadOnly;
+        public bool IsHUInputTextBoxReadOnly
         {
-            get => _IsTextBoxReadOnly;
+            get => _IsHUInputTextBoxReadOnly;
             set
             {
-                if (_IsTextBoxReadOnly != value)
+                if (_IsHUInputTextBoxReadOnly != value)
                 {
-                    _IsTextBoxReadOnly = value;
+                    _IsHUInputTextBoxReadOnly = value;
                 }
-                OnPropertyChanged(nameof(IsTextBoxReadOnly));
+                OnPropertyChanged(nameof(IsHUInputTextBoxReadOnly));
             }
         }
         private string _InputText;
@@ -181,7 +181,7 @@ namespace MAAS_TXIHelper.ViewModels
             StructureList = new ObservableCollection<string>();
             ImageSelectionEnabled = true;
             StructureSelectionEnabled = true;
-            IsTextBoxReadOnly = false;
+            IsHUInputTextBoxReadOnly = false;
             ImageSelected = null;
             InputText = "0";
             TextBox = "Please start by selecting a 3D CT image.";
@@ -239,7 +239,7 @@ namespace MAAS_TXIHelper.ViewModels
                     ImageSelectionEnabled = false;
                     StructureSelectionEnabled = false;
                     IsOverrideBtnEnabled = false;
-                    IsTextBoxReadOnly = true;
+                    IsHUInputTextBoxReadOnly = true;
                     TextBox += "Task is running...\n";
                     var seriesId = ImageSelected.Split('(')[0].Remove(ImageSelected.Split('(')[0].Length - 1);
                     var imageId = ImageSelected.Split('(')[1].Split(')')[0];
@@ -357,7 +357,7 @@ namespace MAAS_TXIHelper.ViewModels
                     TextBox += $"New files were saved in this location: {folderPath}";
                     ImageSelectionEnabled = true;
                     StructureSelectionEnabled = true;
-                    IsTextBoxReadOnly = false;
+                    IsHUInputTextBoxReadOnly = false;
                     IsOverrideBtnEnabled = true;
                 });
             }

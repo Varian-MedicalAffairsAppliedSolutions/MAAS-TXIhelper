@@ -27,7 +27,7 @@
         <Label Grid.Row="1" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select Structure ID:" HorizontalAlignment="Right"/>
         <ComboBox IsEnabled="{Binding StructureSelectionEnabled}" ItemsSource="{Binding StructureList}" SelectedItem="{Binding StructureSelected}" Grid.Row="1" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
         <Label Grid.Row="2" HorizontalAlignment="Right" Content="CT number to use:" Margin="10,10,10,10" Padding="5"></Label>
-        <TextBox Grid.Row="2" Grid.Column="1" Margin="10,10,10,10" Padding="5" IsReadOnly="{Binding IsTextBoxReadOnly}" 
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="10,10,10,10" Padding="5" IsReadOnly="{Binding IsHUInputTextBoxReadOnly}" 
                  PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding InputText}"></TextBox>
         <Button IsEnabled="{Binding IsOverrideBtnEnabled}" Command="{Binding ConvertCmd}" Grid.Row="3" Grid.ColumnSpan="2" Content="Convert CT images" Margin="10,10,10,10" Padding="5">
         </Button>
