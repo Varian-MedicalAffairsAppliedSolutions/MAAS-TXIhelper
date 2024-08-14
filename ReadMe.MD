@@ -4,6 +4,7 @@
 <object data="https://medicalaffairs.varian.com/download/AAPM2023_eposter_TXIHelper.pdf" type="application/pdf" width="700px" height="700px">
     <embed src="https://medicalaffairs.varian.com/download/AAPM2023_eposter_TXIHelper.pdf">
         <p>Please download the poster PDF to view it: <a href="https://medicalaffairs.varian.com/download/AAPM2023_eposter_TXIHelper.pdf">Download PDF</a>.</p>
+        <p>For a step-by-step explanation of using this tool see this TMLI RapidPlan clinical description: <a href="https://medicalaffairs.varian.com/download/TMLI12GyVarianMedAffairs_ClinicalDescription.pdf">PDF, Annex A</a>.</p>
     </embed>
 </object>
 
