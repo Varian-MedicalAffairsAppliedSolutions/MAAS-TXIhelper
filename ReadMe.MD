@@ -8,6 +8,9 @@
     </embed>
 </object>
 
+##Overview
+- supports either: C series / TrueBeam / Halcyon / Ethos
+
 ### CT concatenation tab: working
 ![plot](./CTconcat-screenshot.jpg)
 
@@ -24,12 +27,6 @@ Requires Head First Supine superior series with rigid registration to inferior F
 
 ### Aperture Rotation tab: working
 ![plot](./aperture-rotation-screenshot.jpg)
-
-### Bonus: CT Number Override tab: working
-![plot](CT-number-override-screenshot.jpg)
-- re-process CT series with desity of a structure overridden or "burned-in"
-
-- supports either: C series / TrueBeam / Halcyon / Ethos
 - copy and paste twice the complete plan created in HFS orientation with desired dose distribution head to foot
     - in one plan delete all beams/isocenters that will be treated HFS and the other plan FFS
     - DICOM export the plan that has only the inferior isocenters that is currently in the HFS orientation
@@ -38,6 +35,10 @@ Requires Head First Supine superior series with rigid registration to inferior F
     - calculate dose with fixed MUs
     - create a plan sum with superior plan
     - dose should be identical to initial completed plan
+
+### Bonus: CT Number Override tab: working
+![plot](CT-number-override-screenshot.jpg)
+- re-process CT series with desity of a structure overridden or "burned-in"
 
 ### Final Modifications tab: not yet working
 - breaks each isocenter group into separate plan, treatment approves plans and adds needed setup notes
