@@ -9,7 +9,7 @@ on:
       dateInput:
         description: 'Expiration Date'
         required: true
-        default: '3/1/2024'
+        default: '3/1/2025'
 
 jobs:
   build:
@@ -30,7 +30,7 @@ jobs:
         fetch-depth: 0
 
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v2
     
     - name: Navigate to Workspace
       run: cd $GITHUB_WORKSPACE
@@ -86,7 +86,7 @@ jobs:
           -DestinationPath "${{ github.workspace }}/${{env.PROJECT_NAME}}${{ steps.update_assembly_info.outputs.RELEASE_FILE_NAME }}-EclipseV180.zip"
    
     - name: Create Release
-      uses: softprops/action-gh-release@v0.1.13
+      uses: softprops/action-gh-release@v2.0.9
       with:
         name: ${{env.PROJECT_NAME}}${{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV18.0
         tag_name: ${{env.PROJECT_NAME}}${{ steps.update_assembly_info.outputs.RELEASE_NAME }}-EclipseV18.0
