@@ -75,6 +75,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EulaVerification, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\EulaVerification\EulaVerification\bin\Debug\EulaVerification.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -94,11 +98,11 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="VMS.TPS.Common.Model.API">
-      <HintPath>C:\Program Files (x86)\Varian\RTM\16.1\esapi\API\VMS.TPS.Common.Model.API.dll</HintPath>
+      <HintPath>..\..\MAAS-BreastPlan-helper\VMS.TPS.Common.Model.API.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VMS.TPS.Common.Model.Types">
-      <HintPath>C:\Program Files (x86)\Varian\RTM\16.1\esapi\API\VMS.TPS.Common.Model.Types.dll</HintPath>
+      <HintPath>..\..\MAAS-BreastPlan-helper\VMS.TPS.Common.Model.Types.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -112,6 +116,8 @@
     <Compile Include="Models\SettingsClass.cs" />
     <Compile Include="Properties\AssemblyExpirationDate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AppConfigHelper.cs" />
+    <Compile Include="Services\EsapiWorker.cs" />
     <Compile Include="ViewModels\ConcatViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Script.cs" />
@@ -174,6 +180,10 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\qrcode.bmp" />
+    <Content Include="lib\EulaVerification.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SimpleITKCSharpNative.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -190,9 +200,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
       <Version>8.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="SimpleITK-win64-CSharp-x64">
       <Version>1.0.0.1</Version>
