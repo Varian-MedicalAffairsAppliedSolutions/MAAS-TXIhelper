@@ -119,12 +119,16 @@
     <Compile Include="Services\AppConfigHelper.cs" />
     <Compile Include="Services\EsapiWorker.cs" />
     <Compile Include="ViewModels\ConcatViewModel.cs" />
+    <Compile Include="ViewModels\FinalizeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Script.cs" />
     <Compile Include="ViewModels\OverrideViewModel.cs" />
     <Compile Include="ViewModels\RotateViewModel.cs" />
     <Compile Include="Views\ConcatView.xaml.cs">
       <DependentUpon>ConcatView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FinalizeView.xaml.cs">
+      <DependentUpon>FinalizeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -138,6 +142,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\ConcatView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FinalizeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

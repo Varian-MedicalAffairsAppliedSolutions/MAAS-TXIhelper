@@ -1,9 +1,7 @@
-﻿using MAAS_TXIHelper.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,32 +12,24 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MAAS_TXIHelper.ViewModels;
 
 namespace MAAS_TXIHelper.Views
 {
     /// <summary>
-    /// Interaction logic for ConcatView.xaml
+    /// Interaction logic for FinalizeView.xaml
     /// </summary>
-    public partial class ConcatView : UserControl
+    public partial class FinalizeView : UserControl
     {
-        public ConcatView(EsapiWorker esapiWorker)
+        public FinalizeView(EsapiWorker esapiWorker)
         {
             InitializeComponent();
-            DataContext = new ConcatViewModel(esapiWorker);
+            DataContext = new FinalizeViewModel(esapiWorker);
         }
         private void TextChangedEventHandler(object sender, TextChangedEventArgs args)
         {
             OutputTextBox.SelectionStart = OutputTextBox.Text.Length;
             OutputTextBox.ScrollToEnd();
-        }
-        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs args)
-        {
-            args.Handled = !IsTextAllowed(args.Text);
-        }
-        private static readonly Regex _regex = new Regex("[^0-9.]+");
-        private static bool IsTextAllowed(string text)
-        {
-            return !_regex.IsMatch(text);
         }
     }
 }

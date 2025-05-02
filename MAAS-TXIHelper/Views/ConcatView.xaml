@@ -39,7 +39,7 @@
         <TextBox x:Name="OutputTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
                  IsReadOnly="True"
                  Grid.Row="6" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="10,10,10,10" Padding="5" MaxHeight="80"
-                 TextChanged="textChangedEventHandler"
+                 TextChanged="TextChangedEventHandler"
                  Text="{Binding TextBox}">
         </TextBox>
     </Grid>

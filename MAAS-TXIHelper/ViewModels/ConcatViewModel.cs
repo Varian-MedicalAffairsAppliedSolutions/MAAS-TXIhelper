@@ -105,7 +105,7 @@ namespace MAAS_TXIHelper.ViewModels
             }
         }
         private bool _isPrimaryImageSelectionEnabled;
-        public bool isPrimaryImageSelectionEnabled
+        public bool IsPrimaryImageSelectionEnabled
         {
             get => _isPrimaryImageSelectionEnabled;
             set
@@ -114,11 +114,11 @@ namespace MAAS_TXIHelper.ViewModels
                 {
                     _isPrimaryImageSelectionEnabled = value;
                 }
-                OnPropertyChanged(nameof(isPrimaryImageSelectionEnabled));
+                OnPropertyChanged(nameof(IsPrimaryImageSelectionEnabled));
             }
         }
         private bool _isSecondaryImageSelectionEnabled;
-        public bool isSecondaryImageSelectionEnabled
+        public bool IsSecondaryImageSelectionEnabled
         {
             get => _isSecondaryImageSelectionEnabled;
             set
@@ -127,11 +127,11 @@ namespace MAAS_TXIHelper.ViewModels
                 {
                     _isSecondaryImageSelectionEnabled = value;
                 }
-                OnPropertyChanged(nameof(isSecondaryImageSelectionEnabled));
+                OnPropertyChanged(nameof(IsSecondaryImageSelectionEnabled));
             }
         }
         private bool _isRegistrationSelectionEnabled;
-        public bool isRegistrationSelectionEnabled
+        public bool IsRegistrationSelectionEnabled
         {
             get => _isRegistrationSelectionEnabled;
             set
@@ -140,7 +140,7 @@ namespace MAAS_TXIHelper.ViewModels
                 {
                     _isRegistrationSelectionEnabled = value;
                 }
-                OnPropertyChanged(nameof(isRegistrationSelectionEnabled));
+                OnPropertyChanged(nameof(IsRegistrationSelectionEnabled));
             }
         }
         private string _SecondaryLabelColor;
@@ -250,9 +250,9 @@ namespace MAAS_TXIHelper.ViewModels
             IsSpacingTextBoxReadOnly = false;
             ProgressBarValue = 0;
             TextBox = "Please start by selecting the primary 3D image.";
-            isPrimaryImageSelectionEnabled = true;
-            isSecondaryImageSelectionEnabled = true;
-            isRegistrationSelectionEnabled = true;
+            IsPrimaryImageSelectionEnabled = true;
+            IsSecondaryImageSelectionEnabled = true;
+            IsRegistrationSelectionEnabled = true;
             SecondaryLabelColor = "Gray";
             RegistrationLabelColor = "Gray";
             IsConcatBtnEnabled = false;
@@ -373,9 +373,9 @@ namespace MAAS_TXIHelper.ViewModels
                 var folderPath = dialog.SelectedPath;
                 _worker.Run(scriptContext =>
                 {
-                    isPrimaryImageSelectionEnabled = false;
-                    isSecondaryImageSelectionEnabled = false;
-                    isRegistrationSelectionEnabled = false;
+                    IsPrimaryImageSelectionEnabled = false;
+                    IsSecondaryImageSelectionEnabled = false;
+                    IsRegistrationSelectionEnabled = false;
                     IsSpacingTextBoxReadOnly = true;
                     IsConcatBtnEnabled = false;
                     var seriesID = PrimaryImageSelected.Split('(')[0].Remove(PrimaryImageSelected.Split('(')[0].Length - 1);
@@ -667,9 +667,9 @@ namespace MAAS_TXIHelper.ViewModels
                     }
                     TextBox += $"Image concatenation is complete.\n";
                     TextBox += $"New image files were saved in this location: {folderPath}";
-                    isPrimaryImageSelectionEnabled = true;
-                    isSecondaryImageSelectionEnabled = true;
-                    isRegistrationSelectionEnabled = true;
+                    IsPrimaryImageSelectionEnabled = true;
+                    IsSecondaryImageSelectionEnabled = true;
+                    IsRegistrationSelectionEnabled = true;
                     IsSpacingTextBoxReadOnly = false;
                     IsConcatBtnEnabled = true;
                 });
