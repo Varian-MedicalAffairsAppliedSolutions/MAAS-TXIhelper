@@ -98,6 +98,24 @@ namespace MAAS_TXIHelper.ViewModels
                             newPlan.RemoveBeam(beam);
                         }
                     }
+                    bool imagingFieldExists = false;
+                    foreach (var beam in newPlan.Beams.ToList())
+                    {
+                        if (beam.IsocenterPosition.x == isoCoord.x &&
+                        beam.IsocenterPosition.y == isoCoord.y &&
+                        beam.IsocenterPosition.z == isoCoord.z
+                        && beam.IsImagingTreatmentField
+                        )
+                            imagingFieldExists = true;
+                    }
+                    // next create imaging field(s) in the new plan.
+                    if (imagingFieldExists == false)
+                    {
+                        var param = new ExternalBeamMachineParameters(newPlan.Beams.First().TreatmentUnit.Id);
+                        var imagingSetupParam = new ImagingBeamSetupParameters(ImagingSetup.kVCBCT, 0, 0, 0, 0, 28, 28);
+                        newPlan.AddImagingSetup(param, imagingSetupParam, null);
+                    }
+
                     plansCreated++;
                     int i = (int) ((plansCreated +0.0f) / (isocenters.Count +0.0f) * 100 - 2);
                     if (i < 0)
