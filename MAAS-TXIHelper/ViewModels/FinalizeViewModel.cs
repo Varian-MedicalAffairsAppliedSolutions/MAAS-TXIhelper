@@ -70,61 +70,80 @@ namespace MAAS_TXIHelper.ViewModels
             _worker.Run(scriptContext =>
             {
                 var patient = scriptContext.Patient;
-                var currentPlan = scriptContext.PlanSetup as ExternalPlanSetup;
-                var currentCourse = currentPlan.Course;
-                TextBox += $"Processing plan: {currentPlan.Id}\n";
-                // first review this plan to find out isocenter data
-                ICollection<VVector> isocenters = new List<VVector>();
-                foreach (var beam in currentPlan.Beams.ToList())
+                if (scriptContext.PlanSetup == null && scriptContext.PlanSum == null)
                 {
-                    TextBox += $"Beam ID: {beam.Id}   Iso: {beam.IsocenterPosition.x:F2} {beam.IsocenterPosition.y:F2} {beam.IsocenterPosition.z:F2}\n";
-                    VVector isoCoord = new VVector(beam.IsocenterPosition.x, beam.IsocenterPosition.y, beam.IsocenterPosition.z);
-                    if (isocenters.Contains(isoCoord) == false){
-                        isocenters.Add(isoCoord);
-                        TextBox += "Added one isoenter\n";
-                    }
+                    TextBox += $"No plan selected. Please select a plan or plan sum to proceed.\n";
+                    return;
                 }
-                TextBox += $"Number of isocenters: {isocenters.Count}\n";
-                patient.BeginModifications();
-                int plansCreated = 0;
-                foreach (var isoCoord in isocenters)
+                IEnumerable<PlanSetup> planSetups = new List<PlanSetup>();
+                if (scriptContext.PlanSetup != null)
                 {
-                    ExternalPlanSetup newPlan = currentCourse.CopyPlanSetup(currentPlan) as ExternalPlanSetup;
-                    TextBox += $"ID of the new plan: {newPlan.Id}\n";
-                    foreach (var beam in newPlan.Beams.ToList())
+                    planSetups.Append(scriptContext.PlanSetup);
+                }
+                else if (scriptContext.PlanSum != null)
+                {
+                    TextBox += $"This plan sum is currently open: {scriptContext.PlanSum.Id}. All the included plans will be processed.\n";
+                    planSetups = scriptContext.PlanSum.PlanSetups;
+                }
+                foreach(PlanSetup planSetup in planSetups)
+                {
+                    var extPlanSetup = planSetup as ExternalPlanSetup;
+                    var currentCourse = extPlanSetup.Course;
+                    TextBox += $"Processing plan: {extPlanSetup.Id}\n";
+                    // first review this plan to find out isocenter data
+                    ICollection<VVector> isocenters = new List<VVector>();
+                    foreach (var beam in extPlanSetup.Beams.ToList())
                     {
-                        if(beam.IsocenterPosition.x != isoCoord.x || beam.IsocenterPosition.y != isoCoord.y || beam.IsocenterPosition.z != isoCoord.z)
+                        TextBox += $"Beam ID: {beam.Id}   Iso: {beam.IsocenterPosition.x:F2} {beam.IsocenterPosition.y:F2} {beam.IsocenterPosition.z:F2}\n";
+                        VVector isoCoord = new VVector(beam.IsocenterPosition.x, beam.IsocenterPosition.y, beam.IsocenterPosition.z);
+                        if (isocenters.Contains(isoCoord) == false)
                         {
-                            newPlan.RemoveBeam(beam);
+                            isocenters.Add(isoCoord);
+                            TextBox += "Added one isoenter\n";
                         }
                     }
-                    bool imagingFieldExists = false;
-                    foreach (var beam in newPlan.Beams.ToList())
+                    TextBox += $"Number of isocenters: {isocenters.Count}\n";
+                    patient.BeginModifications();
+                    int plansCreated = 0;
+                    foreach (var isoCoord in isocenters)
                     {
-                        if (beam.IsocenterPosition.x == isoCoord.x &&
-                        beam.IsocenterPosition.y == isoCoord.y &&
-                        beam.IsocenterPosition.z == isoCoord.z
-                        && beam.IsImagingTreatmentField
-                        )
-                            imagingFieldExists = true;
-                    }
-                    // next create imaging field(s) in the new plan.
-                    if (imagingFieldExists == false)
-                    {
-                        var param = new ExternalBeamMachineParameters(newPlan.Beams.First().TreatmentUnit.Id);
-                        var imagingSetupParam = new ImagingBeamSetupParameters(ImagingSetup.kVCBCT, 0, 0, 0, 0, 28, 28);
-                        newPlan.AddImagingSetup(param, imagingSetupParam, null);
-                    }
+                        ExternalPlanSetup newPlan = currentCourse.CopyPlanSetup(planSetup) as ExternalPlanSetup;
+                        TextBox += $"ID of the new plan: {newPlan.Id}\n";
+                        foreach (var beam in newPlan.Beams.ToList())
+                        {
+                            if (beam.IsocenterPosition.x != isoCoord.x || beam.IsocenterPosition.y != isoCoord.y || beam.IsocenterPosition.z != isoCoord.z)
+                            {
+                                newPlan.RemoveBeam(beam);
+                            }
+                        }
+                        bool imagingFieldExists = false;
+                        foreach (var beam in newPlan.Beams.ToList())
+                        {
+                            if (beam.IsocenterPosition.x == isoCoord.x &&
+                            beam.IsocenterPosition.y == isoCoord.y &&
+                            beam.IsocenterPosition.z == isoCoord.z
+                            && beam.IsImagingTreatmentField
+                            )
+                                imagingFieldExists = true;
+                        }
+                        // next create imaging field(s) in the new plan.
+                        if (imagingFieldExists == false)
+                        {
+                            var param = new ExternalBeamMachineParameters(newPlan.Beams.First().TreatmentUnit.Id);
+                            var imagingSetupParam = new ImagingBeamSetupParameters(ImagingSetup.kVCBCT, 0, 0, 0, 0, 28, 28);
+                            newPlan.AddImagingSetup(param, imagingSetupParam, null);
+                        }
 
-                    plansCreated++;
-                    int i = (int) ((plansCreated +0.0f) / (isocenters.Count +0.0f) * 100 - 2);
-                    if (i < 0)
-                    {
-                        i = 0;
+                        plansCreated++;
+                        int i = (int)((plansCreated + 0.0f) / (isocenters.Count + 0.0f) * 100 - 2);
+                        if (i < 0)
+                        {
+                            i = 0;
+                        }
+                        ProgressBarValue = i;
                     }
-                    ProgressBarValue = i;
+                    ProgressBarValue = 100;
                 }
-                ProgressBarValue = 100;
             });
         }
     }
