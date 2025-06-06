@@ -9,11 +9,11 @@ on:
       dateInput:
         description: 'Expiration Date'
         required: true
-        default: '3/1/2025'
+        default: '1/1/2026'
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-latest
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: packages\ESAPI.18.0.0\lib\net48\
       PROJECT_FOLDER_NAME: MAAS-TXIHelper
