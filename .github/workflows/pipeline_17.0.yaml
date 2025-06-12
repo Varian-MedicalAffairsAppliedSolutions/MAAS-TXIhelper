@@ -1,6 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by separate terms of service, privacy policy, and support documentation.
-
 name: Build ESAPI Script - v17.0
 
 on:
@@ -9,18 +6,18 @@ on:
       dateInput:
         description: 'Expiration Date'
         required: true
-        default: '1/1/2026'
+        default: '12/31/2025'
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: packages\ESAPI.17.0.0\lib\net48\
       PROJECT_FOLDER_NAME: MAAS-TXIHelper
       PROJECT_NAME: MAAS_TXIHelper
       MAJOR_VERSION: 1
       MINOR_VERSION: 0
-      PATCH_VERSION: 0
+      PATCH_VERSION: 1
       BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
@@ -45,15 +42,19 @@ jobs:
           -MinorVersion ${{ env.MINOR_VERSION }} `
           -PatchVersion ${{ env.PATCH_VERSION }} `
           -BuildNumber ${{ env.BUILD_NUMBER }}
-          
+
+    - name: Update Target Framework Version to 4.8
+      uses: Nambers/ReplaceStringInFile@v1.1
+      with:
+        path: ${{ env.PROJECT_FOLDER_NAME }}/${{ env.PROJECT_NAME }}.csproj
+        oldString: "TargetFrameworkVersion>v[\\d\\.]+<"
+        newString: 'TargetFrameworkVersion>v4.8<'
+
     - name: Setup NuGet.exe for use with actions
       uses: NuGet/setup-nuget@v1
       with:
         nuget-version: latest
-    
-    - name: Download nuget packages
-      run: nuget install .\MAAS-TXIHelper\packages.config -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
-   
+
     - name: Add VIC GitHub NuGet repository
       run: nuget source add
         -Name github `
@@ -68,11 +69,11 @@ jobs:
     - name: Update hint paths in the csproj file
       run: |
         .\.github\workflows\Update-EsapiHintPaths.ps1 `
-        -CsprojFilePath .\MAAS-TXIHelper `
-        -CsprojFileName MAAS_TXIHelper.csproj
+        -CsprojFilePath .\${{ env.PROJECT_FOLDER_NAME }} `
+        -CsprojFileName ${{ env.PROJECT_NAME }}.csproj
           
     - name: Build Solution
-      run: msbuild.exe .\${{env.PROJECT_FOLDER_NAME}}\${{env.PROJECT_NAME}}.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Release"
+      run: msbuild.exe .\${{env.PROJECT_FOLDER_NAME}}\${{env.PROJECT_NAME}}.sln /nologo /nr:false /p:DeleteExistingFiles=True /p:platform="x64" /p:configuration="Release" /restore
         
     - name: Zip
       run: |

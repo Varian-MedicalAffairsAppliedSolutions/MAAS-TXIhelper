@@ -1,6 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by separate terms of service, privacy policy, and support documentation.
-
 name: Build ESAPI Script - v16.1
 
 on:
@@ -9,18 +6,18 @@ on:
       dateInput:
         description: 'Expiration Date'
         required: true
-        default: '1/1/2026'
+        default: '12/31/2025'
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
     env:
       GITHUB_WORKSPACE_PACKAGES_PATH: packages\ESAPI.16.1.0\lib\net461\
       PROJECT_FOLDER_NAME: MAAS-TXIHelper
       PROJECT_NAME: MAAS_TXIHelper
       MAJOR_VERSION: 1
       MINOR_VERSION: 0
-      PATCH_VERSION: 0
+      PATCH_VERSION: 1
       BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
@@ -52,7 +49,7 @@ jobs:
         nuget-version: latest
     
     - name: Download nuget packages
-      run: nuget install .\MAAS-TXIHelper\packages.config -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
+      run: nuget install Microsoft.NETFramework.ReferenceAssemblies.net461 -OutputDirectory .\${{env.PROJECT_FOLDER_NAME}}\packages
    
     - name: Add VIC GitHub NuGet repository
       run: nuget source add

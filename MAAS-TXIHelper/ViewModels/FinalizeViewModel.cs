@@ -75,15 +75,15 @@ namespace MAAS_TXIHelper.ViewModels
                     TextBox += $"No plan selected. Please select a plan or plan sum to proceed.\n";
                     return;
                 }
-                IEnumerable<PlanSetup> planSetups = new List<PlanSetup>();
+                IList<PlanSetup> planSetups = new List<PlanSetup>();
                 if (scriptContext.PlanSetup != null)
                 {
-                    planSetups.Append(scriptContext.PlanSetup);
+                    planSetups.Add(scriptContext.PlanSetup);
                 }
                 else if (scriptContext.PlanSum != null)
                 {
                     TextBox += $"This plan sum is currently open: {scriptContext.PlanSum.Id}. All the included plans will be processed.\n";
-                    planSetups = scriptContext.PlanSum.PlanSetups;
+                    planSetups = scriptContext.PlanSum.PlanSetups.ToList();
                 }
                 foreach(PlanSetup planSetup in planSetups)
                 {
