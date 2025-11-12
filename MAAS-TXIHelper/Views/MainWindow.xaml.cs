@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Navigation;
+using I = itk.simple;
 
 namespace MAAS_TXIHelper.Views
 {
@@ -12,20 +13,23 @@ namespace MAAS_TXIHelper.Views
     {
         private ConcatView _concatView;
         private RotateView _rotateView;
+        private SetupView _setupView;
         private OverrideView _overrideView;
         private FinalizeView _finalizeView;
         public MainWindow(EsapiWorker esapiWorker)
         {
             InitializeComponent();
             _concatView = new ConcatView(esapiWorker);
+            _setupView = new SetupView(esapiWorker);
             _rotateView = new RotateView(esapiWorker);
             _overrideView = new OverrideView(esapiWorker);
             _finalizeView = new FinalizeView(esapiWorker);
             //            _rotateView = new CPFlipView(esapiWorker);
             Tab1.Content = _concatView;
-            Tab2.Content = _rotateView;
-            Tab3.Content = _overrideView;
-            Tab4.Content = _finalizeView;
+            Tab2.Content = _setupView;
+            Tab3.Content = _rotateView;
+            Tab4.Content = _overrideView;
+            Tab5.Content = _finalizeView;
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
