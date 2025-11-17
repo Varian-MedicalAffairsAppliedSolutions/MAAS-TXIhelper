@@ -195,7 +195,7 @@ namespace MAAS_TXIHelper.ViewModels
                 var plan = scriptContext.ExternalPlanSetup;
                 if (plan == null)
                 {
-                    TextBox += $"No plan is currently open. Please first open a plan to proceed.\n";
+                    TextBox += $"No plan is currently open. Please first open a plan with at least one field (used to identify the desired treatment machine and energy).\n";
                     return;
                 }
                 int numTxBeams = 0;
