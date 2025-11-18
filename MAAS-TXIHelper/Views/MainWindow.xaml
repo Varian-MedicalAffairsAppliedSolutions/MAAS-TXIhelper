@@ -39,18 +39,18 @@
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
-            <TabControl>
+            <TabControl Style="{x:Null}">
                 <TabItem Name="Tab1" Header="CT Concatenation"  Style="{x:Null}"/>
                 <TabItem Name="Tab2" Header="Field Setup"  Style="{x:Null}"/>
                 <TabItem Name="Tab3" Header="Plan Rotation" Style="{x:Null}"/>
                 <TabItem Name="Tab4" Header="CT number override" Style="{x:Null}"/>
                 <TabItem Name="Tab5" Header="Finalize Plan" Style="{x:Null}"/>
             </TabControl>
-            <TextBlock Grid.Row="1" Name="Footer" Background="PaleVioletRed">    
-                <Label Margin="0"><Hyperlink NavigateUri="http://medicalaffairs.varian.com/download/VarianLUSLA.pdf" RequestNavigate="Hyperlink_RequestNavigate">
+            <TextBlock Style="{x:Null}" Grid.Row="1" Name="Footer" Background="PaleVioletRed">    
+                <Label Style="{x:Null}" Margin="0"><Hyperlink NavigateUri="http://medicalaffairs.varian.com/download/VarianLUSLA.pdf" RequestNavigate="Hyperlink_RequestNavigate">
                     Bound by the terms of the Varian LUSLA
                 </Hyperlink></Label>
-                <Label Margin="0" Content="{Binding PostText}"/>
+                <Label Style="{x:Null}" Margin="0" Content="{Binding PostText}"/>
             </TextBlock>
         </Grid>
     </DockPanel>
