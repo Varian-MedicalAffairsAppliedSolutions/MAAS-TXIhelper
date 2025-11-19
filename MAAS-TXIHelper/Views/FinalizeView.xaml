@@ -23,11 +23,11 @@
             <ColumnDefinition Width="200" MinWidth="47"/>
             <ColumnDefinition Width="400" MinWidth="47"/>
         </Grid.ColumnDefinitions>
-        <Button Grid.Row="3" Grid.ColumnSpan="2" Margin="10,10,10,10" Padding="5" Command="{Binding FinalizeCmd}" Content="Finalize the plan." IsEnabled="{Binding IsFinalizeBtnEnabled}">
+        <Button Style="{x:Null}" Grid.Row="3" Grid.ColumnSpan="2" Margin="10,10,10,10" Padding="5" Command="{Binding FinalizeCmd}" Content="Finalize the plan." IsEnabled="{Binding IsFinalizeBtnEnabled}">
         </Button>
-        <ProgressBar Grid.Row="4" Grid.ColumnSpan="2" Height="20" Minimum="0" Maximum="100" Margin="10,10,10,10" Padding="5"
+        <ProgressBar Style="{x:Null}" Grid.Row="4" Grid.ColumnSpan="2" Height="20" Minimum="0" Maximum="100" Margin="10,10,10,10" Padding="5"
                      Value="{Binding ProgressBarValue, Mode=OneWay}" Visibility="{Binding pbVisibility}" Name="pbStatus"></ProgressBar>
-        <TextBox x:Name="OutputTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+        <TextBox Style="{x:Null}" x:Name="OutputTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
                  IsReadOnly="True"
                  Grid.Row="5" Grid.RowSpan="5" Grid.ColumnSpan="2" Margin="10,10,10,10" Padding="5" MaxHeight="80"
                  TextChanged="TextChangedEventHandler"

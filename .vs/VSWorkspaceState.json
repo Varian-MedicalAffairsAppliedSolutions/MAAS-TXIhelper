@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\MAAS-TXIHelper"
+    "\\.github",
+    "\\docs",
+    "\\MAAS-TXIHelper",
+    "\\MAAS-TXIHelper\\Views"
   ],
-  "SelectedNode": "\\MAAS-TXIHelper\\MAAS_TXIHelper.sln",
   "PreviewInSolutionExplorer": false
 }

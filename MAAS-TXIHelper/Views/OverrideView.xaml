@@ -22,19 +22,19 @@
             <ColumnDefinition Width="200" MinWidth="47"/>
             <ColumnDefinition Width="400" MinWidth="47"/>
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select 3D Image:" HorizontalAlignment="Right"/>
-        <ComboBox IsEnabled="{Binding ImageSelectionEnabled}" ItemsSource="{Binding Images}" SelectedItem="{Binding ImageSelected}" Grid.Row="0" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
-        <Label Grid.Row="1" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select Structure ID:" HorizontalAlignment="Right"/>
-        <ComboBox IsEnabled="{Binding StructureSelectionEnabled}" ItemsSource="{Binding StructureList}" SelectedItem="{Binding StructureSelected}" Grid.Row="1" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
-        <Label Grid.Row="2" HorizontalAlignment="Right" Content="CT number to use:" Margin="10,10,10,10" Padding="5"></Label>
-        <TextBox Grid.Row="2" Grid.Column="1" Margin="10,10,10,10" Padding="5" IsReadOnly="{Binding IsHUInputTextBoxReadOnly}" 
+        <Label Style="{x:Null}" Grid.Row="0" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select 3D Image:" HorizontalAlignment="Right"/>
+        <ComboBox Style="{x:Null}" IsEnabled="{Binding ImageSelectionEnabled}" ItemsSource="{Binding Images}" SelectedItem="{Binding ImageSelected}" Grid.Row="0" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
+        <Label Style="{x:Null}" Grid.Row="1" Grid.Column="0" Margin="10,10,10,10" Padding="5" Content="Select Structure ID:" HorizontalAlignment="Right"/>
+        <ComboBox Style="{x:Null}" IsEnabled="{Binding StructureSelectionEnabled}" ItemsSource="{Binding StructureList}" SelectedItem="{Binding StructureSelected}" Grid.Row="1" Grid.Column="1" Margin="10,10,10,10" Padding="5"/>
+        <Label Style="{x:Null}" Grid.Row="2" HorizontalAlignment="Right" Content="CT number to use:" Margin="10,10,10,10" Padding="5"></Label>
+        <TextBox Style="{x:Null}" Grid.Row="2" Grid.Column="1" Margin="10,10,10,10" Padding="5" IsReadOnly="{Binding IsHUInputTextBoxReadOnly}" 
                  PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding InputText}"></TextBox>
-        <Button IsEnabled="{Binding IsOverrideBtnEnabled}" Command="{Binding ConvertCmd}" Grid.Row="3" Grid.ColumnSpan="2" Content="Convert CT images" Margin="10,10,10,10" Padding="5">
+        <Button Style="{x:Null}" IsEnabled="{Binding IsOverrideBtnEnabled}" Command="{Binding ConvertCmd}" Grid.Row="3" Grid.ColumnSpan="2" Content="Convert CT images" Margin="10,10,10,10" Padding="5">
         </Button>
-        <ProgressBar Name="pBar" 
+        <ProgressBar Style="{x:Null}" Name="pBar" 
                      Grid.Row="4" Grid.ColumnSpan="2" Height="20" Minimum="0" Maximum="100" Margin="10,10,10,10" Padding="5"
                      Value="{Binding ProgressBarValue, Mode=OneWay}" Visibility="{Binding pbVisibility}"></ProgressBar>
-        <TextBox x:Name="OutputTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+        <TextBox Style="{x:Null}" x:Name="OutputTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
                  IsReadOnly="True"
                  Grid.Row="5" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="10,10,10,10" Padding="5" MaxHeight="80"
                  TextChanged="TextChangedEventHandler"
