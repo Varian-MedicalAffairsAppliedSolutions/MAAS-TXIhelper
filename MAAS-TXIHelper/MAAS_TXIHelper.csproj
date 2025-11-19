@@ -97,14 +97,6 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="VMS.TPS.Common.Model.API">
-      <HintPath Condition="Exists('C:\Program Files (x86)\Varian\RTM\16.1\esapi\API')">C:\Program Files (x86)\Varian\RTM\16.1\esapi\API\VMS.TPS.Common.Model.API.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="VMS.TPS.Common.Model.Types">
-      <HintPath Condition="Exists('C:\Program Files (x86)\Varian\RTM\16.1\esapi\API')">C:\Program Files (x86)\Varian\RTM\16.1\esapi\API\VMS.TPS.Common.Model.Types.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

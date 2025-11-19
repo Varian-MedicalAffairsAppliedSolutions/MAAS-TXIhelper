@@ -16,8 +16,8 @@ jobs:
       PROJECT_FOLDER_NAME: MAAS-TXIHelper
       PROJECT_NAME: MAAS_TXIHelper
       MAJOR_VERSION: 1
-      MINOR_VERSION: 0
-      PATCH_VERSION: 1
+      MINOR_VERSION: 2
+      PATCH_VERSION: 0
       BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
