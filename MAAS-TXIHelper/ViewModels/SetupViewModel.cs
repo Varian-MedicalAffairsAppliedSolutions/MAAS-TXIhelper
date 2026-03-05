@@ -49,7 +49,7 @@ namespace MAAS_TXIHelper.ViewModels
             {
                 _SetupTypeSelected = value;
                 IsSetupBtnEnabled = true;
-                TextBox = _SetupTypeSelected;
+                TextBox += _SetupTypeSelected;
             }
         }
         private bool _IsSetupTypeSelectionEnabled;
@@ -83,7 +83,7 @@ namespace MAAS_TXIHelper.ViewModels
             set
             {
                 _structureSelected = value;
-                if(!string.IsNullOrEmpty(SetupTypeSelected) && IsSetupBtnEnabled == false)
+                if(IsSetupBtnEnabled == false)
                 {
                     IsSetupBtnEnabled = true;
                 }
@@ -102,7 +102,6 @@ namespace MAAS_TXIHelper.ViewModels
                 }
             }
         }
-
         private int _pbValue;
         public int ProgressBarValue
         {
@@ -114,6 +113,32 @@ namespace MAAS_TXIHelper.ViewModels
                     _pbValue = value;
                     OnPropertyChanged(nameof(ProgressBarValue));
                 }
+            }
+        }
+        private bool _IsIsoSpacingInputTextBoxReadOnly;
+        public bool IsIsoSpacingInputTextBoxReadOnly
+        {
+            get => _IsIsoSpacingInputTextBoxReadOnly;
+            set
+            {
+                if (_IsIsoSpacingInputTextBoxReadOnly != value)
+                {
+                    _IsIsoSpacingInputTextBoxReadOnly = value;
+                }
+                OnPropertyChanged(nameof(IsIsoSpacingInputTextBoxReadOnly));
+            }
+        }
+        private string _IsoSpacingInput;
+        public string IsoSpacingInput
+        {
+            get => _IsoSpacingInput;
+            set
+            {
+                if (_IsoSpacingInput != value)
+                {
+                    _IsoSpacingInput = value;
+                }
+                OnPropertyChanged(nameof(IsoSpacingInput));
             }
         }
         private bool _IsSetupBtnEnabled;
@@ -170,12 +195,14 @@ namespace MAAS_TXIHelper.ViewModels
             SetupTypeSelected = null;
             StructureSelected = null;
             ProgressBarValue = 0;
-            TextBox = "Please first choose the setup type from the drop-down box above.";
+            TextBox = "If the machine model is Halcyon or Ethos, please first choose the setup type from the drop-down box above.";
             IsSetupTypeSelectionEnabled = true;
             IsStructureSelectionEnabled = true;
             IsSetupBtnEnabled = false;
+            IsIsoSpacingInputTextBoxReadOnly = false;
             SetupTypes.Add("Isocenters with equal separation distances");
             SetupTypes.Add("Isocenters with unequal separation distances");
+            IsoSpacingInput = "0";
             _worker.Run(scriptContext =>
             {
                 var ss = scriptContext.StructureSet;
@@ -228,6 +255,11 @@ namespace MAAS_TXIHelper.ViewModels
                     TextBox += $"ERROR: This script is designed for Varian TrueBeam or Halcyon/Ethos machines. Please verify if the correct machine is selected for this plan.\n";
                     return;
                 }
+                if (machineModel == "RDS" && string.IsNullOrEmpty(SetupTypeSelected))
+                {
+                    TextBox += $"ERROR: This plan is fo a Halcyon/Ethos machine. Please choose the correct setup type first from the setup type drop-down menu.\n";
+                    return;
+                }
                 if (string.IsNullOrEmpty(StructureSelected))
                 {
                     TextBox += $"ERROR: Please select the combined target contour from the drop-down structure list above.\n";
@@ -245,6 +277,23 @@ namespace MAAS_TXIHelper.ViewModels
                 if (body == null)
                 {
                     TextBox += $"ERROR: The body contour was not found. Please create the external body structure first.\n";
+                    return;
+                }
+                // Check if the textbox entry is valid.
+                int isoSpacing = 0;
+                try
+                {
+                    isoSpacing = Int32.Parse(IsoSpacingInput);
+                    isoSpacing = isoSpacing * 10;
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show(ex.Message);
+                    return;
+                }
+                if (isoSpacing > 300 || isoSpacing < 110)
+                {
+                    System.Windows.MessageBox.Show("Isocenter spacing is outside the range of 11 to 30 cm. Please correct the isocenter spacing input.");
                     return;
                 }
                 if (machineModel == "RDS")
@@ -446,7 +495,7 @@ namespace MAAS_TXIHelper.ViewModels
                         }
                         else
                         {
-                            beamIso.z = beamIso.z - 140;
+                            beamIso.z = beamIso.z - isoSpacing;
                             if (SetupTypeSelected == "Isocenters with unequal separation distances")
                             {
                                 smallShift = true;
@@ -681,9 +730,9 @@ namespace MAAS_TXIHelper.ViewModels
                         patientSupportAngle: 0,
                         isocenter: beamIso);
                     // continue adding beams until the PTV is covered.
-                    while (beamIso.z - 260 > firstSliceZ - 10)
+                    while (beamIso.z - 140 > firstSliceZ - 10)
                     {
-                        beamIso.z = beamIso.z - 260;
+                        beamIso.z = beamIso.z - isoSpacing;
                         newBeam = plan.AddVMATBeam(machineParameters: machineParameters,
                             metersetWeights: metersetWeights,
                             collimatorAngle: 90,
@@ -710,6 +759,7 @@ namespace MAAS_TXIHelper.ViewModels
                     }
                 }
                 TextBox += $"Please review changes made to this plan. If you are satisfied with the changes, you can save this plan.\n";
+                TextBox += $"After this plan is optimized, you can use the Finalize Plan tab to separate this plan into multiple plans for delivery.\n";
             });
         }
     }
