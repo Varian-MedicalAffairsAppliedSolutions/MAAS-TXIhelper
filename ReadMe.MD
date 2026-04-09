@@ -20,10 +20,13 @@ Requires Head First Supine superior series with rigid registration to inferior F
 - progress bar is accurate, could take approximately 30 minutes to complete concatenation
 - import fully merged CT series from output directory (i.e C:\Temp) when completed
 
-### Isocenter Placement tab: not yet working
-- will automatically place all beams on full body image set
-- will support single isocenter shifts head to foot (X fixed,Y fixed,Z changes)
-- will also support additional lateral shifts for wider patients (X changes,Y fixed,Z changes)
+### Isocenter Placement tab: working
+![plot](./fieldsetup-screenshot.jpg)
+
+Requires a single field already placed on the patient in External Beam Planning
+- automatically places all beams on full body image set
+- supports single isocenter shifts head to foot (X fixed,Y fixed,Z changes)
+- TODO: future support for additional lateral shifts for wider patients (X changes,Y fixed,Z changes)
 
 ### Aperture Rotation tab: working
 ![plot](./aperture-rotation-screenshot.jpg)
