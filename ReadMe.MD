@@ -30,6 +30,7 @@ Requires a single field already placed on the patient in External Beam Planning
 
 ### Aperture Rotation tab: working
 ![plot](./aperture-rotation-screenshot.jpg)
+
 - copy and paste twice the complete plan created in HFS orientation with desired dose distribution head to foot
     - in one plan delete all beams/isocenters that will be treated HFS and the other plan FFS
     - DICOM export the plan that has only the inferior isocenters that is currently in the HFS orientation
@@ -41,8 +42,11 @@ Requires a single field already placed on the patient in External Beam Planning
 
 ### Bonus: CT Number Override tab: working
 ![plot](CT-number-override-screenshot.jpg)
+
 - re-process CT series with desity of a structure overridden or "burned-in"
 
-### Final Modifications tab: not yet working
-- breaks each isocenter group into separate plan, treatment approves plans and adds needed setup notes
+### Final Modifications tab: working
+![plot](./finalize-screenshot.jpg)
+
+- breaks each isocenter group into separate plan, create plansum for bulk plan approval and review
 
